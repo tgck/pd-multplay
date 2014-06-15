@@ -1,0 +1,14 @@
+INSTALL.txt
+README.txt
+LICENSE.txt
+Makefile.am
+m4
+doc
+extra
+man
+pd.pc.in
+portaudio
+portmidi
+po
+configure.ac
+autogen.sh
