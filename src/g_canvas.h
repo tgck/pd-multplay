@@ -76,38 +76,45 @@ EXTERN_STRUCT _canvasenvironment;
 EXTERN_STRUCT _fielddesc;
 #define t_fielddesc struct _fielddesc
 
+	/* _selection */
+	/** 選択範囲。リンクリストで保持 **/
 typedef struct _selection
 {
     t_gobj *sel_what;
     struct _selection *sel_next;
 } t_selection;
 
+		/* _editor */
     /* this structure is instantiated whenever a glist becomes visible. */
+		/* glistが表示状態になると、インスタンス化される。*/
 typedef struct _editor
 {
     t_updateheader e_upd;           /* update header structure */
     t_selection *e_updlist;         /* list of objects to update */
     t_rtext *e_rtext;               /* text responder linked list */
-    t_selection *e_selection;       /* head of the selection list */
+    t_selection *e_selection;       /* head of the selection list */ /*セレクションの先頭位置*/
     t_rtext *e_textedfor;           /* the rtext if any that we are editing */
     t_gobj *e_grab;                 /* object being "dragged" */
-    t_glistmotionfn e_motionfn;     /* ... motion callback */
-    t_glistkeyfn e_keyfn;           /* ... keypress callback */
+    t_glistmotionfn e_motionfn;     /* ... motion callback */ /*モーション時のコールバック関数*/
+    t_glistkeyfn e_keyfn;           /* ... keypress callback */ /*キープレス時のコールバック関数*/
     t_binbuf *e_connectbuf;         /* connections to deleted objects */
     t_binbuf *e_deleted;            /* last stuff we deleted */
     t_guiconnect *e_guiconnect;     /* GUI connection for filtering messages */
-    struct _glist *e_glist;         /* glist which owns this */
-    int e_xwas;                     /* xpos on last mousedown or motion event */
+    struct _glist *e_glist;         /* glist which owns this */ /*glistの親glist?*/
+    int e_xwas;                     /* xpos on last mousedown or motion event */ /*待避されたx座標(イベント発生時の)*/
     int e_ywas;                     /* ypos, similarly */
     int e_selectline_index1;        /* indices for the selected line if any */
     int e_selectline_outno;         /* (only valid if e_selectedline is set) */
     int e_selectline_index2;
     int e_selectline_inno;
     t_outconnect *e_selectline_tag;
+	
+		/**コロンによるビット幅指定**/
     unsigned int e_onmotion: 3;     /* action to take on motion */
-    unsigned int e_lastmoved: 1;    /* one if mouse has moved since click */
+    unsigned int e_lastmoved: 1;    /* one if mouse has moved since click */ /*ドラッグ中フラグ ?*/
     unsigned int e_textdirty: 1;    /* one if e_textedfor has changed */
     unsigned int e_selectedline: 1; /* one if a line is selected */
+	
     t_clock *e_clock;               /* clock to filter GUI move messages */
     int e_xnew;                     /* xpos for next move event */
     int e_ynew;                     /* ypos, similarly */
@@ -142,7 +149,7 @@ typedef struct _tick    /* where to put ticks on x or y axes */
 
 /* the t_glist structure, which describes a list of elements that live on an
 area of a window.
-
+  ウィンドウ中の要素群。=オブジェクトリスト?
 */
 
 struct _glist
@@ -172,11 +179,13 @@ struct _glist
     int gl_nylabels;
     t_symbol **gl_ylabel;
     t_float gl_ylabelx;
-    t_editor *gl_editor;        /* editor structure when visible */
+    t_editor *gl_editor;        /* editor structure when visible */ /*glistが表示状態のときのみgl_editorを持つ*/
     t_symbol *gl_name;          /* symbol bound here */
     int gl_font;                /* nominal font size in points, e.g., 10 */
-    struct _glist *gl_next;         /* link in list of toplevels */
+    struct _glist *gl_next;         /* link in list of toplevels */ /*当該リストがトップレベルであるとき、次のリストへのポインタ(?)*/
     t_canvasenvironment *gl_env;    /* root canvases and abstractions only */
+	
+		/* 1ビット幅の各種フラグ */
     unsigned int gl_havewindow:1;   /* true if we own a window */
     unsigned int gl_mapped:1;       /* true if, moreover, it's "mapped" */
     unsigned int gl_dirty:1;        /* (root canvas only:) patch has changed */
