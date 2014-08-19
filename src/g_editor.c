@@ -895,15 +895,16 @@ void canvas_create_editor(t_glist *x)
     {
         x->gl_editor = editor_new(x);
 				
-        /** new session test **/
-  			t_usession *s1 = usession_new(x->gl_editor);
-			  usession_array_test[0] = s1;
-   			sleep(1);
-  			t_usession *s2 = usession_new(x->gl_editor);
-			  usession_array_test[1] = s2;
+			/** new session test **/
+
+			t_usession *s1 = usession_new(x->gl_editor);
+			usession_array_test[0] = s1;
+			sleep(1);
+			t_usession *s2 = usession_new(x->gl_editor);
+			usession_array_test[1] = s2;
 			
- 	  		fprintf(stderr, "new session. id=%ld\n", s1->user_id);
-  			fprintf(stderr, "new session. id=%ld\n", s2->user_id);
+			fprintf(stderr, "new session. id=%ld\n", s1->user_id);
+			fprintf(stderr, "new session. id=%ld\n", s2->user_id);
 			
 				for (y = x->gl_list; y; y = y->g_next)
             if (ob = pd_checkobject(&y->g_pd))
