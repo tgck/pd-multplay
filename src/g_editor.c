@@ -860,8 +860,7 @@ static void canvas_rightclick(t_canvas *x, int xpos, int ypos, t_gobj *y)
 
 static t_editor *editor_new(t_glist *owner)
 {
-		hello();
-    char buf[40];
+		char buf[40];
     t_editor *x = (t_editor *)getbytes(sizeof(*x));
     x->e_connectbuf = binbuf_new();
     x->e_deleted = binbuf_new();
@@ -869,8 +868,6 @@ static t_editor *editor_new(t_glist *owner)
     sprintf(buf, ".x%lx", (t_int)owner);
     x->e_guiconnect = guiconnect_new(&owner->gl_pd, gensym(buf));
     x->e_clock = 0;
-		x->session_id = new_session_id(); // test
-	fprintf(stderr, "hoge:%ld\n", x->session_id);
 		
     return (x);
 }
@@ -895,7 +892,13 @@ void canvas_create_editor(t_glist *x)
     if (!x->gl_editor)
     {
         x->gl_editor = editor_new(x);
-        for (y = x->gl_list; y; y = y->g_next)
+				
+				/** new session test **/
+				fprintf(stderr, "new session. id");
+				t_usession *s = usession_new(x->gl_editor);
+				fprintf(stderr, "new session. id=%ld", s->user_id);
+						
+				for (y = x->gl_list; y; y = y->g_next)
             if (ob = pd_checkobject(&y->g_pd))
                 rtext_new(x, ob);
     }
