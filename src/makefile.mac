@@ -138,16 +138,16 @@ $(PDEXEC): $(OBJ) $(BIN_DIR)
 	cd ../obj;  $(CC) $(LDFLAGS) $(DBG_CFLAGS) -o $(PDEXEC) $(OBJ) $(LIB)
 
 externs: 
-	make -C ../extra/bonk~    d_fat
-	make -C ../extra/choice   d_fat
-	make -C ../extra/expr~    d_fat
-	make -C ../extra/fiddle~  d_fat
-	make -C ../extra/loop~    d_fat
-	make -C ../extra/lrshift~ d_fat
-	make -C ../extra/pique    d_fat
-	make -C ../extra/sigmund~ d_fat
-	make -C ../extra/pd~      d_fat
-	make -C ../extra/stdout   d_fat
+#	make -C ../extra/bonk~    d_fat
+#	make -C ../extra/choice   d_fat
+#	make -C ../extra/expr~    d_fat
+#	make -C ../extra/fiddle~  d_fat
+#	make -C ../extra/loop~    d_fat
+#	make -C ../extra/lrshift~ d_fat
+#	make -C ../extra/pique    d_fat
+#	make -C ../extra/sigmund~ d_fat
+#	make -C ../extra/pd~      d_fat
+#	make -C ../extra/stdout   d_fat
 
 BINARYMODE=-m755
 

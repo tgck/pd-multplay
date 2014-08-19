@@ -936,7 +936,7 @@ void canvas_vis(t_canvas *x, t_floatarg f)
             char cbuf[MAXPDSTRING];
             int cbuflen;
             t_canvas *c = x;
-            canvas_create_editor(x);
+            canvas_create_editor(x); // editor の生成
             sys_vgui("pdtk_canvas_new .x%lx %d %d +%d+%d %d\n", x,
                 (int)(x->gl_screenx2 - x->gl_screenx1),
                 (int)(x->gl_screeny2 - x->gl_screeny1),
