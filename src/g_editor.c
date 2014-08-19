@@ -8,6 +8,7 @@
 #include "m_imp.h"
 #include "s_stuff.h"
 #include "g_canvas.h"
+#include "g_usersession.h"
 #include "s_utf8.h" /*-- moo --*/
 #include <string.h>
 #ifdef _MSC_VER  /* This is only for Microsoft's compiler, not cygwin, e.g. */
@@ -859,6 +860,7 @@ static void canvas_rightclick(t_canvas *x, int xpos, int ypos, t_gobj *y)
 
 static t_editor *editor_new(t_glist *owner)
 {
+		hello();
     char buf[40];
     t_editor *x = (t_editor *)getbytes(sizeof(*x));
     x->e_connectbuf = binbuf_new();
@@ -867,6 +869,9 @@ static t_editor *editor_new(t_glist *owner)
     sprintf(buf, ".x%lx", (t_int)owner);
     x->e_guiconnect = guiconnect_new(&owner->gl_pd, gensym(buf));
     x->e_clock = 0;
+		x->session_id = new_session_id(); // test
+	fprintf(stderr, "hoge:%ld\n", x->session_id);
+		
     return (x);
 }
 
