@@ -1681,6 +1681,14 @@ static void canvas_displaceselection(t_canvas *x, int dx, int dy)
     may be zero if there's no current canvas.  The first argument is true or
     false for down/up; the second one is either a symbolic key name (e.g.,
     "Right" or an Ascii key number.  The third is the shift key. */
+
+    /** キーイベントハンドラ。
+		    canvas が存在しない場合 xは0。
+				t_atom *av: // キーイベントもアトム。
+					引数1: downなら1, upなら0
+					引数2: キー名もしくは単純なAscii key number
+					引数3: shiftなら1
+		 **/
 void canvas_key(t_canvas *x, t_symbol *s, int ac, t_atom *av)
 {
     static t_symbol *keynumsym, *keyupsym, *keynamesym;
@@ -1697,6 +1705,7 @@ void canvas_key(t_canvas *x, t_symbol *s, int ac, t_atom *av)
     shift = (atom_getfloat(av+2) != 0);  /* nonzero if shift-ed */
     if (av[1].a_type == A_SYMBOL)
         gotkeysym = av[1].a_w.w_symbol;
+		// 特殊キーであった場合は、シンボルを振る
     else if (av[1].a_type == A_FLOAT)
     {
         char buf[UTF8_MAXBYTES1];
@@ -1757,7 +1766,7 @@ void canvas_key(t_canvas *x, t_symbol *s, int ac, t_atom *av)
         pd_float(keynumsym->s_thing, (t_float)keynum);
     if (keyupsym->s_thing && !down)
         pd_float(keyupsym->s_thing, (t_float)keynum);
-    if (keynamesym->s_thing)
+    if (keynamesym->s_thing) /** この処理の意図はよくわかってない **/
     {
         t_atom at[2];
         at[0] = av[0];
@@ -1765,6 +1774,7 @@ void canvas_key(t_canvas *x, t_symbol *s, int ac, t_atom *av)
         SETSYMBOL(at+1, gotkeysym);
         pd_list(keynamesym->s_thing, 0, 2, at);
     }
+    /** エディタがなければ、後続処理は無視 **/
     if (!x || !x->gl_editor)  /* if that 'invis'ed the window, we'd better stop. */
         return;
     if (x && down)
@@ -1821,6 +1831,7 @@ void canvas_key(t_canvas *x, t_symbol *s, int ac, t_atom *av)
     }
         /* if control key goes up or down, and if we're in edit mode, change
         cursor to indicate how the click action changes */
+        /** カーソルアイコンの変更 **/
     if (x && keynum == 0 && x->gl_edit &&
         !strncmp(gotkeysym->s_name, "Control", 7))
             canvas_setcursor(x, down ?
@@ -1836,10 +1847,11 @@ static void delay_move(t_canvas *x)
     x->gl_editor->e_ywas = x->gl_editor->e_ynew;
 }
 
+/** ポインタがキャンバス上を移動する度に呼ばれる **/
 void canvas_motion(t_canvas *x, t_floatarg xpos, t_floatarg ypos,
     t_floatarg fmod)
 { 
-    /* post("motion %d %d", xpos, ypos); */
+		post("motion %4.1f %4.1f", xpos, ypos);
     int mod = fmod;
     if (!x->gl_editor)
     {
@@ -2792,8 +2804,11 @@ static void glist_setlastxy(t_glist *gl, int xval, int yval)
 
 void g_editor_setup(void)
 {
+
 /* ------------------------ events ---------------------------------- */
-    class_addmethod(canvas_class, (t_method)canvas_mouse, gensym("mouse"),
+/** イベントハンドラの登録を行う**/
+/** イベントハンドラの実装は、当ソースで登場 **/	
+	  class_addmethod(canvas_class, (t_method)canvas_mouse, gensym("mouse"),
         A_FLOAT, A_FLOAT, A_FLOAT, A_FLOAT, A_NULL);
     class_addmethod(canvas_class, (t_method)canvas_mouseup, gensym("mouseup"),
         A_FLOAT, A_FLOAT, A_FLOAT, A_NULL);
