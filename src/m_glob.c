@@ -36,6 +36,11 @@ void glob_ping(t_pd *dummy);
 void glob_watchdog(t_pd *dummy);
 void glob_savepreferences(t_pd *dummy);
 
+/** later move this function to valid place.. **/
+static void alter_user_session(){
+	fprintf(stderr, "[test]alter user session.\n");
+}
+
 static void glob_compatibility(t_pd *dummy, t_floatarg level)
 {
     int dspwas = canvas_suspend_dsp();
@@ -92,6 +97,7 @@ void max_default(t_pd *x, t_symbol *s, int argc, t_atom *argv)
     endpost();
 }
 
+/** グローバルな pd メッセージのハンドラを定義する **/
 void glob_init(void)
 {
     maxclass = class_new(gensym("max"), 0, 0, sizeof(t_pd),
@@ -150,6 +156,10 @@ void glob_init(void)
         gensym("perf"), A_FLOAT, 0);
     class_addmethod(glob_pdobject, (t_method)glob_compatibility,
         gensym("compatibility"), A_FLOAT, 0);
+	
+		class_addmethod(glob_pdobject, (t_method)alter_user_session, 		/** test **/
+				gensym("alter_user_session"), 0);
+	
 #if defined(__linux__) || defined(__FreeBSD_kernel__)
     class_addmethod(glob_pdobject, (t_method)glob_watchdog,
         gensym("watchdog"), 0);
