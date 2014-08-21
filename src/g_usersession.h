@@ -51,3 +51,8 @@ static void alter_session_2(t_glist *x){
 		fprintf(stderr, "changed editor 1->2");
 	}	
 }
+
+/** [test] pd メッセージから呼ぶ**/
+void alter_user_session(){
+	fprintf(stderr, "[test]alter user session.\n");
+}

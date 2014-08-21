@@ -35,11 +35,7 @@ void glob_startup_dialog(t_pd *dummy, t_symbol *s, int argc, t_atom *argv);
 void glob_ping(t_pd *dummy);
 void glob_watchdog(t_pd *dummy);
 void glob_savepreferences(t_pd *dummy);
-
-/** later move this function to valid place.. **/
-static void alter_user_session(){
-	fprintf(stderr, "[test]alter user session.\n");
-}
+void alter_user_session(); /** test **/
 
 static void glob_compatibility(t_pd *dummy, t_floatarg level)
 {
