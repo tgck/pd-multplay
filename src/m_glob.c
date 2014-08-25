@@ -35,7 +35,14 @@ void glob_startup_dialog(t_pd *dummy, t_symbol *s, int argc, t_atom *argv);
 void glob_ping(t_pd *dummy);
 void glob_watchdog(t_pd *dummy);
 void glob_savepreferences(t_pd *dummy);
+
 void alter_user_session(); /** test **/
+
+
+void another_user_session();
+void another_user_session(){
+	fprintf(stderr, "[test]alter user session.AAA\n");
+}
 
 static void glob_compatibility(t_pd *dummy, t_floatarg level)
 {
@@ -103,7 +110,8 @@ void glob_init(void)
 
     glob_pdobject = class_new(gensym("pd"), 0, 0, sizeof(t_pd),
         CLASS_DEFAULT, A_NULL);
-    class_addmethod(glob_pdobject, (t_method)glob_initfromgui, gensym("init"),
+	
+	  class_addmethod(glob_pdobject, (t_method)glob_initfromgui, gensym("init"),
         A_GIMME, 0);
     class_addmethod(glob_pdobject, (t_method)glob_menunew, gensym("menunew"),
         A_SYMBOL, A_SYMBOL, 0);
@@ -152,9 +160,13 @@ void glob_init(void)
         gensym("perf"), A_FLOAT, 0);
     class_addmethod(glob_pdobject, (t_method)glob_compatibility,
         gensym("compatibility"), A_FLOAT, 0);
-	
-		class_addmethod(glob_pdobject, (t_method)alter_user_session, 		/** test **/
+
+  	class_addmethod(glob_pdobject, (t_method)alter_user_session, 		/** test **/
 				gensym("alter_user_session"), 0);
+
+  	class_addmethod(glob_pdobject, (t_method)another_user_session, 		/** test **/
+				gensym("hello"), 0);
+	
 	
 #if defined(__linux__) || defined(__FreeBSD_kernel__)
     class_addmethod(glob_pdobject, (t_method)glob_watchdog,

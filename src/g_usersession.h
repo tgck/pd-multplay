@@ -56,3 +56,5 @@ static void alter_session_2(t_glist *x){
 void alter_user_session(){
 	fprintf(stderr, "[test]alter user session.\n");
 }
+
+
