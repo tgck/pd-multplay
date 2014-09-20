@@ -1,7 +1,7 @@
 /** file for user session extention **/
 #include <time.h>
 #include "m_pd.h"			// struct t_canvas
-#include "g_canvas.h"	// struct t_editor
+//#include "g_canvas.h"	// struct t_editor
 
 static void hello(void);
 static long new_session_id(void);
@@ -15,8 +15,9 @@ typedef struct _usession
 } t_usession;
 
 // session control for temporary debugs
-extern t_usession *usession_array_test[4];
-static t_usession *usession_new(t_editor *x);
+//extern t_usession *usession_array_test[4];
+t_usession *usession_array_test[4];
+t_usession *usession_new(t_editor *x);
 
 // alter session
 // TODO: assgin to key event

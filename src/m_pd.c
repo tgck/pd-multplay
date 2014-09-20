@@ -183,6 +183,8 @@ void pd_unbind(t_pd *x, t_symbol *s)
 
 void zz(void) {}
 
+// canvas_getcurrent() の中で呼んでいる関数
+// 
 t_pd *pd_findbyclass(t_symbol *s, t_class *c)
 {
     t_pd *x = 0;

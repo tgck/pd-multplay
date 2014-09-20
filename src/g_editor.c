@@ -8,7 +8,7 @@
 #include "m_imp.h"
 #include "s_stuff.h"
 #include "g_canvas.h"
-//#include "aa_usersession.h"
+#include "aa_usersession.h"
 #include "s_utf8.h" /*-- moo --*/
 #include <string.h>
 #ifdef _MSC_VER  /* This is only for Microsoft's compiler, not cygwin, e.g. */
@@ -883,31 +883,35 @@ static void editor_free(t_editor *x, t_glist *y)
     freebytes((void *)x, sizeof(*x));
 }
 
+
+t_usession *usession_array_test[4];
+//exterun struct t_usession;
+
     /* recursively create or destroy all editors of a glist and its 
     sub-glists, as long as they aren't toplevels. */
 void canvas_create_editor(t_glist *x)
 {
     t_gobj *y;
     t_object *ob;
-//    if (!x->gl_editor)
-//    {
-//        x->gl_editor = editor_new(x);
-//				
-//			/** new session test **/
-//
-//			t_usession *s1 = usession_new(x->gl_editor);
+    if (!x->gl_editor)
+    {
+        x->gl_editor = editor_new(x);
+				
+			/** new session test **/
+
+			t_usession *s1 = usession_new(x->gl_editor);
 //			usession_array_test[0] = s1;
 //			sleep(1);
 //			t_usession *s2 = usession_new(x->gl_editor);
 //			usession_array_test[1] = s2;
-//			
-//			fprintf(stderr, "new session. id=%ld\n", s1->user_id);
+			
+			fprintf(stderr, "new session. id=%ld\n", s1->user_id);
 //			fprintf(stderr, "new session. id=%ld\n", s2->user_id);
-//			
-//				for (y = x->gl_list; y; y = y->g_next)
-//            if (ob = pd_checkobject(&y->g_pd))
-//                rtext_new(x, ob);
-//    }
+			
+				for (y = x->gl_list; y; y = y->g_next)
+            if (ob = pd_checkobject(&y->g_pd))
+                rtext_new(x, ob);
+    }
 }
 
 void canvas_destroy_editor(t_glist *x)
@@ -931,6 +935,8 @@ void canvas_map(t_canvas *x, t_floatarg f);
     /* we call this when we want the window to become visible, mapped, and
     in front of all windows; or with "f" zero, when we want to get rid of
     the window. */
+		// 指定したcanvasを表示する(制御対象にする)
+
 void canvas_vis(t_canvas *x, t_floatarg f)
 {
     char buf[30];
@@ -1230,6 +1236,7 @@ static int canvas_upx, canvas_upy;
 #define DCLICKINTERVAL 0.25
 
     /* mouse click */
+		// クリックイベント
 void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
     int mod, int doit)
 {
@@ -1849,7 +1856,9 @@ static void delay_move(t_canvas *x)
 void canvas_motion(t_canvas *x, t_floatarg xpos, t_floatarg ypos,
     t_floatarg fmod)
 { 
-		post("motion %4.1f %4.1f", xpos, ypos);
+//		post("motion %4.1f %4.1f", xpos, ypos);
+		post("motion %4.1f %4.1f canvas .x%lx \n", xpos, ypos, x);
+	
     int mod = fmod;
     if (!x->gl_editor)
     {
