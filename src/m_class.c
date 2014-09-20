@@ -650,6 +650,8 @@ void pd_typedmess(t_pd *x, t_symbol *s, int argc, t_atom *argv)
         /* check for messages that are handled by fixed slots in the class
         structure.  We don't catch "pointer" though so that sending "pointer"
         to pd_objectmaker doesn't require that we supply a pointer value. */
+        // クラス構造体のメッセージをチェックする
+        // pd_objectmaker はポインタ値を必要としないので、ポインタを受け付けることは不要	
     if (s == &s_float)
     {
         if (!argc) (*c->c_floatmethod)(x, 0.);

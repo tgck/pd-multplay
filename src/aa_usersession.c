@@ -1,6 +1,5 @@
 /** file for user session extention **/
-#include <time.h>
-
+#include "aa_usersession.h"
 
 static void hello() {
 	fprintf(stderr, "hello pd.");
@@ -13,18 +12,6 @@ static long new_session_id() {
 	return t;
 }
 
-// user session
-typedef struct _usession 
-{
-	long user_id;
-	t_canvas *us_canvas;
-	t_editor *us_editor;
-} t_usession;
-
-// session control for temporary debugs
-extern t_usession *usession_array_test[4];
-
-//static t_usession *usession_new(){
 static t_usession *usession_new(t_editor *x){
 	
 	t_usession *y = (t_usession *)getbytes(sizeof(*y));
@@ -46,15 +33,21 @@ static void alter_session_1(t_glist *x){
 } 
 
 static void alter_session_2(t_glist *x){
+	fprintf(stderr, "alter_session_2");
 	if (!x->gl_editor){
 		x->gl_editor = usession_array_test[1];
 		fprintf(stderr, "changed editor 1->2");
 	}	
 }
 
-/** [test] pd メッセージから呼ぶ**/
-void alter_user_session(){
-	fprintf(stderr, "[test]alter user session.\n");
+
+void alter_user_session(t_pd *dummy){
+	fprintf(stderr, "[test]alter user session1.\n");
+	
+//	t_glist *curr = canvas_getcurrent();
+//	alter_session_1(curr);
+	
+	fprintf(stderr, "[test]alter user session2.\n");
 }
 
 

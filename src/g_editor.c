@@ -8,7 +8,7 @@
 #include "m_imp.h"
 #include "s_stuff.h"
 #include "g_canvas.h"
-#include "g_usersession.h"
+//#include "aa_usersession.h"
 #include "s_utf8.h" /*-- moo --*/
 #include <string.h>
 #ifdef _MSC_VER  /* This is only for Microsoft's compiler, not cygwin, e.g. */
@@ -872,8 +872,6 @@ static t_editor *editor_new(t_glist *owner)
     return (x);
 }
 
-t_usession *usession_array_test[4];
-
 static void editor_free(t_editor *x, t_glist *y)
 {
     glist_noselect(y);
@@ -891,25 +889,25 @@ void canvas_create_editor(t_glist *x)
 {
     t_gobj *y;
     t_object *ob;
-    if (!x->gl_editor)
-    {
-        x->gl_editor = editor_new(x);
-				
-			/** new session test **/
-
-			t_usession *s1 = usession_new(x->gl_editor);
-			usession_array_test[0] = s1;
-			sleep(1);
-			t_usession *s2 = usession_new(x->gl_editor);
-			usession_array_test[1] = s2;
-			
-			fprintf(stderr, "new session. id=%ld\n", s1->user_id);
-			fprintf(stderr, "new session. id=%ld\n", s2->user_id);
-			
-				for (y = x->gl_list; y; y = y->g_next)
-            if (ob = pd_checkobject(&y->g_pd))
-                rtext_new(x, ob);
-    }
+//    if (!x->gl_editor)
+//    {
+//        x->gl_editor = editor_new(x);
+//				
+//			/** new session test **/
+//
+//			t_usession *s1 = usession_new(x->gl_editor);
+//			usession_array_test[0] = s1;
+//			sleep(1);
+//			t_usession *s2 = usession_new(x->gl_editor);
+//			usession_array_test[1] = s2;
+//			
+//			fprintf(stderr, "new session. id=%ld\n", s1->user_id);
+//			fprintf(stderr, "new session. id=%ld\n", s2->user_id);
+//			
+//				for (y = x->gl_list; y; y = y->g_next)
+//            if (ob = pd_checkobject(&y->g_pd))
+//                rtext_new(x, ob);
+//    }
 }
 
 void canvas_destroy_editor(t_glist *x)

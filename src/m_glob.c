@@ -4,6 +4,7 @@
 
 #include "m_pd.h"
 #include "m_imp.h"
+//#include "aa_usersession.h"
 
 t_class *glob_pdobject;
 static t_class *maxclass;
@@ -36,12 +37,17 @@ void glob_ping(t_pd *dummy);
 void glob_watchdog(t_pd *dummy);
 void glob_savepreferences(t_pd *dummy);
 
-void alter_user_session(); /** test **/
+void alter_user_session(t_pd *dummy); /** test **/
 
 
 void another_user_session();
 void another_user_session(){
 	fprintf(stderr, "[test]alter user session.AAA\n");
+	
+//	t_glist *curr = canvas_getcurrent();	
+//	alter_session_2(curr);
+	
+	fprintf(stderr, "[test]alter user session.BBB\n");
 }
 
 static void glob_compatibility(t_pd *dummy, t_floatarg level)
@@ -101,6 +107,9 @@ void max_default(t_pd *x, t_symbol *s, int argc, t_atom *argv)
 }
 
 /** グローバルな pd メッセージのハンドラを定義する **/
+// ここで定義することでMessageウィンドウでキーワード呼び出し可能となる
+// ;pd start-path-dialog
+// 
 void glob_init(void)
 {
     maxclass = class_new(gensym("max"), 0, 0, sizeof(t_pd),
@@ -164,8 +173,8 @@ void glob_init(void)
   	class_addmethod(glob_pdobject, (t_method)alter_user_session, 		/** test **/
 				gensym("alter_user_session"), 0);
 
-  	class_addmethod(glob_pdobject, (t_method)another_user_session, 		/** test **/
-				gensym("hello"), 0);
+//  	class_addmethod(glob_pdobject, (t_method)another_user_session, 		/** test **/
+//				gensym("hello"), 0);
 	
 	
 #if defined(__linux__) || defined(__FreeBSD_kernel__)
