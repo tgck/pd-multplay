@@ -883,10 +883,6 @@ static void editor_free(t_editor *x, t_glist *y)
     freebytes((void *)x, sizeof(*x));
 }
 
-
-t_usession *usession_array_test[4];
-//exterun struct t_usession;
-
     /* recursively create or destroy all editors of a glist and its 
     sub-glists, as long as they aren't toplevels. */
 void canvas_create_editor(t_glist *x)
@@ -896,17 +892,6 @@ void canvas_create_editor(t_glist *x)
     if (!x->gl_editor)
     {
         x->gl_editor = editor_new(x);
-				
-			/** new session test **/
-
-			t_usession *s1 = usession_new(x->gl_editor);
-//			usession_array_test[0] = s1;
-//			sleep(1);
-//			t_usession *s2 = usession_new(x->gl_editor);
-//			usession_array_test[1] = s2;
-			
-			fprintf(stderr, "new session. id=%ld\n", s1->user_id);
-//			fprintf(stderr, "new session. id=%ld\n", s2->user_id);
 			
 				for (y = x->gl_list; y; y = y->g_next)
             if (ob = pd_checkobject(&y->g_pd))
@@ -932,11 +917,11 @@ void canvas_destroy_editor(t_glist *x)
 void canvas_reflecttitle(t_canvas *x);
 void canvas_map(t_canvas *x, t_floatarg f);
 
+extern t_usession *usession_array_test[4];
     /* we call this when we want the window to become visible, mapped, and
     in front of all windows; or with "f" zero, when we want to get rid of
     the window. */
 		// 指定したcanvasを表示する(制御対象にする)
-
 void canvas_vis(t_canvas *x, t_floatarg f)
 {
     char buf[30];
@@ -956,7 +941,11 @@ void canvas_vis(t_canvas *x, t_floatarg f)
             char cbuf[MAXPDSTRING];
             int cbuflen;
             t_canvas *c = x;
-            canvas_create_editor(x); // editor の生成
+            canvas_create_editor(x); // editor の生成. 変数xのメンバであるx->editorが埋められて処理が戻ってくる
+							
+						// test for session.
+						
+						
             sys_vgui("pdtk_canvas_new .x%lx %d %d +%d+%d %d\n", x,
                 (int)(x->gl_screenx2 - x->gl_screenx1),
                 (int)(x->gl_screeny2 - x->gl_screeny1),
@@ -2808,7 +2797,8 @@ static void glist_setlastxy(t_glist *gl, int xval, int yval)
     canvas_last_glist_y = yval;
 }
 
-
+// editorのセットアップと称して、実際に行っているのは
+// canvasクラスの操作関数の登録。
 void g_editor_setup(void)
 {
 
@@ -2878,6 +2868,9 @@ void g_editor_setup(void)
     copy_binbuf = binbuf_new();
 }
 
+//
+// マウスとキーボードによるイベントハンドラを登録
+//
 void canvas_editor_for_class(t_class *c)
 {
     class_addmethod(c, (t_method)canvas_mouse, gensym("mouse"),

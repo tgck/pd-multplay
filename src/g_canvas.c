@@ -1494,7 +1494,10 @@ void g_editor_setup(void);
 void g_readwrite_setup(void);
 extern void canvas_properties(t_gobj *z);
 
+// 
 // オブジェクトを canvas クラスに登録する
+//  類似の処理として、canvas_add_for_classも参照 
+//
 void g_canvas_setup(void)
 {
         /* we prevent the user from typing "canvas" in an object box
@@ -1599,8 +1602,11 @@ void g_canvas_setup(void)
     g_readwrite_setup();
 }
 
+
     /* functions to add basic gui (e.g., clicking but not editing) to things
     based on canvases that aren't editable, like "array define" object */
+		// 機能制限したコマンドのみキャンバスに紐づける場合はこちらの
+		// canvas_add_for_class を使うらしい. ロックしたパッチ向けか?
 void canvas_editor_for_class(t_class *c);
 void g_graph_setup_class(t_class *c);
 void canvas_readwrite_for_class(t_class *c);
