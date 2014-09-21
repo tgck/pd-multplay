@@ -1,7 +1,7 @@
 /** file for user session extention **/
 #include <time.h>
 #include "m_pd.h"			// struct t_canvas
-#include "g_canvas.h"	// struct t_editor
+//#include "g_canvas.h"	// struct t_editor
 
 static void hello(void);
 static long new_session_id(void);
