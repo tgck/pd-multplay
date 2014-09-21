@@ -906,7 +906,9 @@ void canvas_create_editor2(t_glist *x)
 	t_object *ob;
 	if (!x->gl_editor2)
 	{
-		x->gl_editor2 = editor_new(x);
+		x->gl_editor2 = editor_new(x);	// この1行があると、keyメッセージに対してcanvasが二重に反応する
+		//	x->gl_editor2->e_guiconnect = NULL; // 接続を打ち消し NOTE:何故か効かない
+		guiconnect_notarget(x->gl_editor2->e_guiconnect, 1000); // TEMP: editor2 と GUIとの接続を消去する。
 		
 		for (y = x->gl_list; y; y = y->g_next)
 			if (ob = pd_checkobject(&y->g_pd))
@@ -957,7 +959,8 @@ void canvas_vis(t_canvas *x, t_floatarg f)
             int cbuflen;
             t_canvas *c = x;
             canvas_create_editor(x); // editor の生成. 変数xのメンバであるx->editorが埋められて処理が戻ってくる
-						canvas_create_editor2(x);
+						canvas_create_editor2(x); // この行を有効化すると、1キーストロークで2つのオブジェクトボックスが作られる。
+																				// イベントハンドラが2回動いているっぽい 
 					
 						// test for session.
 						// x->gl_editor2 = x->gl_editor; // 参照のコピー
@@ -2717,9 +2720,13 @@ static void canvas_texteditor(t_canvas *x)
     
 }
 
+// シンボル"key"に対して設定されるハンドラ
+// pdウィンドウや特殊なウィンドウにアタッチされる。
+// 通常のキャンバス上のイベントでは呼ばれない
 void glob_key(void *dummy, t_symbol *s, int ac, t_atom *av)
 {
         /* canvas_key checks for zero */
+		fprintf(stderr, "glob_key\n");
     canvas_key(0, s, ac, av);
 }
 
@@ -2819,9 +2826,11 @@ static void glist_setlastxy(t_glist *gl, int xval, int yval)
 
 // editorのセットアップと称して、実際に行っているのは
 // canvasクラスの操作関数の登録。
+// プログラムの最初に1回だけ実施される(canvasクラスのセットアップルーチンの一部として)
 void g_editor_setup(void)
 {
-
+	fprintf(stderr, "-- g_editor_setup !\n");
+	
 /* ------------------------ events ---------------------------------- */
 /** イベントハンドラの登録を行う**/
 /** イベントハンドラの実装は、当ソースで登場 **/	
@@ -2893,7 +2902,9 @@ void g_editor_setup(void)
 //
 void canvas_editor_for_class(t_class *c)
 {
-    class_addmethod(c, (t_method)canvas_mouse, gensym("mouse"),
+		fprintf(stderr, "-- canvas_editor_for_class !\n"); // test
+
+		class_addmethod(c, (t_method)canvas_mouse, gensym("mouse"),
         A_FLOAT, A_FLOAT, A_FLOAT, A_FLOAT, A_NULL);
     class_addmethod(c, (t_method)canvas_mouseup, gensym("mouseup"),
         A_FLOAT, A_FLOAT, A_FLOAT, A_NULL);

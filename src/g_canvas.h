@@ -99,7 +99,7 @@ typedef struct _editor
     t_glistkeyfn e_keyfn;           /* ... keypress callback */ /*キープレス時のコールバック関数*/
     t_binbuf *e_connectbuf;         /* connections to deleted objects */
     t_binbuf *e_deleted;            /* last stuff we deleted */
-    t_guiconnect *e_guiconnect;     /* GUI connection for filtering messages */
+    t_guiconnect *e_guiconnect;     /* GUI connection for filtering messages */ // NOTE: 多重化する時にGUIイベントの受け口となることに注意
     struct _glist *e_glist;         /* glist which owns this */ /*glistの親glist?*/
     int e_xwas;                     /* xpos on last mousedown or motion event */ /*待避されたx座標(イベント発生時の)*/
     int e_ywas;                     /* ypos, similarly */

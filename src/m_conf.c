@@ -57,7 +57,7 @@ void d_ugen_setup(void);
 void conf_init(void)
 {
     g_array_setup();
-    g_canvas_setup();
+    g_canvas_setup(); // NOTE: editorのセットアップ(g_editor_setup)はこの中で実施される
     g_guiconnect_setup();
 /* iemlib */
     g_bang_setup();

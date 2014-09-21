@@ -322,7 +322,7 @@ t_canvas *canvas_new(void *dummy, t_symbol *sel, int argc, t_atom *argv)
 {
 		fprintf(stderr, "canvas_new with argc[%d]\n", argc); // test
 	
-    t_canvas *x = (t_canvas *)pd_new(canvas_class);
+    t_canvas *x = (t_canvas *)pd_new(canvas_class); // canvas_class を元にcanvasインスタンスを作成
     t_canvas *owner = canvas_getcurrent();
 		
     if (owner) {
@@ -1496,7 +1496,7 @@ extern void canvas_properties(t_gobj *z);
 
 // 
 // オブジェクトを canvas クラスに登録する
-//  類似の処理として、canvas_add_for_classも参照 
+//  類似の処理として、canvas_add_for_class も参照 
 //
 void g_canvas_setup(void)
 {
@@ -1598,7 +1598,7 @@ void g_canvas_setup(void)
         gensym("f"), A_GIMME, 0);
 /* -------------- setups from other files for canvas_class ---------------- */
     g_graph_setup();
-    g_editor_setup();
+    g_editor_setup(); // global な editor の setup.
     g_readwrite_setup();
 }
 

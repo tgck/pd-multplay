@@ -7,7 +7,8 @@
 #include "m_imp.h"
 
     /* FIXME no out-of-memory testing yet! */
-
+		// NOTE: クラス c のインスタンスを作成して返す関数
+		//     : クラスの setup が済んでいない時に呼び出すとエラー
 t_pd *pd_new(t_class *c)
 {
     t_pd *x;

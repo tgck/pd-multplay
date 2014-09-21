@@ -259,6 +259,8 @@ void class_addcreator(t_newmethod newmethod, t_symbol *s,
 void class_addmethod(t_class *c, t_method fn, t_symbol *sel,
     t_atomtype arg1, ...)
 {
+		fprintf(stderr, "---- class_addmethod to [%s] of selector [%s]\n", c->c_name->s_name, sel->s_name); // test
+	
     va_list ap;
     t_methodentry *m;
     t_atomtype argtype = arg1;
@@ -302,7 +304,10 @@ void class_addmethod(t_class *c, t_method fn, t_symbol *sel,
         class_addanything(c, fn);
     }
     else
-    {
+    {	
+			// NOTE: canvas クラスへの "key" シンボルへのハンドラ設定は、このルート。
+			// fprintf(stderr, "------ else ! [%s] of selector [%s]\n", c->c_name->s_name, sel->s_name); // test
+			
         int i;
         for (i = 0; i < c->c_nmethod; i++)
             if (c->c_methods[i].me_name == sel)
