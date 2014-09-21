@@ -899,6 +899,21 @@ void canvas_create_editor(t_glist *x)
     }
 }
 
+// test : ふたつめのeditorを埋める
+void canvas_create_editor2(t_glist *x)
+{	
+	t_gobj *y;
+	t_object *ob;
+	if (!x->gl_editor2)
+	{
+		x->gl_editor2 = editor_new(x);
+		
+		for (y = x->gl_list; y; y = y->g_next)
+			if (ob = pd_checkobject(&y->g_pd))
+				rtext_new(x, ob);
+	}
+}
+
 void canvas_destroy_editor(t_glist *x)
 {
     t_gobj *y;
@@ -942,9 +957,14 @@ void canvas_vis(t_canvas *x, t_floatarg f)
             int cbuflen;
             t_canvas *c = x;
             canvas_create_editor(x); // editor の生成. 変数xのメンバであるx->editorが埋められて処理が戻ってくる
-							
+						canvas_create_editor2(x);
+					
 						// test for session.
-						
+						// x->gl_editor2 = x->gl_editor; // 参照のコピー
+						//*(x->gl_editor2) = *(x->gl_editor); // 値のコピー
+					
+						fprintf(stderr, "--gl_editor.. .x%lx \n", x->gl_editor);
+						fprintf(stderr, "--gl_editor2. .x%lx \n", x->gl_editor2);
 						
             sys_vgui("pdtk_canvas_new .x%lx %d %d +%d+%d %d\n", x,
                 (int)(x->gl_screenx2 - x->gl_screenx1),

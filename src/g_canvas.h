@@ -419,6 +419,7 @@ EXTERN void glist_drawiofor(t_glist *glist, t_object *ob, int firsttime,
     char *tag, int x1, int y1, int x2, int y2);
 EXTERN void glist_eraseiofor(t_glist *glist, t_object *ob, char *tag);
 EXTERN void canvas_create_editor(t_glist *x);
+EXTERN void canvas_create_editor2(t_glist *x); // test
 EXTERN void canvas_destroy_editor(t_glist *x);
 void canvas_deletelinesforio(t_canvas *x, t_text *text,
     t_inlet *inp, t_outlet *outp);
