@@ -121,6 +121,7 @@ void m_pd_setup(void)
     class_addanything(bindlist_class, bindlist_anything);
 }
 
+// pdオブジェクトとシンボルのバインド
 void pd_bind(t_pd *x, t_symbol *s)
 {
     if (s->s_thing)

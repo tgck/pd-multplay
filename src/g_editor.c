@@ -966,8 +966,8 @@ void canvas_vis(t_canvas *x, t_floatarg f)
 						// x->gl_editor2 = x->gl_editor; // 参照のコピー
 						//*(x->gl_editor2) = *(x->gl_editor); // 値のコピー
 					
-						fprintf(stderr, "--gl_editor.. .x%lx \n", x->gl_editor);
-						fprintf(stderr, "--gl_editor2. .x%lx \n", x->gl_editor2);
+						fprintf(stderr, "--gl_editor.. editor[.x%lx]\n", x->gl_editor);
+						fprintf(stderr, "--gl_editor2. editor[.x%lx]\n", x->gl_editor2);
 						
             sys_vgui("pdtk_canvas_new .x%lx %d %d +%d+%d %d\n", x,
                 (int)(x->gl_screenx2 - x->gl_screenx1),

@@ -1,7 +1,7 @@
 /** file for user session extention **/
 #include <time.h>
 #include "m_pd.h"			// struct t_canvas
-//#include "g_canvas.h"	// struct t_editor
+#include "g_canvas.h"	// struct t_editor
 
 static void hello(void);
 static long new_session_id(void);
@@ -24,3 +24,8 @@ static void alter_session_1(void);
 static void alter_session_2(void);
 
 // void alter_user_session();	// m_glob.c でプロトタイプ宣言済み
+
+
+// ユーティリティ
+// ひとまずここに置いておく. 
+int strrep(char *buf, char *mae, char *ato); // binbufのログ出力整形用

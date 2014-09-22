@@ -579,7 +579,7 @@ t_symbol *canvas_makebindsym(t_symbol *s)
 		// canvas を シンボル「pd-なんとか」に紐づける。ただし、 Pdコンソールは操作の対象外。
 static void canvas_bind(t_canvas *x)
 {
-		fprintf(stderr, "canvas_bind .x%lx[%s]\n", x, x->gl_name);
+		fprintf(stderr, "canvas_bind canvas[.x%lx] glistName[%s]\n", x, x->gl_name);
 	
     if (strcmp(x->gl_name->s_name, "Pd"))
         pd_bind(&x->gl_pd, canvas_makebindsym(x->gl_name));
@@ -587,7 +587,7 @@ static void canvas_bind(t_canvas *x)
 
 static void canvas_unbind(t_canvas *x)
 {
-		fprintf(stderr, "canvas_unbind .x%lx[%s]\n", x, x->gl_name);
+		fprintf(stderr, "canvas_unbind canvas[.x%lx] glistName[%s]\n", x, x->gl_name);
 	
 		if (strcmp(x->gl_name->s_name, "Pd"))
         pd_unbind(&x->gl_pd, canvas_makebindsym(x->gl_name));
@@ -659,7 +659,7 @@ void canvas_map(t_canvas *x, t_floatarg f)
 				// canvas x が非表示状態であれば表示する
         if (!glist_isvisible(x))
         {
-						fprintf(stderr, "-- [not mapped->mapped] canvas_map .x%lx %1.0f\n", x, f); // test
+						fprintf(stderr, "-- [not mapped->mapped] canvas_map canvas[.x%lx] floatArg[%1.0f]\n", x, f); // test
 						
 						t_selection *sel;
             if (!x->gl_havewindow)
@@ -685,7 +685,7 @@ void canvas_map(t_canvas *x, t_floatarg f)
 				// canvas x を非表示にするケース
         if (glist_isvisible(x))
         {
-						fprintf(stderr, "-- [mapped->not mapped] canvas_map .x%lx %1.0f\n", x, f); // test
+						fprintf(stderr, "-- [mapped->not mapped] canvas_map canvas[.x%lx] floatArg[%1.0f]\n", x, f); // test
 					
                 /* just clear out the whole canvas */
             sys_vgui(".x%lx.c delete all\n", x);

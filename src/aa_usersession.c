@@ -1,5 +1,6 @@
 /** file for user session extention **/
 #include "aa_usersession.h"
+#include <string.h>
 
 static void hello() {
 	fprintf(stderr, "hello pd.");
@@ -46,3 +47,16 @@ void alter_user_session(t_pd *dummy){
 }
 
 
+// binbufのログ出力整形用
+int strrep(char *buf, char *mae, char *ato)
+{
+	char *mituke;
+	size_t maelen, atolen;
+	
+	maelen = strlen(mae);
+	atolen = strlen(ato);
+	if (maelen == 0 || (mituke = strstr(buf, mae)) == NULL) return 0;
+	memmove(mituke + atolen, mituke + maelen, strlen(buf) - (mituke + maelen - buf ) + 1);
+	memcpy(mituke, ato, atolen);
+	return 1;
+}
