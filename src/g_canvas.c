@@ -610,11 +610,10 @@ static void canvas_bind(t_canvas *x)
 
 static void canvas_unbind(t_canvas *x)
 {
-		//fprintf(stderr, "canvas_unbind canvas[.x%lx] glistName[%s]\n", x, x->gl_name); // 文字化けして取得される.
-		fprintf(stderr, "canvas_unbind canvas[.x%lx] glistName-SymbolName[%s]\n", x, x->gl_name->s_name);	// 可読な文字列で取れる.
-		fprintf(stderr, "canvas_unbind canvas[.x%lx] Pd-SymbolName[.x%lx]\n", x, x->gl_pd);	// 可読な文字列で取れる. // gl_pd は　gl_obj.te_g.g_pd のシンタックスシュガー
-	
-		if (strcmp(x->gl_name->s_name, "Pd"))
+    fprintf(stderr, "canvas_unbind canvas[.x%lx] glist-SymbolName[%s]\n", x, x->gl_name->s_name);	// 可読な文字列で取れる.
+    // fprintf(stderr, "canvas_unbind canvas[.x%lx] glist[.x%lx]\n", x, x->gl_pd);	// 可読な文字列で取れる // gl_pd は　gl_obj.te_g.g_pd のシンタックスシュガー
+
+    if (strcmp(x->gl_name->s_name, "Pd"))
         pd_unbind(&x->gl_pd, canvas_makebindsym(x->gl_name));
 }
 
