@@ -593,11 +593,11 @@ done:
 // GUIから受信したメッセージのパース
 void binbuf_eval(t_binbuf *x, t_pd *target, int argc, t_atom *argv)
 {
-		int bufsize;
-		char *buf;
-		binbuf_gettext(x, &buf, &bufsize);
-		strrep(buf, "\n", "");
-		fprintf(stderr, "-- -- -- binbuf_eval: bufNum[%d] text[%s]\n", x->b_n, buf); // TEST
+    int bufsize;
+    char *buf;
+    binbuf_gettext(x, &buf, &bufsize);
+    strrep(buf, "\n", "");
+    fprintf(stderr, "-- -- -- binbuf_eval: bufNum[%d] text[%s]\n", x->b_n, buf); // TEST
 	
     t_atom smallstack[SMALLMSG], *mstack, *msp;
     t_atom *at = x->b_vec;
