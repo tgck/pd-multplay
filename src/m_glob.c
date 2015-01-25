@@ -38,6 +38,7 @@ void glob_watchdog(t_pd *dummy);
 void glob_savepreferences(t_pd *dummy);
 
 void alter_user_session(t_pd *dummy); /** test **/
+void glob_list_canvases(t_pd *dummy); /** test **/ 
 
 
 void another_user_session();
@@ -170,9 +171,11 @@ void glob_init(void)
     class_addmethod(glob_pdobject, (t_method)glob_compatibility,
         gensym("compatibility"), A_FLOAT, 0);
 
-  	class_addmethod(glob_pdobject, (t_method)alter_user_session, 		/** test **/
-				gensym("alter_user_session"), 0);
-
+    class_addmethod(glob_pdobject, (t_method)alter_user_session, 		/** test **/
+        gensym("alter_user_session"), 0);
+    class_addmethod(glob_pdobject, (t_method)glob_list_canvases, 		/** test **/
+        gensym("list-canvases"), 0);
+	
 //  	class_addmethod(glob_pdobject, (t_method)another_user_session, 		/** test **/
 //				gensym("hello"), 0);
 	

@@ -130,8 +130,14 @@ void glist_delete(t_glist *x, t_gobj *y)
 }
 
     /* remove every object from a glist.  Experimental. */
+// 
+// [canvas_id clear;( で呼ばれるのはこの関数.
+// パッチ上のオブジェクトをすべて削除する.
+//
 void glist_clear(t_glist *x)
 {
+    fprintf(stdout, "[debug]glist_clear.\n");
+	
     t_gobj *y, *y2;
     int dspstate = 0, suspended = 0;
     t_symbol *dspsym = gensym("dsp");

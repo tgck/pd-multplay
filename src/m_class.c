@@ -158,6 +158,8 @@ extern void text_save(t_gobj *z, t_binbuf *b);
 t_class *class_new(t_symbol *s, t_newmethod newmethod, t_method freemethod,
     size_t size, int flags, t_atomtype type1, ...)
 {
+    fprintf(stderr, "-- class_new with symbol[%s]\n", s->s_name); // test
+	
     va_list ap;
     t_atomtype vec[MAXPDARG+1], *vp = vec;
     int count = 0;
@@ -259,7 +261,9 @@ void class_addcreator(t_newmethod newmethod, t_symbol *s,
 void class_addmethod(t_class *c, t_method fn, t_symbol *sel,
     t_atomtype arg1, ...)
 {
-		fprintf(stderr, "---- class_addmethod to [%s] of selector [%s]\n", c->c_name->s_name, sel->s_name); // test
+		// 前者は クラス名としてのsymbolで、後者はセレクタ名としてのsymbol(?)
+		fprintf(stderr, "---- class_addmethod to [%s] with selector [%s]\n", c->c_name->s_name, sel->s_name); // test
+		
 	
     va_list ap;
     t_methodentry *m;

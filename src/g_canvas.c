@@ -53,9 +53,12 @@ static void canvas_dosetbounds(t_canvas *x, int x1, int y1, int x2, int y2);
 void canvas_reflecttitle(t_canvas *x);
 static void canvas_addtolist(t_canvas *x);
 static void canvas_takeofflist(t_canvas *x);
+static int  canvas_get_canvas_count(); // test
 static void canvas_pop(t_canvas *x, t_floatarg fvis);
 static void canvas_bind(t_canvas *x);
 static void canvas_unbind(t_canvas *x);
+
+void canvas_list_objects(t_canvas *x); // test
 
 /* --------- functions to handle the canvas environment ----------- */
 
@@ -74,12 +77,18 @@ void canvas_updatewindowlist( void)
     /* add a glist the list of "root" canvases (toplevels without parents.) */
 static void canvas_addtolist(t_canvas *x)
 {
+    fprintf(stderr, "-- canvas_addtolist add[.x%lx] to canvas_list\n", x);
+	
     x->gl_next = canvas_list;
     canvas_list = x;
+	
+    fprintf(stderr, "-- canvas_addtolist done num_canvas=[%d]\n", canvas_get_canvas_count()); // test
 }
 
 static void canvas_takeofflist(t_canvas *x)
 {
+    fprintf(stderr, "-- canvas_takeofflist [.x%lx] from canvas_list\n", x);
+	
         /* take it off the window list */
     if (x == canvas_list) canvas_list = x->gl_next;
     else
@@ -89,8 +98,20 @@ static void canvas_takeofflist(t_canvas *x)
             ;
         z->gl_next = x->gl_next;
     }
+    fprintf(stderr, "-- canvas_takeofflist done num_canvas=[%d]\n", canvas_get_canvas_count()); // test
 }
 
+// 
+// pd が保持する canvas の数を取得する
+//
+int canvas_get_canvas_count(){
+	t_canvas *z;
+	int num = 0;
+	for (z = canvas_list; z->gl_next; z = z->gl_next){
+		num++;
+	}
+	return num;
+}
 
 void canvas_setargs(int argc, t_atom *argv)
 {
@@ -579,15 +600,19 @@ t_symbol *canvas_makebindsym(t_symbol *s)
 		// canvas を シンボル「pd-なんとか」に紐づける。ただし、 Pdコンソールは操作の対象外。
 static void canvas_bind(t_canvas *x)
 {
-		fprintf(stderr, "canvas_bind canvas[.x%lx] glistName[%s]\n", x, x->gl_name);
-	
+    fprintf(stderr, "canvas_bind canvas[.x%lx] glistName[%s]\n", x, x->gl_name);
+    // -> ---- class_addmethod to [canvas] of selector [obj]
+    // -> ---- class_addmethod to [canvas] of selector [msg]
+
     if (strcmp(x->gl_name->s_name, "Pd"))
         pd_bind(&x->gl_pd, canvas_makebindsym(x->gl_name));
 }
 
 static void canvas_unbind(t_canvas *x)
 {
-		fprintf(stderr, "canvas_unbind canvas[.x%lx] glistName[%s]\n", x, x->gl_name);
+		//fprintf(stderr, "canvas_unbind canvas[.x%lx] glistName[%s]\n", x, x->gl_name); // 文字化けして取得される.
+		fprintf(stderr, "canvas_unbind canvas[.x%lx] glistName-SymbolName[%s]\n", x, x->gl_name->s_name);	// 可読な文字列で取れる.
+		fprintf(stderr, "canvas_unbind canvas[.x%lx] Pd-SymbolName[.x%lx]\n", x, x->gl_pd);	// 可読な文字列で取れる. // gl_pd は　gl_obj.te_g.g_pd のシンタックスシュガー
 	
 		if (strcmp(x->gl_name->s_name, "Pd"))
         pd_unbind(&x->gl_pd, canvas_makebindsym(x->gl_name));
@@ -1577,6 +1602,10 @@ void g_canvas_setup(void)
     class_addmethod(canvas_class, (t_method)glist_clear, gensym("clear"),
         A_NULL);
 
+/*--------------- for test  -------------- */
+    class_addmethod(canvas_class, (t_method)canvas_list_objects,
+        gensym("list-objects"), A_NULL, 0);	
+	
 /* ----- subcanvases, which you get by typing "pd" in a box ---- */
     class_addcreator((t_newmethod)subcanvas_new, gensym("pd"), A_DEFSYMBOL, 0);
     class_addcreator((t_newmethod)subcanvas_new, gensym("page"),  A_DEFSYMBOL, 0);
@@ -1596,6 +1625,7 @@ void g_canvas_setup(void)
 /*--------------- future message to set formatting  -------------- */
     class_addmethod(canvas_class, (t_method)canvas_f,
         gensym("f"), A_GIMME, 0);
+	
 /* -------------- setups from other files for canvas_class ---------------- */
     g_graph_setup();
     g_editor_setup(); // global な editor の setup.

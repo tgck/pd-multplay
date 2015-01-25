@@ -124,6 +124,8 @@ void m_pd_setup(void)
 // pdオブジェクトとシンボルのバインド
 void pd_bind(t_pd *x, t_symbol *s)
 {
+    fprintf(stderr, "pd_bind bind_target[.x%lx] symbol[%s]\n", x, s->s_name);
+	
     if (s->s_thing)
     {
         if (*s->s_thing == bindlist_class)
@@ -150,8 +152,11 @@ void pd_bind(t_pd *x, t_symbol *s)
     else s->s_thing = x;
 }
 
+// pd から、キャンバスをunbindするときのメソッド
 void pd_unbind(t_pd *x, t_symbol *s)
 {
+    fprintf(stderr, "pd_unbind unbind_target[.x%lx] symbol[%s]\n", x, s->s_name);
+	
     if (s->s_thing == x) s->s_thing = 0;
     else if (s->s_thing && *s->s_thing == bindlist_class)
     {

@@ -77,7 +77,7 @@ EXTERN_STRUCT _fielddesc;
 #define t_fielddesc struct _fielddesc
 
 	/* _selection */
-	/** 選択範囲。リンクリストで保持 **/
+	/** 選択範囲。リストで保持 **/
 typedef struct _selection
 {
     t_gobj *sel_what;
@@ -153,9 +153,9 @@ typedef struct _tick    /* where to put ticks on x or y axes */
 
 /* the t_glist structure, which describes a list of elements that live on an
 area of a window.
-  ウィンドウ中の要素群。=オブジェクトリスト?
 */
-
+// ウィンドウ中の要素群=オブジェクトリスト
+// 各メンバの接頭辞 gl_ は単に、glist の配下メンバであることを示す、と理解すればよろしいか...(?)
 struct _glist
 {  
     t_object gl_obj;            /* header in case we're a glist */
