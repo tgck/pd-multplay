@@ -341,17 +341,16 @@ void glist_init(t_glist *x)
 		// 注: canvas_getcurrent() は親ウィンドウのidを返すらしい
 t_canvas *canvas_new(void *dummy, t_symbol *sel, int argc, t_atom *argv)
 {
-		fprintf(stderr, "canvas_new with argc[%d]\n", argc); // test
+    fprintf(stderr, "canvas_new with argc[%d]\n", argc); // test
 	
     t_canvas *x = (t_canvas *)pd_new(canvas_class); // canvas_class を元にcanvasインスタンスを作成
     t_canvas *owner = canvas_getcurrent();
 		
     if (owner) {
-				fprintf(stderr, "canvas_new -- owner exists \n");// test
-		} else {
-				fprintf(stderr, "canvas_new -- owner NOT exists \n");// test
-		}
-
+        fprintf(stderr, "canvas_new -- owner exists \n");// test
+    } else {
+        fprintf(stderr, "canvas_new -- owner NOT exists \n");// test
+    }
 	
     t_symbol *s = &s_;
     int vis = 0, width = GLIST_DEFCANVASWIDTH, height = GLIST_DEFCANVASHEIGHT;
@@ -361,7 +360,8 @@ t_canvas *canvas_new(void *dummy, t_symbol *sel, int argc, t_atom *argv)
     x->gl_obj.te_type = T_OBJECT;
     if (!owner)
         canvas_addtolist(x);
-				post("canvas %lx, owner %lx", x, owner); // "canvas 229ed0, owner 0" -- キャンバスはあるがownerは居ない
+    
+    post("canvas %lx, owner %lx", x, owner); // "canvas 229ed0, owner 0" -- キャンバスはあるがownerは居ない
 
     if (argc == 5)  /* toplevel: x, y, w, h, font */
     {
@@ -372,7 +372,7 @@ t_canvas *canvas_new(void *dummy, t_symbol *sel, int argc, t_atom *argv)
         font = atom_getintarg(4, argc, argv);
     }
 	
-		// サブウィンドウのnew.
+    // サブウィンドウのnew.
     else if (argc == 6)  /* subwindow: x, y, w, h, name, vis */
     {
         xloc = atom_getintarg(0, argc, argv);
@@ -597,7 +597,7 @@ t_symbol *canvas_makebindsym(t_symbol *s)
     /* functions to bind and unbind canvases to symbol "pd-blah".  As
     discussed on Pd dev list there should be a way to defeat this for
     abstractions.  (Claude Heiland et al. Aug 9 2013) */
-		// canvas を シンボル「pd-なんとか」に紐づける。ただし、 Pdコンソールは操作の対象外。
+        // canvas を シンボル「pd-なんとか」に紐づける。ただし、 Pdコンソールは操作の対象外。
 static void canvas_bind(t_canvas *x)
 {
     fprintf(stderr, "canvas_bind canvas[.x%lx] glistName[%s]\n", x, x->gl_name);
@@ -672,15 +672,15 @@ void canvas_drawredrect(t_canvas *x, int doit)
     /* the window becomes "mapped" (visible and not miniaturized) or
     "unmapped" (either miniaturized or just plain gone.)  This should be
     called from the GUI after the fact to "notify" us that we're mapped. */
-		// ウィンドウが最前面かどうか(マウスへのリアクターかどうか)とは関係なく
-		// 単にウィンドウが(最小化or閉じている)<-->(表示されている)の変更をおこなうものらしい
+        // ウィンドウが最前面かどうか(マウスへのリアクターかどうか)とは関係なく
+        // 単にウィンドウが(最小化or閉じている)<-->(表示されている)の変更をおこなうものらしい
 void canvas_map(t_canvas *x, t_floatarg f)
 {
     int flag = (f != 0);
     t_gobj *y;
     if (flag)
     {
-				// canvas x が非表示状態であれば表示する
+        // canvas x が非表示状態であれば表示する
         if (!glist_isvisible(x))
         {
 						fprintf(stderr, "-- [not mapped->mapped] canvas_map canvas[.x%lx] floatArg[%1.0f]\n", x, f); // test
@@ -706,7 +706,7 @@ void canvas_map(t_canvas *x, t_floatarg f)
     }
     else
     {
-				// canvas x を非表示にするケース
+        // canvas x を非表示にするケース
         if (glist_isvisible(x))
         {
 						fprintf(stderr, "-- [mapped->not mapped] canvas_map canvas[.x%lx] floatArg[%1.0f]\n", x, f); // test
@@ -1631,11 +1631,10 @@ void g_canvas_setup(void)
     g_readwrite_setup();
 }
 
-
     /* functions to add basic gui (e.g., clicking but not editing) to things
     based on canvases that aren't editable, like "array define" object */
-		// 機能制限したコマンドのみキャンバスに紐づける場合はこちらの
-		// canvas_add_for_class を使うらしい. ロックしたパッチ向けか?
+        // 機能制限したコマンドのみキャンバスに紐づける場合はこちらの
+        // canvas_add_for_class を使うらしい. ロックしたパッチ向けか?
 void canvas_editor_for_class(t_class *c);
 void g_graph_setup_class(t_class *c);
 void canvas_readwrite_for_class(t_class *c);
