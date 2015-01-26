@@ -527,6 +527,8 @@ EXTERN int canvas_isconnected (t_canvas *x,
 EXTERN void canvas_selectinrect(t_canvas *x, int lox, int loy, int hix, int hiy);
 
 EXTERN t_glist *pd_checkglist(t_pd *x);
+	
+EXTERN int canvas_get_canvas_count(void); // test
 
 
 /* ---- functions on canvasses as objects  --------------------- */
