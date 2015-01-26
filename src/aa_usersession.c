@@ -2,10 +2,6 @@
 #include "aa_usersession.h"
 #include <string.h>
 
-static void hello() {
-	fprintf(stderr, "hello pd.");
-}
-
 // TODO: 精度向上
 static long new_session_id() {
 	time_t t;
@@ -27,14 +23,6 @@ t_usession *usession_new(t_editor *x){
 	return y;
 }
 
-// alter session
-// TODO: assgin to key event
-static void alter_session_1(){
-} 
-
-static void alter_session_2(){
-}
-
 //
 // pd が保持する canvas の数を数える
 // 
@@ -44,30 +32,19 @@ void glob_list_canvases(t_pd *dummy){
 	fprintf(stdout, "%s\n", class_getname(glob_pdobject)); //-> "pd"
 }
 
+//
+// キャンバスが保持するオブジェクトを走査する
+//
 void canvas_list_objects(t_glist *x){
 	fprintf(stdout, "[testOut]canvas_list_objects.\n");
 	
-	// ひとまず、キャンバスが持っている
-	// オブジェクトの数を数えるユーティリティ
 	t_gobj *z;
 	int num = 0;
 	for (z = x->gl_list; z; z = z->g_next){
 		num++;
 	}
-	fprintf(stdout, "[testOut]number of objects in canvas:%d\n", num);
+	fprintf(stdout, "[testOut]number of objects in canvas[%d]\n", num);
 }
-
-void alter_user_session(t_pd *dummy){
-	fprintf(stdout, "[testOut]alter user session1.\n");
-	fprintf(stderr, "[testErr]alter user session1.\n");	
-	
-	// ここで編集対象になっているキャンバスIDを取得しようとしたのだが、
-	// そもそもそういう情報は管理されていない。コマンドラインからメッセージを送ろうとするからおかしなことになる。
-	// セッションの定義を変更するべし。
-	//
-	alter_session_1(); // bug
-}
-
 
 // binbufのログ出力整形用
 int strrep(char *buf, char *mae, char *ato)
