@@ -77,7 +77,7 @@ EXTERN_STRUCT _fielddesc;
 #define t_fielddesc struct _fielddesc
 
 	/* _selection */
-	/** 選択範囲。リンクリストで保持 **/
+	/** 選択範囲。リストで保持 **/
 typedef struct _selection
 {
     t_gobj *sel_what;
@@ -99,7 +99,7 @@ typedef struct _editor
     t_glistkeyfn e_keyfn;           /* ... keypress callback */ /*キープレス時のコールバック関数*/
     t_binbuf *e_connectbuf;         /* connections to deleted objects */
     t_binbuf *e_deleted;            /* last stuff we deleted */
-    t_guiconnect *e_guiconnect;     /* GUI connection for filtering messages */
+    t_guiconnect *e_guiconnect;     /* GUI connection for filtering messages */ // NOTE: 多重化する時にGUIイベントの受け口となることに注意
     struct _glist *e_glist;         /* glist which owns this */ /*glistの親glist?*/
     int e_xwas;                     /* xpos on last mousedown or motion event */ /*待避されたx座標(イベント発生時の)*/
     int e_ywas;                     /* ypos, similarly */
@@ -153,9 +153,9 @@ typedef struct _tick    /* where to put ticks on x or y axes */
 
 /* the t_glist structure, which describes a list of elements that live on an
 area of a window.
-  ウィンドウ中の要素群。=オブジェクトリスト?
 */
-
+// ウィンドウ中の要素群=オブジェクトリスト
+// 各メンバの接頭辞 gl_ は単に、glist の配下メンバであることを示す、と理解すればよろしいか...(?)
 struct _glist
 {  
     t_object gl_obj;            /* header in case we're a glist */
@@ -184,6 +184,7 @@ struct _glist
     t_symbol **gl_ylabel;
     t_float gl_ylabelx;
     t_editor *gl_editor;        /* editor structure when visible */ /*glistが表示状態のときのみgl_editorを持つ*/
+		t_editor *gl_editor2;				// alternative editor (for test)
     t_symbol *gl_name;          /* symbol bound here */
     int gl_font;                /* nominal font size in points, e.g., 10 */
     struct _glist *gl_next;         /* link in list of toplevels */ /*当該リストがトップレベルであるとき、次のリストへのポインタ(?)*/
@@ -418,6 +419,7 @@ EXTERN void glist_drawiofor(t_glist *glist, t_object *ob, int firsttime,
     char *tag, int x1, int y1, int x2, int y2);
 EXTERN void glist_eraseiofor(t_glist *glist, t_object *ob, char *tag);
 EXTERN void canvas_create_editor(t_glist *x);
+EXTERN void canvas_create_editor2(t_glist *x); // test
 EXTERN void canvas_destroy_editor(t_glist *x);
 void canvas_deletelinesforio(t_canvas *x, t_text *text,
     t_inlet *inp, t_outlet *outp);

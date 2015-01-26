@@ -53,9 +53,12 @@ static void canvas_dosetbounds(t_canvas *x, int x1, int y1, int x2, int y2);
 void canvas_reflecttitle(t_canvas *x);
 static void canvas_addtolist(t_canvas *x);
 static void canvas_takeofflist(t_canvas *x);
+static int  canvas_get_canvas_count(); // test
 static void canvas_pop(t_canvas *x, t_floatarg fvis);
 static void canvas_bind(t_canvas *x);
 static void canvas_unbind(t_canvas *x);
+
+void canvas_list_objects(t_canvas *x); // test
 
 /* --------- functions to handle the canvas environment ----------- */
 
@@ -74,12 +77,18 @@ void canvas_updatewindowlist( void)
     /* add a glist the list of "root" canvases (toplevels without parents.) */
 static void canvas_addtolist(t_canvas *x)
 {
+    fprintf(stderr, "-- canvas_addtolist add[.x%lx] to canvas_list\n", x);
+	
     x->gl_next = canvas_list;
     canvas_list = x;
+	
+    fprintf(stderr, "-- canvas_addtolist done num_canvas=[%d]\n", canvas_get_canvas_count()); // test
 }
 
 static void canvas_takeofflist(t_canvas *x)
 {
+    fprintf(stderr, "-- canvas_takeofflist [.x%lx] from canvas_list\n", x);
+	
         /* take it off the window list */
     if (x == canvas_list) canvas_list = x->gl_next;
     else
@@ -89,8 +98,20 @@ static void canvas_takeofflist(t_canvas *x)
             ;
         z->gl_next = x->gl_next;
     }
+    fprintf(stderr, "-- canvas_takeofflist done num_canvas=[%d]\n", canvas_get_canvas_count()); // test
 }
 
+// 
+// pd が保持する canvas の数を取得する
+//
+int canvas_get_canvas_count(){
+	t_canvas *z;
+	int num = 0;
+	for (z = canvas_list; z->gl_next; z = z->gl_next){
+		num++;
+	}
+	return num;
+}
 
 void canvas_setargs(int argc, t_atom *argv)
 {
@@ -315,10 +336,22 @@ void glist_init(t_glist *x)
     /* make a new glist.  It will either be a "root" canvas or else
     it appears as a "text" object in another window (canvas_getcurrnet() 
     tells us which.) */
+		// rootキャンバスか、もしくは別ウィンドウのテキストオブジェクトであるかのどちらか。
+		// canvas_getcurrent()で判別できる
+		// 注: canvas_getcurrent() は親ウィンドウのidを返すらしい
 t_canvas *canvas_new(void *dummy, t_symbol *sel, int argc, t_atom *argv)
 {
-    t_canvas *x = (t_canvas *)pd_new(canvas_class);
+    fprintf(stderr, "canvas_new with argc[%d]\n", argc); // test
+	
+    t_canvas *x = (t_canvas *)pd_new(canvas_class); // canvas_class を元にcanvasインスタンスを作成
     t_canvas *owner = canvas_getcurrent();
+		
+    if (owner) {
+        fprintf(stderr, "canvas_new -- owner exists \n");// test
+    } else {
+        fprintf(stderr, "canvas_new -- owner NOT exists \n");// test
+    }
+	
     t_symbol *s = &s_;
     int vis = 0, width = GLIST_DEFCANVASWIDTH, height = GLIST_DEFCANVASHEIGHT;
     int xloc = 0, yloc = GLIST_DEFCANVASYLOC;
@@ -327,7 +360,8 @@ t_canvas *canvas_new(void *dummy, t_symbol *sel, int argc, t_atom *argv)
     x->gl_obj.te_type = T_OBJECT;
     if (!owner)
         canvas_addtolist(x);
-    /* post("canvas %lx, owner %lx", x, owner); */
+    
+    post("canvas %lx, owner %lx", x, owner); // "canvas 229ed0, owner 0" -- キャンバスはあるがownerは居ない
 
     if (argc == 5)  /* toplevel: x, y, w, h, font */
     {
@@ -337,6 +371,8 @@ t_canvas *canvas_new(void *dummy, t_symbol *sel, int argc, t_atom *argv)
         height = atom_getintarg(3, argc, argv);
         font = atom_getintarg(4, argc, argv);
     }
+	
+    // サブウィンドウのnew.
     else if (argc == 6)  /* subwindow: x, y, w, h, name, vis */
     {
         xloc = atom_getintarg(0, argc, argv);
@@ -561,14 +597,22 @@ t_symbol *canvas_makebindsym(t_symbol *s)
     /* functions to bind and unbind canvases to symbol "pd-blah".  As
     discussed on Pd dev list there should be a way to defeat this for
     abstractions.  (Claude Heiland et al. Aug 9 2013) */
+        // canvas を シンボル「pd-なんとか」に紐づける。ただし、 Pdコンソールは操作の対象外。
 static void canvas_bind(t_canvas *x)
 {
+    fprintf(stderr, "canvas_bind canvas[.x%lx] glistName[%s]\n", x, x->gl_name);
+    // -> ---- class_addmethod to [canvas] of selector [obj]
+    // -> ---- class_addmethod to [canvas] of selector [msg]
+
     if (strcmp(x->gl_name->s_name, "Pd"))
         pd_bind(&x->gl_pd, canvas_makebindsym(x->gl_name));
 }
 
 static void canvas_unbind(t_canvas *x)
 {
+    fprintf(stderr, "canvas_unbind canvas[.x%lx] glist-SymbolName[%s]\n", x, x->gl_name->s_name);	// 可読な文字列で取れる.
+    // fprintf(stderr, "canvas_unbind canvas[.x%lx] glist[.x%lx]\n", x, x->gl_pd);	// 可読な文字列で取れる // gl_pd は　gl_obj.te_g.g_pd のシンタックスシュガー
+
     if (strcmp(x->gl_name->s_name, "Pd"))
         pd_unbind(&x->gl_pd, canvas_makebindsym(x->gl_name));
 }
@@ -628,15 +672,20 @@ void canvas_drawredrect(t_canvas *x, int doit)
     /* the window becomes "mapped" (visible and not miniaturized) or
     "unmapped" (either miniaturized or just plain gone.)  This should be
     called from the GUI after the fact to "notify" us that we're mapped. */
+        // ウィンドウが最前面かどうか(マウスへのリアクターかどうか)とは関係なく
+        // 単にウィンドウが(最小化or閉じている)<-->(表示されている)の変更をおこなうものらしい
 void canvas_map(t_canvas *x, t_floatarg f)
 {
     int flag = (f != 0);
     t_gobj *y;
     if (flag)
     {
+        // canvas x が非表示状態であれば表示する
         if (!glist_isvisible(x))
         {
-            t_selection *sel;
+						fprintf(stderr, "-- [not mapped->mapped] canvas_map canvas[.x%lx] floatArg[%1.0f]\n", x, f); // test
+						
+						t_selection *sel;
             if (!x->gl_havewindow)
             {
                 bug("canvas_map");
@@ -651,12 +700,17 @@ void canvas_map(t_canvas *x, t_floatarg f)
             if (x->gl_isgraph && x->gl_goprect)
                 canvas_drawredrect(x, 1);
             sys_vgui("pdtk_canvas_getscroll .x%lx.c\n", x);
+					
+
         }
     }
     else
     {
+        // canvas x を非表示にするケース
         if (glist_isvisible(x))
         {
+						fprintf(stderr, "-- [mapped->not mapped] canvas_map canvas[.x%lx] floatArg[%1.0f]\n", x, f); // test
+					
                 /* just clear out the whole canvas */
             sys_vgui(".x%lx.c delete all\n", x);
             x->gl_mapped = 0;
@@ -721,6 +775,8 @@ int glist_getfont(t_glist *x)
 
 void canvas_free(t_canvas *x)
 {
+		fprintf(stderr, "--canvas_free [.x%lx]", x); // test
+	
     t_gobj *y;
     int dspstate = canvas_suspend_dsp();
     canvas_noundo(x);
@@ -1462,6 +1518,10 @@ void g_editor_setup(void);
 void g_readwrite_setup(void);
 extern void canvas_properties(t_gobj *z);
 
+// 
+// オブジェクトを canvas クラスに登録する
+//  類似の処理として、canvas_add_for_class も参照 
+//
 void g_canvas_setup(void)
 {
         /* we prevent the user from typing "canvas" in an object box
@@ -1541,6 +1601,10 @@ void g_canvas_setup(void)
     class_addmethod(canvas_class, (t_method)glist_clear, gensym("clear"),
         A_NULL);
 
+/*--------------- for test  -------------- */
+    class_addmethod(canvas_class, (t_method)canvas_list_objects,
+        gensym("list-objects"), A_NULL, 0);	
+	
 /* ----- subcanvases, which you get by typing "pd" in a box ---- */
     class_addcreator((t_newmethod)subcanvas_new, gensym("pd"), A_DEFSYMBOL, 0);
     class_addcreator((t_newmethod)subcanvas_new, gensym("page"),  A_DEFSYMBOL, 0);
@@ -1560,14 +1624,17 @@ void g_canvas_setup(void)
 /*--------------- future message to set formatting  -------------- */
     class_addmethod(canvas_class, (t_method)canvas_f,
         gensym("f"), A_GIMME, 0);
+	
 /* -------------- setups from other files for canvas_class ---------------- */
     g_graph_setup();
-    g_editor_setup();
+    g_editor_setup(); // global な editor の setup.
     g_readwrite_setup();
 }
 
     /* functions to add basic gui (e.g., clicking but not editing) to things
     based on canvases that aren't editable, like "array define" object */
+        // 機能制限したコマンドのみキャンバスに紐づける場合はこちらの
+        // canvas_add_for_class を使うらしい. ロックしたパッチ向けか?
 void canvas_editor_for_class(t_class *c);
 void g_graph_setup_class(t_class *c);
 void canvas_readwrite_for_class(t_class *c);

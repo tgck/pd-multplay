@@ -7,7 +7,8 @@
 #include "m_imp.h"
 
     /* FIXME no out-of-memory testing yet! */
-
+		// NOTE: クラス c のインスタンスを作成して返す関数
+		//     : クラスの setup が済んでいない時に呼び出すとエラー
 t_pd *pd_new(t_class *c)
 {
     t_pd *x;
@@ -120,8 +121,11 @@ void m_pd_setup(void)
     class_addanything(bindlist_class, bindlist_anything);
 }
 
+// pdオブジェクトとシンボルのバインド
 void pd_bind(t_pd *x, t_symbol *s)
 {
+    fprintf(stderr, "pd_bind bind_target[.x%lx] symbol[%s]\n", x, s->s_name);
+	
     if (s->s_thing)
     {
         if (*s->s_thing == bindlist_class)
@@ -148,8 +152,11 @@ void pd_bind(t_pd *x, t_symbol *s)
     else s->s_thing = x;
 }
 
+// pd から、キャンバスをunbindするときのメソッド
 void pd_unbind(t_pd *x, t_symbol *s)
 {
+    fprintf(stderr, "pd_unbind unbind_target[.x%lx] symbol[%s]\n", x, s->s_name);
+	
     if (s->s_thing == x) s->s_thing = 0;
     else if (s->s_thing && *s->s_thing == bindlist_class)
     {
@@ -183,6 +190,8 @@ void pd_unbind(t_pd *x, t_symbol *s)
 
 void zz(void) {}
 
+// canvas_getcurrent() の中で呼んでいる関数
+// 
 t_pd *pd_findbyclass(t_symbol *s, t_class *c)
 {
     t_pd *x = 0;

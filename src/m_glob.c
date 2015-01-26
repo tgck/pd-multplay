@@ -4,6 +4,7 @@
 
 #include "m_pd.h"
 #include "m_imp.h"
+//#include "aa_usersession.h"
 
 t_class *glob_pdobject;
 static t_class *maxclass;
@@ -35,6 +36,7 @@ void glob_startup_dialog(t_pd *dummy, t_symbol *s, int argc, t_atom *argv);
 void glob_ping(t_pd *dummy);
 void glob_watchdog(t_pd *dummy);
 void glob_savepreferences(t_pd *dummy);
+void glob_list_canvases(t_pd *dummy); /** test **/ 
 
 static void glob_compatibility(t_pd *dummy, t_floatarg level)
 {
@@ -92,6 +94,10 @@ void max_default(t_pd *x, t_symbol *s, int argc, t_atom *argv)
     endpost();
 }
 
+/** グローバルな pd メッセージのハンドラを定義する **/
+// ここで定義することでMessageウィンドウでキーワード呼び出し可能となる
+// ;pd start-path-dialog
+// 
 void glob_init(void)
 {
     maxclass = class_new(gensym("max"), 0, 0, sizeof(t_pd),
@@ -101,7 +107,8 @@ void glob_init(void)
 
     glob_pdobject = class_new(gensym("pd"), 0, 0, sizeof(t_pd),
         CLASS_DEFAULT, A_NULL);
-    class_addmethod(glob_pdobject, (t_method)glob_initfromgui, gensym("init"),
+	
+	  class_addmethod(glob_pdobject, (t_method)glob_initfromgui, gensym("init"),
         A_GIMME, 0);
     class_addmethod(glob_pdobject, (t_method)glob_menunew, gensym("menunew"),
         A_SYMBOL, A_SYMBOL, 0);
@@ -150,6 +157,10 @@ void glob_init(void)
         gensym("perf"), A_FLOAT, 0);
     class_addmethod(glob_pdobject, (t_method)glob_compatibility,
         gensym("compatibility"), A_FLOAT, 0);
+
+    class_addmethod(glob_pdobject, (t_method)glob_list_canvases, 		/** test **/
+        gensym("list-canvases"), 0);
+		
 #if defined(__linux__) || defined(__FreeBSD_kernel__)
     class_addmethod(glob_pdobject, (t_method)glob_watchdog,
         gensym("watchdog"), 0);

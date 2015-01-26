@@ -216,6 +216,7 @@ typedef struct _scalar      /* a graphical object holding data */
     t_word sc_vec[1];       /* indeterminate-length array of words */
 } t_scalar;
 
+// テキストを持った、パッチ可能なオブジェクト
 typedef struct _text        /* patchable object - graphical, with text */
 {
     t_gobj te_g;                /* header for graphical object */

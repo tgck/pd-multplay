@@ -4,7 +4,8 @@
 
 /*  a thing to forward messages from the GUI, dealing with race conditions
 in which the "target" gets deleted while the GUI is sending it something.
-
+// NOTE: GUIからのメッセージを転送させるためのもの
+ 
 See also the gfxstub object that doesn't oblige the owner to keep a pointer
 around (so is better suited to one-off dialogs)
 */
@@ -22,12 +23,16 @@ struct _guiconnect
 
 static t_class *guiconnect_class;
 
+// guiとの接続
 t_guiconnect *guiconnect_new(t_pd *who, t_symbol *sym)
 {
+    fprintf(stderr, "-- --guiconnect_new at class[-] sym[%s]\n", sym->s_name);
+	
     t_guiconnect *x = (t_guiconnect *)pd_new(guiconnect_class);
     x->x_who = who;
     x->x_sym = sym;
-    pd_bind(&x->x_obj.ob_pd, sym);
+    pd_bind(&x->x_obj.ob_pd, sym); // guiconnectの要素1のt_objectとシンボルをバインド
+																		// すなわち t_text->te_g->g_pd
     return (x);
 }
 
@@ -52,6 +57,8 @@ static void guiconnect_tick(t_guiconnect *x)
     or for a timeout. */
 void guiconnect_notarget(t_guiconnect *x, double timedelay)
 {
+		fprintf(stderr, "-- --guiconnect_notarget at guiConnect[%s]\n", x->x_sym->s_name);	
+	
     if (!x->x_sym)
         pd_free(&x->x_obj.ob_pd);
     else

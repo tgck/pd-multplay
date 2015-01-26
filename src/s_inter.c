@@ -99,7 +99,7 @@ static t_fdpoll *sys_fdpoll;
 static int sys_maxfd;
 static int sys_guisock;
 
-static t_binbuf *inbinbuf;
+static t_binbuf *inbinbuf;	// NOTE: 受信ソケットへの書込内容
 static t_socketreceiver *sys_socketreceiver;
 extern int sys_addhist(int phase);
 void sys_set_searchpath(void);
@@ -460,6 +460,7 @@ static void socketreceiver_getudp(t_socketreceiver *x, int fd)
 
 void sys_exit(void);
 
+// 受信ソケットの読み出し
 void socketreceiver_read(t_socketreceiver *x, int fd)
 {
     if (x->sr_udp)   /* UDP ("datagram") socket protocol */

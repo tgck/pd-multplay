@@ -8,7 +8,7 @@
 #include "m_imp.h"
 #include "s_stuff.h"
 #include "g_canvas.h"
-#include "g_usersession.h"
+#include "aa_usersession.h"
 #include "s_utf8.h" /*-- moo --*/
 #include <string.h>
 #ifdef _MSC_VER  /* This is only for Microsoft's compiler, not cygwin, e.g. */
@@ -892,16 +892,28 @@ void canvas_create_editor(t_glist *x)
     if (!x->gl_editor)
     {
         x->gl_editor = editor_new(x);
-				
-				/** new session test **/
-				fprintf(stderr, "new session. id");
-				t_usession *s = usession_new(x->gl_editor);
-				fprintf(stderr, "new session. id=%ld", s->user_id);
-						
+			
 				for (y = x->gl_list; y; y = y->g_next)
             if (ob = pd_checkobject(&y->g_pd))
                 rtext_new(x, ob);
     }
+}
+
+// test : ふたつめのeditorを埋める
+void canvas_create_editor2(t_glist *x)
+{	
+	t_gobj *y;
+	t_object *ob;
+	if (!x->gl_editor2)
+	{
+		x->gl_editor2 = editor_new(x);	// この1行があると、keyメッセージに対してcanvasが二重に反応する
+		//	x->gl_editor2->e_guiconnect = NULL; // 接続を打ち消し NOTE:何故か効かない
+		guiconnect_notarget(x->gl_editor2->e_guiconnect, 1000); // TEMP: editor2 と GUIとの接続を消去する。
+		
+		for (y = x->gl_list; y; y = y->g_next)
+			if (ob = pd_checkobject(&y->g_pd))
+				rtext_new(x, ob);
+	}
 }
 
 void canvas_destroy_editor(t_glist *x)
@@ -922,9 +934,11 @@ void canvas_destroy_editor(t_glist *x)
 void canvas_reflecttitle(t_canvas *x);
 void canvas_map(t_canvas *x, t_floatarg f);
 
+extern t_usession *usession_array_test[4];
     /* we call this when we want the window to become visible, mapped, and
     in front of all windows; or with "f" zero, when we want to get rid of
     the window. */
+		// 指定したcanvasを表示する(制御対象にする)
 void canvas_vis(t_canvas *x, t_floatarg f)
 {
     char buf[30];
@@ -944,7 +958,17 @@ void canvas_vis(t_canvas *x, t_floatarg f)
             char cbuf[MAXPDSTRING];
             int cbuflen;
             t_canvas *c = x;
-            canvas_create_editor(x); // editor の生成
+            canvas_create_editor(x); // editor の生成. 変数xのメンバであるx->editorが埋められて処理が戻ってくる
+						canvas_create_editor2(x); // この行を有効化すると、1キーストロークで2つのオブジェクトボックスが作られる。
+																				// イベントハンドラが2回動いているっぽい 
+					
+						// test for session.
+						// x->gl_editor2 = x->gl_editor; // 参照のコピー
+						//*(x->gl_editor2) = *(x->gl_editor); // 値のコピー
+					
+						fprintf(stderr, "--gl_editor.. editor[.x%lx]\n", x->gl_editor);
+						fprintf(stderr, "--gl_editor2. editor[.x%lx]\n", x->gl_editor2);
+						
             sys_vgui("pdtk_canvas_new .x%lx %d %d +%d+%d %d\n", x,
                 (int)(x->gl_screenx2 - x->gl_screenx1),
                 (int)(x->gl_screeny2 - x->gl_screeny1),
@@ -1224,6 +1248,7 @@ static int canvas_upx, canvas_upy;
 #define DCLICKINTERVAL 0.25
 
     /* mouse click */
+		// クリックイベント
 void canvas_doclick(t_canvas *x, int xpos, int ypos, int which,
     int mod, int doit)
 {
@@ -1673,6 +1698,14 @@ static void canvas_displaceselection(t_canvas *x, int dx, int dy)
     may be zero if there's no current canvas.  The first argument is true or
     false for down/up; the second one is either a symbolic key name (e.g.,
     "Right" or an Ascii key number.  The third is the shift key. */
+
+    /** キーイベントハンドラ。
+		    canvas が存在しない場合 xは0。
+				t_atom *av: // キーイベントもアトム。
+					引数1: downなら1, upなら0
+					引数2: キー名もしくは単純なAscii key number
+					引数3: shiftなら1
+		 **/
 void canvas_key(t_canvas *x, t_symbol *s, int ac, t_atom *av)
 {
     static t_symbol *keynumsym, *keyupsym, *keynamesym;
@@ -1689,6 +1722,7 @@ void canvas_key(t_canvas *x, t_symbol *s, int ac, t_atom *av)
     shift = (atom_getfloat(av+2) != 0);  /* nonzero if shift-ed */
     if (av[1].a_type == A_SYMBOL)
         gotkeysym = av[1].a_w.w_symbol;
+		// 特殊キーであった場合は、シンボルを振る
     else if (av[1].a_type == A_FLOAT)
     {
         char buf[UTF8_MAXBYTES1];
@@ -1749,7 +1783,7 @@ void canvas_key(t_canvas *x, t_symbol *s, int ac, t_atom *av)
         pd_float(keynumsym->s_thing, (t_float)keynum);
     if (keyupsym->s_thing && !down)
         pd_float(keyupsym->s_thing, (t_float)keynum);
-    if (keynamesym->s_thing)
+    if (keynamesym->s_thing) /** この処理の意図はよくわかってない **/
     {
         t_atom at[2];
         at[0] = av[0];
@@ -1757,6 +1791,7 @@ void canvas_key(t_canvas *x, t_symbol *s, int ac, t_atom *av)
         SETSYMBOL(at+1, gotkeysym);
         pd_list(keynamesym->s_thing, 0, 2, at);
     }
+    /** エディタがなければ、後続処理は無視 **/
     if (!x || !x->gl_editor)  /* if that 'invis'ed the window, we'd better stop. */
         return;
     if (x && down)
@@ -1813,6 +1848,7 @@ void canvas_key(t_canvas *x, t_symbol *s, int ac, t_atom *av)
     }
         /* if control key goes up or down, and if we're in edit mode, change
         cursor to indicate how the click action changes */
+        /** カーソルアイコンの変更 **/
     if (x && keynum == 0 && x->gl_edit &&
         !strncmp(gotkeysym->s_name, "Control", 7))
             canvas_setcursor(x, down ?
@@ -1828,10 +1864,13 @@ static void delay_move(t_canvas *x)
     x->gl_editor->e_ywas = x->gl_editor->e_ynew;
 }
 
+/** ポインタがキャンバス上を移動する度に呼ばれる **/
 void canvas_motion(t_canvas *x, t_floatarg xpos, t_floatarg ypos,
     t_floatarg fmod)
 { 
-    /* post("motion %d %d", xpos, ypos); */
+//		post("motion %4.1f %4.1f", xpos, ypos);
+		post("motion %4.1f %4.1f canvas .x%lx \n", xpos, ypos, x);
+	
     int mod = fmod;
     if (!x->gl_editor)
     {
@@ -2681,9 +2720,13 @@ static void canvas_texteditor(t_canvas *x)
     
 }
 
+// シンボル"key"に対して設定されるハンドラ
+// pdウィンドウや特殊なウィンドウにアタッチされる。
+// 通常のキャンバス上のイベントでは呼ばれない
 void glob_key(void *dummy, t_symbol *s, int ac, t_atom *av)
 {
         /* canvas_key checks for zero */
+		fprintf(stderr, "glob_key\n");
     canvas_key(0, s, ac, av);
 }
 
@@ -2781,11 +2824,17 @@ static void glist_setlastxy(t_glist *gl, int xval, int yval)
     canvas_last_glist_y = yval;
 }
 
-
+// editorのセットアップと称して、実際に行っているのは
+// canvasクラスの操作関数の登録。
+// プログラムの最初に1回だけ実施される(canvasクラスのセットアップルーチンの一部として)
 void g_editor_setup(void)
 {
+	fprintf(stderr, "-- g_editor_setup !\n");
+	
 /* ------------------------ events ---------------------------------- */
-    class_addmethod(canvas_class, (t_method)canvas_mouse, gensym("mouse"),
+/** イベントハンドラの登録を行う**/
+/** イベントハンドラの実装は、当ソースで登場 **/	
+	  class_addmethod(canvas_class, (t_method)canvas_mouse, gensym("mouse"),
         A_FLOAT, A_FLOAT, A_FLOAT, A_FLOAT, A_NULL);
     class_addmethod(canvas_class, (t_method)canvas_mouseup, gensym("mouseup"),
         A_FLOAT, A_FLOAT, A_FLOAT, A_NULL);
@@ -2848,9 +2897,14 @@ void g_editor_setup(void)
     copy_binbuf = binbuf_new();
 }
 
+//
+// マウスとキーボードによるイベントハンドラを登録
+//
 void canvas_editor_for_class(t_class *c)
 {
-    class_addmethod(c, (t_method)canvas_mouse, gensym("mouse"),
+		fprintf(stderr, "-- canvas_editor_for_class !\n"); // test
+
+		class_addmethod(c, (t_method)canvas_mouse, gensym("mouse"),
         A_FLOAT, A_FLOAT, A_FLOAT, A_FLOAT, A_NULL);
     class_addmethod(c, (t_method)canvas_mouseup, gensym("mouseup"),
         A_FLOAT, A_FLOAT, A_FLOAT, A_NULL);
