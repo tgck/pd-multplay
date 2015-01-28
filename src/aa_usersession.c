@@ -9,20 +9,6 @@ static long new_session_id() {
 	return t;
 }
 
-// ユーザID, キャンバスを指定する
-// キャンバスに複数のエディタを持たせる
-// t_usession *usession_new(int user_id, t_editor *x){
-t_usession *usession_new(t_editor *x){
-	
-	t_usession *y = (t_usession *)getbytes(sizeof(*y));
-	
-	y->user_id = new_session_id();
-	y->us_canvas = NULL; // LATER
-	y->us_editor = x;
-	
-	return y;
-}
-
 //
 // pd が保持する canvas の数を数える
 // 

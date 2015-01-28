@@ -80,7 +80,7 @@ static void canvas_addtolist(t_canvas *x)
 	
     x->gl_next = canvas_list;
     canvas_list = x;
-	
+
     fprintf(stderr, "-- canvas_addtolist done num_canvas=[%d]\n", canvas_get_canvas_count()); // test
 }
 
