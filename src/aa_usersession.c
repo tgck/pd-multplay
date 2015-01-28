@@ -1,12 +1,13 @@
 /** file for user session extention **/
 #include "aa_usersession.h"
+#include "g_canvas.h"
+#include <time.h>
 #include <string.h>
 
 // TODO: 精度向上
 static long new_session_id() {
 	time_t t;
-	time(&t);
-	return t;
+	return time(&t);
 }
 
 //
