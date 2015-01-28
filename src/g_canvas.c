@@ -103,20 +103,21 @@ static void canvas_takeofflist(t_canvas *x)
 // 
 // pd が保持する canvas の数を取得する
 // BUGあり
-// 
+//
+//-- -- canvas name[.x217480][_float_array_template].
+//-- -- canvas name[.x217270][_float_template].
+//-- -- canvas name[.x212080][_text_template].
 int canvas_get_canvas_count(){
 	t_canvas *z;
 	int num = 0;
 	for (z = canvas_list; z->gl_next; z = z->gl_next){
-		fprintf(stdout, "-- -- canvas name[.x%lx][%s].\n", 
+		fprintf(stdout, "-- -- canvas_get_count[%d]: canvas name[.x%lx]symbol[%s].\n",
+							num,
 							glist_getcanvas(z->gl_next)->gl_name,   // print as object id
 							glist_getcanvas(z->gl_next)->gl_name->s_name);
-//-- -- canvas name[.x217480][_float_array_template].
-//-- -- canvas name[.x217270][_float_template].
-//-- -- canvas name[.x212080][_text_template].
+
 		num++;
 	}
-	fprintf(stdout, "-- -- canvas_get_canvas_count num=[%d]\n", num);
 	return num;
 }
 
@@ -608,10 +609,10 @@ t_symbol *canvas_makebindsym(t_symbol *s)
 static void canvas_bind(t_canvas *x)
 {
 		if (x->gl_name->s_name){
-			fprintf(stderr, "canvas_bind canvas[.x%lx] symbol[%s]\n", x, x->gl_name->s_name);
+			fprintf(stderr, "canvas_bind A) canvas[.x%lx] with symbol[%s]\n", x, x->gl_name->s_name);
 			// --> canvas_bind canvas[.x221960] symbol[Untitled-3]
 		} else {
-			fprintf(stderr, "canvas_bind canvas[.x%lx] symbol[%s]\n", x, x->gl_name);
+			fprintf(stderr, "canvas_bind B) canvas[.x%lx] with symbol[%s]\n", x, x->gl_name);
 		}
     
     if (strcmp(x->gl_name->s_name, "Pd"))
@@ -620,7 +621,7 @@ static void canvas_bind(t_canvas *x)
 
 static void canvas_unbind(t_canvas *x)
 {
-    fprintf(stderr, "canvas_unbind canvas[.x%lx] symbol[%s]\n", x, x->gl_name->s_name);	// 可読な文字列で取れる.
+    fprintf(stderr, "canvas_unbind canvas[.x%lx] with symbol[%s]\n", x, x->gl_name->s_name);	// 可読な文字列で取れる.
     // fprintf(stderr, "canvas_unbind canvas[.x%lx] glist[.x%lx]\n", x, x->gl_pd);	// 可読な文字列で取れる // gl_pd は　gl_obj.te_g.g_pd のシンタックスシュガー
 
     if (strcmp(x->gl_name->s_name, "Pd"))
@@ -693,9 +694,9 @@ void canvas_map(t_canvas *x, t_floatarg f)
         // canvas x が非表示状態であれば表示する
         if (!glist_isvisible(x))
         {
-						fprintf(stderr, "-- [not mapped->mapped] canvas_map canvas[.x%lx] floatArg[%1.0f]\n", x, f); // test
+            fprintf(stderr, "-- canvas_map [not mapped->mapped] canvas[.x%lx] floatArg[%1.0f]\n", x, f); // test
 						
-						t_selection *sel;
+            t_selection *sel;
             if (!x->gl_havewindow)
             {
                 bug("canvas_map");
@@ -719,7 +720,7 @@ void canvas_map(t_canvas *x, t_floatarg f)
         // canvas x を非表示にするケース
         if (glist_isvisible(x))
         {
-						fprintf(stderr, "-- [mapped->not mapped] canvas_map canvas[.x%lx] floatArg[%1.0f]\n", x, f); // test
+            fprintf(stderr, "-- canvas_map [mapped->not mapped] canvas[.x%lx] floatArg[%1.0f]\n", x, f); // test
 					
                 /* just clear out the whole canvas */
             sys_vgui(".x%lx.c delete all\n", x);
@@ -785,7 +786,7 @@ int glist_getfont(t_glist *x)
 
 void canvas_free(t_canvas *x)
 {
-		fprintf(stderr, "--canvas_free [.x%lx]", x); // test
+    fprintf(stderr, "-- canvas_free canvas[.x%lx]", x); // test
 	
     t_gobj *y;
     int dspstate = canvas_suspend_dsp();
@@ -1613,7 +1614,9 @@ void g_canvas_setup(void)
 
 /*--------------- for test  -------------- */
     class_addmethod(canvas_class, (t_method)canvas_list_objects,
-        gensym("list-objects"), A_NULL, 0);	
+        gensym("list-objects"), A_NULL, 0);
+    class_addmethod(canvas_class, (t_method)canvas_list_objects,
+        gensym("ls"), A_NULL, 0); /** alias **/
 	
 /* ----- subcanvases, which you get by typing "pd" in a box ---- */
     class_addcreator((t_newmethod)subcanvas_new, gensym("pd"), A_DEFSYMBOL, 0);

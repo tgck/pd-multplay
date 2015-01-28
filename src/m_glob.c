@@ -160,7 +160,9 @@ void glob_init(void)
 
     class_addmethod(glob_pdobject, (t_method)glob_list_canvases, 		/** test **/
         gensym("list-canvases"), 0);
-		
+    class_addmethod(glob_pdobject, (t_method)glob_list_canvases, 		/** test **/ /** alias **/ 
+        gensym("ls"), 0);
+
 #if defined(__linux__) || defined(__FreeBSD_kernel__)
     class_addmethod(glob_pdobject, (t_method)glob_watchdog,
         gensym("watchdog"), 0);

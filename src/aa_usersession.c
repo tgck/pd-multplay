@@ -28,24 +28,18 @@ t_usession *usession_new(t_editor *x){
 // 
 void glob_list_canvases(t_pd *dummy){
 	fprintf(stdout, "[testOut]glob_list_canvases. canvas num[%d].\n", canvas_get_canvas_count());
-//	fprintf(stdout, "%s\n", class_getname(glob_pdobject)); //-> "pd"
 }
 
 //
 // キャンバスが保持するオブジェクトを走査する
 //
 void canvas_list_objects(t_glist *x){
-	fprintf(stdout, "[testOut]canvas_list_objects.\n");
-	
 	t_gobj *z;
 	int num = 0;
 	for (z = x->gl_list; z; z = z->g_next){
-
-		fprintf(stdout, "-- -- object dump[%s]\n", class_getname(pd_class((t_pd*)z)));
-		// OK:  z を t_pd* にキャストしてからclass化して名前をとる
-//		fprintf(stdout, "-- -- %s", glist_getcanvas(z)->gl_name->s_name);
-//		fprintf(stdout, "-- -- [.x%lx][%s]\n", ((t_glist*)z)->gl_name,
-//						((t_glist*)z)->gl_name->s_name);
+		fprintf(stdout, "-- -- canvas_list_objects[%d]:[%s]\n", 
+						num,
+						class_getname(pd_class((t_pd*)z)));
 		num++;
 	}
 	fprintf(stdout, "[testOut]number of objects in canvas[%d]\n", num);
