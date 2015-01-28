@@ -1,52 +1,39 @@
 /** file for user session extention **/
 #include "aa_usersession.h"
+#include "g_canvas.h"
+#include <time.h>
 #include <string.h>
 
 // TODO: 精度向上
 static long new_session_id() {
 	time_t t;
-	time(&t);
-	return t;
-}
-
-// ユーザID, キャンバスを指定する
-// キャンバスに複数のエディタを持たせる
-// t_usession *usession_new(int user_id, t_editor *x){
-t_usession *usession_new(t_editor *x){
-	
-	t_usession *y = (t_usession *)getbytes(sizeof(*y));
-	
-	y->user_id = new_session_id();
-	y->us_canvas = NULL; // LATER
-	y->us_editor = x;
-	
-	return y;
+	return time(&t);
 }
 
 //
 // pd が保持する canvas の数を数える
 // 
 void glob_list_canvases(t_pd *dummy){
-	fprintf(stdout, "[testOut]glob_list_canvases.\n");
-//	fprintf(stdout, "%s\n", class_getname(dummy));
-	fprintf(stdout, "%s\n", class_getname(glob_pdobject)); //-> "pd"
+	fprintf(stdout, "[testOut]glob_list_canvases. canvas num[%d].\n", canvas_get_canvas_count());
 }
 
 //
 // キャンバスが保持するオブジェクトを走査する
 //
 void canvas_list_objects(t_glist *x){
-	fprintf(stdout, "[testOut]canvas_list_objects.\n");
-	
 	t_gobj *z;
 	int num = 0;
 	for (z = x->gl_list; z; z = z->g_next){
+		fprintf(stdout, "-- -- canvas_list_objects[%d]:[%s]\n", 
+						num,
+						class_getname(pd_class((t_pd*)z)));
 		num++;
 	}
 	fprintf(stdout, "[testOut]number of objects in canvas[%d]\n", num);
 }
 
 // binbufのログ出力整形用
+// 文字列"mae" を文字列"ato"で置換する
 int strrep(char *buf, char *mae, char *ato)
 {
 	char *mituke;
