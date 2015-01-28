@@ -129,7 +129,8 @@ void glist_selectline(t_glist *x, t_outconnect *oc, int index1,
         x->gl_editor->e_selectline_index2 = index2;
         x->gl_editor->e_selectline_inno = inno;
         x->gl_editor->e_selectline_tag = oc;
-        sys_vgui(".x%lx.c itemconfigure l%lx -fill blue\n",
+//        sys_vgui(".x%lx.c itemconfigure l%lx -fill blue\n",
+        sys_vgui(".x%lx.c itemconfigure l%lx -fill red\n",
             x, x->gl_editor->e_selectline_tag);
     }    
 }
@@ -860,6 +861,8 @@ static void canvas_rightclick(t_canvas *x, int xpos, int ypos, t_gobj *y)
 
 static t_editor *editor_new(t_glist *owner)
 {
+		fprintf(stderr, "-- editor_new : on owner[.x%lx][%s]\n", (t_int)owner, owner->gl_name->s_name);
+	
 		char buf[40];
     t_editor *x = (t_editor *)getbytes(sizeof(*x));
     x->e_connectbuf = binbuf_new();
@@ -868,12 +871,16 @@ static t_editor *editor_new(t_glist *owner)
     sprintf(buf, ".x%lx", (t_int)owner);
     x->e_guiconnect = guiconnect_new(&owner->gl_pd, gensym(buf));
     x->e_clock = 0;
-		
+
+		fprintf(stderr, "-- editor_new : editor[.x%lx]\n", (t_int)x);	
     return (x);
 }
 
 static void editor_free(t_editor *x, t_glist *y)
 {
+		fprintf(stderr, "-- editor_free : [.x%lx]from glist[.x%lx][%s]\n", 
+        (t_int)x, (t_int)y, y->gl_name->s_name);
+	
     glist_noselect(y);
     guiconnect_notarget(x->e_guiconnect, 1000);
     binbuf_free(x->e_connectbuf);
@@ -918,6 +925,9 @@ void canvas_create_editor2(t_glist *x)
 
 void canvas_destroy_editor(t_glist *x)
 {
+    fprintf(stderr, "-- editor_destroy : glis[.x%lx][%s]\n", 
+        (t_int)x, x->gl_name->s_name);
+	
     t_gobj *y;
     t_object *ob;
     glist_noselect(x);
