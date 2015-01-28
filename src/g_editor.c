@@ -934,7 +934,6 @@ void canvas_destroy_editor(t_glist *x)
 void canvas_reflecttitle(t_canvas *x);
 void canvas_map(t_canvas *x, t_floatarg f);
 
-extern t_usession *usession_array_test[4];
     /* we call this when we want the window to become visible, mapped, and
     in front of all windows; or with "f" zero, when we want to get rid of
     the window. */
@@ -2726,7 +2725,7 @@ static void canvas_texteditor(t_canvas *x)
 void glob_key(void *dummy, t_symbol *s, int ac, t_atom *av)
 {
         /* canvas_key checks for zero */
-		fprintf(stderr, "glob_key\n");
+    fprintf(stderr, "-- glob_key symbol[%s]\n", s->s_name);
     canvas_key(0, s, ac, av);
 }
 

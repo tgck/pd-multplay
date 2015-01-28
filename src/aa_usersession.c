@@ -33,6 +33,7 @@ void canvas_list_objects(t_glist *x){
 }
 
 // binbufのログ出力整形用
+// 文字列"mae" を文字列"ato"で置換する
 int strrep(char *buf, char *mae, char *ato)
 {
 	char *mituke;

@@ -1,5 +1,4 @@
 /** file for user session extention **/
-#include <time.h>
 #include "m_pd.h"			// struct t_canvas
 
 static void hello(void);
