@@ -133,7 +133,7 @@ proc ::pd_menus::build_file_menu {mymenu} {
     #$mymenu entryconfigure [_ "Revert*"]    -command {menu_revert $::focused_window}
     $mymenu entryconfigure [_ "Close"]      -command {menu_send_float $::focused_window menuclose 0}
     $mymenu entryconfigure [_ "Message..."] -command {menu_message_dialog}
-    $mymenu entryconfigure [_ "Message2..."] -command {menu_message_dialog}
+    $mymenu entryconfigure [_ "Message2..."] -command {menu_message_dialog2}
     $mymenu entryconfigure [_ "Print..."]   -command {menu_print $::focused_window}
     # update recent files
     if {[llength $::recentfiles_list] > 0} {
