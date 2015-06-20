@@ -1,3 +1,4 @@
+
 # Copyright (c) 1997-2009 Miller Puckette.
 #(c) 2008 WordTech Communications LLC. License: standard Tcl license, http://www.tcl.tk/software/tcltk/license.html
 
@@ -132,6 +133,7 @@ proc ::pd_menus::build_file_menu {mymenu} {
     #$mymenu entryconfigure [_ "Revert*"]    -command {menu_revert $::focused_window}
     $mymenu entryconfigure [_ "Close"]      -command {menu_send_float $::focused_window menuclose 0}
     $mymenu entryconfigure [_ "Message..."] -command {menu_message_dialog}
+    $mymenu entryconfigure [_ "Message2..."] -command {menu_message_dialog}
     $mymenu entryconfigure [_ "Print..."]   -command {menu_print $::focused_window}
     # update recent files
     if {[llength $::recentfiles_list] > 0} {
@@ -521,6 +523,7 @@ proc ::pd_menus::build_file_menu_aqua {mymenu} {
     #$mymenu add command -label [_ "Revert to Saved"]
     $mymenu add  separator
     $mymenu add command -label [_ "Message..."]
+    $mymenu add command -label [_ "Message2..."]
     $mymenu add  separator
     $mymenu add command -label [_ "Print..."]   -accelerator "$accelerator+P"
 }
