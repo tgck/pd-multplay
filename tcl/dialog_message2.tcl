@@ -11,7 +11,7 @@ namespace eval ::dialog_message2:: {
     variable message_history {"pd dsp 1"}
     variable history_position 0
 
-    namespace export open_message_dialog
+    namespace export open_message_dialog2
 }
 
 proc ::dialog_message2::get_history {direction} {
@@ -45,7 +45,7 @@ proc ::dialog_message2::cancel {mytoplevel} {
 }
 
 # the message panel is opened from the menu and key bindings
-proc ::dialog_message2::open_message_dialog {mytoplevel} {
+proc ::dialog_message2::open_message_dialog2 {mytoplevel} {
     if {[winfo exists .message]} {
         wm deiconify .message
         raise .message
@@ -58,7 +58,7 @@ proc ::dialog_message2::create_dialog {mytoplevel} {
     toplevel .message -class DialogWindow
     wm group .message .
     wm transient .message
-    wm title .message [_ "Send a Pd message"]
+    wm title .message [_ "Send a Pd message(this is a GUI template!!!)"]
     wm geometry .message =400x80+150+150
     wm resizable .message 1 0
     wm minsize .message 250 80
