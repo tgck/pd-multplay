@@ -15,17 +15,6 @@ namespace eval ::dialog_message2:: {
 }
 
 proc ::dialog_message2::get_history {direction} {
-    variable message_history
-    variable history_position
-    
-    incr history_position $direction
-    if {$history_position < 0} {set history_position 0}
-    if {$history_position > [llength $message_history]} {
-        set history_position [llength $message_history]
-    }
-    .message.f.entry delete 0 end
-    .message.f.entry insert 0 \
-        [lindex $message_history end-[expr $history_position - 1]]
 }
 
 # mytoplevel isn't used here, but is kept for compatibility with other dialog ok procs
@@ -55,11 +44,14 @@ proc ::dialog_message2::open_message_dialog2 {mytoplevel} {
 }
 
 proc ::dialog_message2::create_dialog {mytoplevel} {
+
+    global canvas_width canvas_height
+
     toplevel .message -class DialogWindow
     wm group .message .
     wm transient .message
-    wm title .message [_ "Send a Pd message(this is a GUI template!!!)"]
-    wm geometry .message =400x80+150+150
+    wm title .message [_ "(this is a GUI template!!!)"]
+    wm geometry .message =280x80+150+150
     wm resizable .message 1 0
     wm minsize .message 250 80
     .message configure -menu $::dialog_menubar
@@ -67,19 +59,20 @@ proc ::dialog_message2::create_dialog {mytoplevel} {
     ::pd_bindings::dialog_bindings .message "message"
     # not all Tcl/Tk versions or platforms support -topmost, so catch the error
     catch {wm attributes $id -topmost 1}
-
+    
     # TODO this should use something like 'dialogfont' for the font
     frame .message.f
-    pack .message.f -side top -fill x -expand 1
-    entry .message.f.entry -width 54 -font {Helvetica 18} -relief sunken \
-        -highlightthickness 1 -highlightcolor blue
-    label .message.f.semicolon -text ";" -font {Helvetica 24}
-    pack .message.f.semicolon -side left
-    pack .message.f.entry -side left -padx 10 -fill x -expand 1
-    focus .message.f.entry
-    label .message.label -text [_ "(use arrow keys for history)"]
-    pack .message.label -side bottom
 
-    bind .message.f.entry <Up> "::dialog_message2::get_history 1"
-    bind .message.f.entry <Down> "::dialog_message2::get_history -1"
+    # for temporary local test
+    set canvas_width aaa   ; label .message.f.l01 -textvariable canvas_width
+    set canvas_height zzz  ; label .message.f.l11 -textvariable canvas_height
+
+    label .message.f.title -text "canvas size:"
+    label .message.f.l00 -text "hoge1:  "
+    label .message.f.l10 -text "hoge2:  "
+
+    pack .message.f -side top -fill x -expand 1
+    pack .message.f.title -fill both
+    pack .message.f.l01
+    pack .message.f.l11
 }
