@@ -64,18 +64,15 @@ proc ::dialog_message2::create_dialog {mytoplevel} {
     frame .message.f
 
     # for temporary local test
-    set canvas_width aaa   ; label .message.f.l01 -textvariable canvas_width
-    set canvas_height zzz  ; label .message.f.l11 -textvariable canvas_height
-	#label .message.f.l99 -textvariable port
+    #set canvas_width aaa
+    #set canvas_height zzz
+	label .message.f.l01 -textvariable canvas_width
+    label .message.f.l11 -textvariable canvas_height
+
+    #label .message.f.l99 -textvariable port
     label .message.f.l100 -textvariable focused_window   ; # .x31bf50
     #label .message.f.l101 -textvariable windowname {}    ; # とれない...? 空のarrayなのかも
-
-    label .message.f.l101 -textvariable temp    ; 
     label .message.f.l102 -textvariable editmode_button  ; # 0 or 1
-    #set temp [array exists editingtext]
-    #set temp_out [join $temp /]
-    label .message.f.l103 -textvariable [array exists editingtext]   ; 
-
 
     label .message.f.title -text "canvas size:"
     label .message.f.l00 -text "hoge1:  "
@@ -87,7 +84,5 @@ proc ::dialog_message2::create_dialog {mytoplevel} {
     pack .message.f.l11
 
     pack .message.f.l100
-    pack .message.f.l101
     pack .message.f.l102
-    pack .message.f.l103
 }
