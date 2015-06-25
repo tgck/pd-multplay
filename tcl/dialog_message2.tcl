@@ -73,6 +73,7 @@ proc ::dialog_message2::create_dialog {mytoplevel} {
     label .message.f.l100 -textvariable focused_window   ; # .x31bf50
     #label .message.f.l101 -textvariable windowname {}    ; # とれない...? 空のarrayなのかも
     label .message.f.l102 -textvariable editmode_button  ; # 0 or 1
+    #label .message.f.l103 -textvariable ::pd_connect::pd_socket  ;
 
     label .message.f.title -text "canvas size:"
     label .message.f.l00 -text "hoge1:  "
@@ -85,4 +86,12 @@ proc ::dialog_message2::create_dialog {mytoplevel} {
 
     pack .message.f.l100
     pack .message.f.l102
+    #pack .message.f.l103
+}
+
+# ------------------------------------------------------------------------------
+#  functions for debug
+
+proc pdtk_test {} {
+	::pdwindow::post this_is_test_message\n
 }
