@@ -200,8 +200,11 @@ from; for instance we could be some kind of RT embedded system.  However, to
 really make this make sense we would have to implement
 open(), read(), etc, calls to be served somehow from the GUI too. */
 
+// GUIからの "pd init .." 
 void glob_initfromgui(void *dummy, t_symbol *s, int argc, t_atom *argv)
 {
+	  fprintf(stderr, "-- glob_initfromgui() START\n");
+	
     char *cwd = atom_getsymbolarg(0, argc, argv)->s_name;
     t_namelist *nl;
     unsigned int i;
@@ -255,6 +258,8 @@ void glob_initfromgui(void *dummy, t_symbol *s, int argc, t_atom *argv)
     }
     namelist_free(sys_messagelist);
     sys_messagelist = 0;
+	
+	  fprintf(stderr, "-- glob_initfromgui() END\n");
 }
 
 static void sys_afterargparse(void);

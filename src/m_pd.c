@@ -306,12 +306,23 @@ void conf_init(void);
 void glob_init(void);
 void garray_init(void);
 
+// pd の初期化
 void pd_init(void)
 {
+    fprintf(stderr, "pd_init() ***START***\n");
+    
     mess_init();
     obj_init();
     conf_init();
     glob_init();
     garray_init();
+	
+    // test
+    sys_vgui("pdtk_test\n");
+    sys_vgui("pdtk_test\n");
+    sys_vgui("pdtk_test\n");
+    sys_vgui("pdtk_test2 321 567\n");
+	
+    fprintf(stderr, "pd_init() ***END***\n\n");
 }
 
