@@ -95,3 +95,8 @@ proc ::dialog_message2::create_dialog {mytoplevel} {
 proc pdtk_test {} {
 	::pdwindow::post this_is_test_message\n
 }
+
+proc pdtk_test2 { posx posy } {
+	::pdwindow::post this_is_test_message\n
+	::pdwindow::post [format "x: %s y: %s\n" $posx $posy]
+}
