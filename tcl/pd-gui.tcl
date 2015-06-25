@@ -210,8 +210,8 @@ set ::patch_menubar   ".menubar"
 set ::dialog_menubar   ""
 
 # variables for test 
-set canvas_width  0
-set canvas_height 0
+set ::canvas_width  0
+set ::canvas_height 0
 
 # minimum size of the canvas window of a patch
 set canvas_minwidth 50

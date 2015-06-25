@@ -97,6 +97,8 @@ proc pdtk_test {} {
 }
 
 proc pdtk_test2 { posx posy } {
-	::pdwindow::post this_is_test_message\n
+	::pdwindow::post this_is_test_message2\n
 	::pdwindow::post [format "x: %s y: %s\n" $posx $posy]
+	set ::canvas_width $posx
+	set ::canvas_height $posy
 }
