@@ -1944,8 +1944,24 @@ void canvas_motion(t_canvas *x, t_floatarg xpos, t_floatarg ypos,
         }
     }
     else canvas_doclick(x, xpos, ypos, 0, mod, 0);
-    
+    	
     x->gl_editor->e_lastmoved = 1;
+	
+	  //
+	  // test
+	  // 
+	  //	fprintf(stderr, "window name:[%s] width:[%lx]  height:[%lx]\n", x->gl_name->s_name, x->gl_pixwidth, x->gl_pixheight); // USELESS!
+	  //		fprintf(stderr, "window name:[%s] [%f] [%f] [%f] [%f]\n", x->gl_name->s_name, // USELESS!
+	  //						x->gl_x1, x->gl_y1, x->gl_x2, x->gl_y2 ); 
+	  fprintf(stderr, "window name:[%s] [%d] [%d] [%d] [%d]\n", x->gl_name->s_name, 
+					x->gl_screenx1, x->gl_screeny1, x->gl_screenx2, x->gl_screeny2);
+  	int width  = x->gl_screenx2 - x->gl_screenx1;
+  	int height = x->gl_screeny2 - x->gl_screeny1;
+	
+	  char* mess[100] = {'\0'};
+	  sprintf(mess, "pdtk_test2 %d %d\n", width, height);
+	  sys_gui(mess);
+	
 }
 
 void canvas_startmotion(t_canvas *x)
