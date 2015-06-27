@@ -58,6 +58,7 @@ static void canvas_bind(t_canvas *x);
 static void canvas_unbind(t_canvas *x);
 
 void canvas_list_objects(t_canvas *x); // test
+void canvas_dump(t_canvas *x); // test
 
 /* --------- functions to handle the canvas environment ----------- */
 
@@ -1617,6 +1618,8 @@ void g_canvas_setup(void)
         gensym("list-objects"), A_NULL, 0);
     class_addmethod(canvas_class, (t_method)canvas_list_objects,
         gensym("ls"), A_NULL, 0); /** alias **/
+	  class_addmethod(canvas_class, (t_method)canvas_dump,
+									gensym("dump"), A_NULL, 0);
 	
 /* ----- subcanvases, which you get by typing "pd" in a box ---- */
     class_addcreator((t_newmethod)subcanvas_new, gensym("pd"), A_DEFSYMBOL, 0);
@@ -1666,4 +1669,15 @@ void canvas_add_for_class(t_class *c)
     canvas_editor_for_class(c);
     canvas_readwrite_for_class(c);
     /* g_graph_setup_class(c); */
+}
+
+/* -------------- utility for canvas, editor ---------------- */
+void canvas_dump(t_canvas *x)
+{
+	if (!x) {
+		fprintf(stderr, "[debug]canvas_dump CAN'T dump\n");
+	}
+	fprintf(stderr, "[debug]canvas_dump START ----------------------------\n");
+	fprintf(stderr, "  gl_name:[%s]\n", x->gl_name->s_name);
+	fprintf(stderr, "[debug]canvas_dump END ------------------------------\n");
 }
