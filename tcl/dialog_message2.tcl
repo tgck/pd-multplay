@@ -66,27 +66,23 @@ proc ::dialog_message2::create_dialog {mytoplevel} {
     # for temporary local test
     #set canvas_width aaa
     #set canvas_height zzz
-	label .message.f.l01 -textvariable canvas_width
-    label .message.f.l11 -textvariable canvas_height
+    #label .message.f.l00 -textvariable port
+	#label .message.f.l01 -textvariable canvas_width
+    #label .message.f.l11 -textvariable canvas_height
+    #label .message.f.l100 -textvariable focused_window   ; # .x31bf50
+    #label .message.f.l102 -textvariable editmode_button  ; # 0 or 1
+	
+	#label .message.f.title01 -text "port:"
+    #label .message.f.title02 -text "canvas size:"
 
-    #label .message.f.l99 -textvariable port
-    label .message.f.l100 -textvariable focused_window   ; # .x31bf50
-    #label .message.f.l101 -textvariable windowname {}    ; # とれない...? 空のarrayなのかも
-    label .message.f.l102 -textvariable editmode_button  ; # 0 or 1
-    #label .message.f.l103 -textvariable ::pd_connect::pd_socket  ;
-
-    label .message.f.title -text "canvas size:"
-    label .message.f.l00 -text "hoge1:  "
-    label .message.f.l10 -text "hoge2:  "
-
-    pack .message.f -side top -fill x -expand 1
-    pack .message.f.title -fill both
-    pack .message.f.l01
-    pack .message.f.l11
-
-    pack .message.f.l100
-    pack .message.f.l102
-    #pack .message.f.l103
+    #pack .message.f -side top -fill x -expand 1
+    #pack .message.f.title01 -fill both -bg blue
+	#pack .message.f.l00
+    #pack .message.f.title02 -fill both -bg blue
+    #pack .message.f.l01
+    #pack .message.f.l11
+    #pack .message.f.l100
+    #pack .message.f.l102
 }
 
 # ------------------------------------------------------------------------------
@@ -97,8 +93,12 @@ proc pdtk_test {} {
 }
 
 proc pdtk_test2 { posx posy } {
-	::pdwindow::post this_is_test_message2\n
-	::pdwindow::post [format "x: %s y: %s\n" $posx $posy]
+	variable name
+	variable id
+
+	#::pdwindow::post [format "x: %s y: %s\n" $posx $posy]
+	::pdwindow::post [format "x: %s y: %s name: %s id: %s\n" $posx $posy $name $id]
 	set ::canvas_width $posx
 	set ::canvas_height $posy
+	set 
 }
