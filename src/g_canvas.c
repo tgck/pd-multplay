@@ -57,6 +57,7 @@ static void canvas_pop(t_canvas *x, t_floatarg fvis);
 static void canvas_bind(t_canvas *x);
 static void canvas_unbind(t_canvas *x);
 
+void canvas_dump(t_canvas *x); // test(t_canvasのメンバーダンプ)
 void canvas_list_objects(t_canvas *x); // test
 
 /* --------- functions to handle the canvas environment ----------- */
@@ -1617,6 +1618,8 @@ void g_canvas_setup(void)
         gensym("list-objects"), A_NULL, 0);
     class_addmethod(canvas_class, (t_method)canvas_list_objects,
         gensym("ls"), A_NULL, 0); /** alias **/
+	  class_addmethod(canvas_class, (t_method)canvas_dump,
+									gensym("dump"), A_NULL, 0);
 	
 /* ----- subcanvases, which you get by typing "pd" in a box ---- */
     class_addcreator((t_newmethod)subcanvas_new, gensym("pd"), A_DEFSYMBOL, 0);
@@ -1667,3 +1670,74 @@ void canvas_add_for_class(t_class *c)
     canvas_readwrite_for_class(c);
     /* g_graph_setup_class(c); */
 }
+
+/* -------------- utility for canvas ---------------- */
+/* NOTE: t_canvas は struct _glist と等価 */
+void canvas_dump(t_canvas *x)
+{
+	if (!x) {
+		fprintf(stderr, "[debug]canvas_dump CAN'T dump\n");
+		return;
+	}
+	
+	fprintf(stderr, "[debug]canvas_dump START ----------------------------\n");
+	fprintf(stderr, "  this:[.x|%lx]\n", x);
+	fprintf(stderr, "  gl_obj:[%lx]\n",  x->gl_obj);
+	fprintf(stderr, "  gl_list:[%s]\n",  x->gl_list);
+	fprintf(stderr, "  gl_stub:[.x|%lx]\n",  x->gl_stub);
+	fprintf(stderr, "  gl_owner:[%d]\n",  x->gl_owner);
+	fprintf(stderr, "  gl_pixwidth:[%d]\n",  x->gl_pixwidth);
+	fprintf(stderr, "  gl_pixheight:[%d]\n",  x->gl_pixheight);
+
+	fprintf(stderr, "  gl_x1:[%f]\n",  x->gl_x1);
+	fprintf(stderr, "  gl_y1:[%f]\n",  x->gl_y1);
+	fprintf(stderr, "  gl_x2:[%f]\n",  x->gl_x2);
+	fprintf(stderr, "  gl_y2:[%f]\n",  x->gl_y2);
+	fprintf(stderr, "  gl_screenx1:[%d]\n",  x->gl_screenx1);
+	fprintf(stderr, "  gl_screeny1:[%d]\n",  x->gl_screeny1);
+	fprintf(stderr, "  gl_screenx2:[%d]\n",  x->gl_screenx2);
+	fprintf(stderr, "  gl_screeny2:[%d]\n",  x->gl_screeny2);
+	fprintf(stderr, "  gl_xmargin:[%d]\n",  x->gl_xmargin);
+	fprintf(stderr, "  gl_ymargin:[%d]\n",  x->gl_ymargin);
+	
+	fprintf(stderr, "  gl_xtick:[%lx]\n",  x->gl_xtick);
+	fprintf(stderr, "  gl_nxlabels:[%d]\n",  x->gl_nxlabels);
+	fprintf(stderr, "  gl_xlabel:[%d]\n",  x->gl_xlabel);
+	fprintf(stderr, "  gl_xlabely:[%f]\n",  x->gl_xlabely);
+	
+	fprintf(stderr, "  gl_ytick:[%lx]\n",  x->gl_ytick);
+	fprintf(stderr, "  gl_nylabels:[%d]\n",  x->gl_nylabels);
+	fprintf(stderr, "  gl_ylabel:[%d]\n",  x->gl_ylabel);
+	fprintf(stderr, "  gl_ylabelx:[%f]\n",  x->gl_ylabelx);
+	
+	fprintf(stderr, "  gl_editor:[.x|%lx]\n",  x->gl_editor);
+	fprintf(stderr, "  gl_editor2:[.x|%lx]\n",  x->gl_editor2);
+	fprintf(stderr, "  gl_name:[%s]\n", x->gl_name->s_name);
+	fprintf(stderr, "  gl_font:[%d]\n",  x->gl_font);
+	fprintf(stderr, "  gl_next:[.x|%lx]\n",  x->gl_next);
+	fprintf(stderr, "  gl_env:[.x|%lx]\n",  x->gl_env);
+	
+	fprintf(stderr, "[debug]canvas_dump END ------------------------------\n");
+}
+
+/* キャンバスのオブジェクトのデバッグ出力 */
+void canvas_list_objects(t_canvas *x){
+	
+	fprintf(stderr, "[debug]canvas_list_objects START ----------------------------\n");
+	
+	t_gobj *z;
+	int i;
+	for (z = x->gl_list, i=0; z; z = z->g_next, i++){
+		fprintf(stdout, " object[%d][%lx][%s]\n", i, z, z->g_pd->c_name->s_name);
+		
+		// fprintf(stdout, "  object[%d][%lx][%s]\n", i, z, 
+		//						class_getname(pd_class((t_pd*)z)));
+		
+		// NOTE: 上記のどちらのやり方でもうまく行く.
+		// z:        t_gobj
+		// g_pd:     t_pd
+		// c_name:   t_symbol
+	}
+	fprintf(stderr, "[debug]canvas_list_objects END ----------------------------\n");
+}
+

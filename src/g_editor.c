@@ -33,6 +33,9 @@ static char *canvas_textcopybuf;
 static int canvas_textcopybufsize;
 static t_glist *glist_finddirty(t_glist *x);
 
+void canvas_editor_dump(t_canvas *x); // test
+void canvas_selection_dump(t_canvas *x); // test
+
 /* ---------------- generic widget behavior ------------------------- */
 
 void gobj_getrect(t_gobj *x, t_glist *glist, int *x1, int *y1,
@@ -1947,14 +1950,8 @@ void canvas_motion(t_canvas *x, t_floatarg xpos, t_floatarg ypos,
     	
     x->gl_editor->e_lastmoved = 1;
 	
-	  //
-	  // test
-	  // 
-	  //	fprintf(stderr, "window name:[%s] width:[%lx]  height:[%lx]\n", x->gl_name->s_name, x->gl_pixwidth, x->gl_pixheight); // USELESS!
-	  //		fprintf(stderr, "window name:[%s] [%f] [%f] [%f] [%f]\n", x->gl_name->s_name, // USELESS!
-	  //						x->gl_x1, x->gl_y1, x->gl_x2, x->gl_y2 ); 
-	  fprintf(stderr, "window name:[%s] [%d] [%d] [%d] [%d]\n", x->gl_name->s_name, 
-					x->gl_screenx1, x->gl_screeny1, x->gl_screenx2, x->gl_screeny2);
+	  // fprintf(stderr, "window name:[%s] [%d] [%d] [%d] [%d]\n", x->gl_name->s_name, 
+		//			x->gl_screenx1, x->gl_screeny1, x->gl_screenx2, x->gl_screeny2);
   	int width  = x->gl_screenx2 - x->gl_screenx1;
   	int height = x->gl_screeny2 - x->gl_screeny1;
 	
@@ -2741,7 +2738,7 @@ static void canvas_texteditor(t_canvas *x)
 void glob_key(void *dummy, t_symbol *s, int ac, t_atom *av)
 {
         /* canvas_key checks for zero */
-    fprintf(stderr, "-- glob_key symbol[%s]\n", s->s_name);
+    // fprintf(stderr, "-- glob_key symbol[%s]\n", s->s_name);
     canvas_key(0, s, ac, av);
 }
 
@@ -2910,6 +2907,13 @@ void g_editor_setup(void)
         gensym("disconnect"), A_FLOAT, A_FLOAT, A_FLOAT, A_FLOAT, A_NULL);
 /* -------------- copy buffer ------------------ */
     copy_binbuf = binbuf_new();
+
+/* -------------- test --------------- */
+    class_addmethod(canvas_class, (t_method)canvas_editor_dump, 
+										gensym("eddump"), A_GIMME, A_NULL); // tani
+    class_addmethod(canvas_class, (t_method)canvas_selection_dump, 
+									gensym("seldump"), A_GIMME, A_NULL); // tani
+	
 }
 
 //
@@ -2933,4 +2937,71 @@ void canvas_editor_for_class(t_class *c)
         gensym("menuclose"), A_DEFFLOAT, 0);
     class_addmethod(c, (t_method)canvas_find_parent,
         gensym("findparent"), A_NULL);
+}
+
+
+/* -------------- utility for editor ---------------- */
+/* NOTE: デバッグの手間をへらすため、キャンバスを引数に指定する */
+void canvas_editor_dump(t_canvas *x){
+	
+	if (!x->gl_editor) {
+		fprintf(stderr, "[debug]canvas_editor_dump CAN'T dump\n");
+		return;
+	}
+	t_editor *e = x->gl_editor;
+	
+	fprintf(stderr, "[debug]canvas_editor_dump START ----------------------------\n");
+	fprintf(stderr, "  e_upd:[.x|%lx]\n", e->e_upd);
+	fprintf(stderr, "  e_updlist:[.x|%lx]\n", e->e_updlist);
+	fprintf(stderr, "  e_selection:[.x|%lx]\n", e->e_selection);
+	fprintf(stderr, "  e_textedfor:[.x|%lx]\n", e->e_textedfor);
+	fprintf(stderr, "  e_grab:[.x|%lx]\n", e->e_grab);
+
+	fprintf(stderr, "  e_motionfn:[.x|%lx]\n", e->e_motionfn);
+	fprintf(stderr, "  e_keyfn:[.x|%lx]\n", e->e_keyfn);
+
+	fprintf(stderr, "  e_connectbuf:[.x|%lx]\n", e->e_connectbuf);
+	fprintf(stderr, "  e_deleted:[.x|%lx]\n", e->e_deleted);
+	fprintf(stderr, "  e_guiconnect:[.x|%lx]\n", e->e_guiconnect);
+	
+	fprintf(stderr, "  e_glist:[.x|%lx]\n", e->e_glist); /* editorの親glist */
+	fprintf(stderr, "  e_xwas:[%d]\n", e->e_xwas);
+	fprintf(stderr, "  e_ywas:[%d]\n", e->e_ywas);
+	fprintf(stderr, "  e_selectline_index1:[%d]\n", e->e_selectline_index1);
+	fprintf(stderr, "  e_selectline_outno:[%d]\n", e->e_selectline_outno);
+	fprintf(stderr, "  e_selectline_index2:[%d]\n", e->e_selectline_index2);
+	fprintf(stderr, "  e_selectline_inno:[%d]\n", e->e_selectline_inno);
+
+	fprintf(stderr, "  e_onmotion:[%d]\n", e->e_onmotion);
+	fprintf(stderr, "  e_lastmoved:[%d]\n", e->e_lastmoved);
+	fprintf(stderr, "  e_textdirty:[%d]\n", e->e_textdirty);
+	fprintf(stderr, "  e_selectedline:[%d]\n", e->e_selectedline);
+
+	fprintf(stderr, "  e_clock:[%lx]\n", e->e_clock);
+	fprintf(stderr, "  e_xnew:[%d]\n", e->e_xnew);
+	fprintf(stderr, "  e_ynew:[%d]\n", e->e_ynew);
+	fprintf(stderr, "  session_id:[%d]\n", e->session_id);
+	fprintf(stderr, "[debug]canvas_editor_dump END ------------------------------\n");
+}
+
+/* t_selection に特化したオブジェクトのデバッグ出力 */
+void canvas_selection_dump (t_canvas *x){
+	
+	if (!x->gl_editor->e_selection) {
+		fprintf(stderr, "[debug]canvas_selection_dump CAN'T dump\n");
+		return;
+	}
+	fprintf(stderr, "[debug]canvas_selection_dump START ----------------------------\n");
+
+	t_selection *y;
+	int i;
+	for (y = x->gl_editor->e_selection, i=0; y; y = y->sel_next, i++){
+		fprintf(stderr, "  selection[%d][%lx][%s]\n", i, y->sel_what, y->sel_what->g_pd->c_name->s_name);
+			// y:        t_selection
+			// sel_what: t_gobj (=graphical object @ m_pd.h)
+			// g_pd:     t_pd   (=class @ m_imp.h)
+			// c_name:   t_symbol
+	}
+		
+	fprintf(stderr, "[debug]canvas_selection_dump END ------------------------------\n");
 }

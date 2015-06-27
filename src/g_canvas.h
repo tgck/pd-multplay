@@ -100,7 +100,7 @@ typedef struct _editor
     t_binbuf *e_connectbuf;         /* connections to deleted objects */
     t_binbuf *e_deleted;            /* last stuff we deleted */
     t_guiconnect *e_guiconnect;     /* GUI connection for filtering messages */ // NOTE: 多重化する時にGUIイベントの受け口となることに注意
-    struct _glist *e_glist;         /* glist which owns this */ /*glistの親glist?*/
+    struct _glist *e_glist;         /* glist which owns this */ /*glistの親glist*/
     int e_xwas;                     /* xpos on last mousedown or motion event */ /*待避されたx座標(イベント発生時の)*/
     int e_ywas;                     /* ypos, similarly */
     int e_selectline_index1;        /* indices for the selected line if any */
@@ -184,13 +184,13 @@ struct _glist
     t_symbol **gl_ylabel;
     t_float gl_ylabelx;
     t_editor *gl_editor;        /* editor structure when visible */ /*glistが表示状態のときのみgl_editorを持つ*/
-		t_editor *gl_editor2;				// alternative editor (for test)
+    t_editor *gl_editor2;				// alternative editor (for test)
     t_symbol *gl_name;          /* symbol bound here */
     int gl_font;                /* nominal font size in points, e.g., 10 */
     struct _glist *gl_next;         /* link in list of toplevels */ /*当該リストがトップレベルであるとき、次のリストへのポインタ(?)*/
     t_canvasenvironment *gl_env;    /* root canvases and abstractions only */
 	
-		/* 1ビット幅の各種フラグ */
+    /* 1ビット幅の各種フラグ */
     unsigned int gl_havewindow:1;   /* true if we own a window */
     unsigned int gl_mapped:1;       /* true if, moreover, it's "mapped" */
     unsigned int gl_dirty:1;        /* (root canvas only:) patch has changed */
