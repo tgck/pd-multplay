@@ -34,6 +34,7 @@ static int canvas_textcopybufsize;
 static t_glist *glist_finddirty(t_glist *x);
 
 void canvas_editor_dump(t_canvas *x); // test
+void canvas_selection_dump(t_canvas *x); // test
 
 /* ---------------- generic widget behavior ------------------------- */
 
@@ -2916,7 +2917,9 @@ void g_editor_setup(void)
 /* -------------- test --------------- */
     class_addmethod(canvas_class, (t_method)canvas_editor_dump, 
 										gensym("eddump"), A_GIMME, A_NULL); // tani
-
+    class_addmethod(canvas_class, (t_method)canvas_selection_dump, 
+									gensym("seldump"), A_GIMME, A_NULL); // tani
+	
 }
 
 //
@@ -2949,6 +2952,7 @@ void canvas_editor_dump(t_canvas *x){
 	
 	if (!x->gl_editor) {
 		fprintf(stderr, "[debug]canvas_editor_dump CAN'T dump\n");
+		return;
 	}
 	t_editor *e = x->gl_editor;
 	
@@ -2984,4 +2988,26 @@ void canvas_editor_dump(t_canvas *x){
 	fprintf(stderr, "  e_ynew:[%d]\n", e->e_ynew);
 	fprintf(stderr, "  session_id:[%d]\n", e->session_id);
 	fprintf(stderr, "[debug]canvas_editor_dump END ------------------------------\n");
+}
+
+/* t_selection に特化したenumrator */
+void canvas_selection_dump (t_canvas *x){
+	
+	if (!x->gl_editor->e_selection) {
+		fprintf(stderr, "[debug]canvas_selection_dump CAN'T dump\n");
+		return;
+	}
+	fprintf(stderr, "[debug]canvas_selection_dump START ----------------------------\n");
+
+	t_selection *y;
+	int i;
+	for (y = x->gl_editor->e_selection, i=0; y; y = y->sel_next, i++){
+		fprintf(stderr, "selection[%d][%lx][%s]\n", i, y->sel_what, y->sel_what->g_pd->c_name->s_name);
+			// y:        t_selection
+			// sel_what: t_gobj (=graphical object @ m_pd.h)
+			// g_pd:     t_pd   (=class @ m_imp.h)
+			// c_name:   t_symbol
+	}
+		
+	fprintf(stderr, "[debug]canvas_selection_dump END ------------------------------\n");
 }

@@ -1671,12 +1671,13 @@ void canvas_add_for_class(t_class *c)
     /* g_graph_setup_class(c); */
 }
 
-/* -------------- utility for canvas, editor ---------------- */
+/* -------------- utility for canvas ---------------- */
 /* NOTE: t_canvas は struct _glist と等価 */
 void canvas_dump(t_canvas *x)
 {
 	if (!x) {
 		fprintf(stderr, "[debug]canvas_dump CAN'T dump\n");
+		return;
 	}
 	
 	fprintf(stderr, "[debug]canvas_dump START ----------------------------\n");
