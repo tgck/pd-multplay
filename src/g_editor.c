@@ -3002,7 +3002,7 @@ void canvas_selection_dump (t_canvas *x){
 	t_selection *y;
 	int i;
 	for (y = x->gl_editor->e_selection, i=0; y; y = y->sel_next, i++){
-		fprintf(stderr, "selection[%d][%lx][%s]\n", i, y->sel_what, y->sel_what->g_pd->c_name->s_name);
+		fprintf(stderr, "  selection[%d][%lx][%s]\n", i, y->sel_what, y->sel_what->g_pd->c_name->s_name);
 			// y:        t_selection
 			// sel_what: t_gobj (=graphical object @ m_pd.h)
 			// g_pd:     t_pd   (=class @ m_imp.h)
