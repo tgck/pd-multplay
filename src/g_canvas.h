@@ -100,7 +100,7 @@ typedef struct _editor
     t_binbuf *e_connectbuf;         /* connections to deleted objects */
     t_binbuf *e_deleted;            /* last stuff we deleted */
     t_guiconnect *e_guiconnect;     /* GUI connection for filtering messages */ // NOTE: 多重化する時にGUIイベントの受け口となることに注意
-    struct _glist *e_glist;         /* glist which owns this */ /*glistの親glist?*/
+    struct _glist *e_glist;         /* glist which owns this */ /*glistの親glist*/
     int e_xwas;                     /* xpos on last mousedown or motion event */ /*待避されたx座標(イベント発生時の)*/
     int e_ywas;                     /* ypos, similarly */
     int e_selectline_index1;        /* indices for the selected line if any */

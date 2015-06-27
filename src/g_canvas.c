@@ -1717,40 +1717,4 @@ void canvas_dump(t_canvas *x)
 	fprintf(stderr, "  gl_env:[.x|%lx]\n",  x->gl_env);
 	
 	fprintf(stderr, "[debug]canvas_dump END ------------------------------\n");
-/*
-	t_object	gl_obj
-	t_gobj	*gl_list
-	struct	_gstub	*gl_stub
-	int	gl_valid
-	struct	_glist	*gl_owner
-	int	gl_pixwidth
-	int	gl_pixheight
-	t_float	gl_x1
-	t_float	gl_y1
-	t_float	gl_x2
-	t_float	gl_y2
-	int	gl_screenx1
-	int	gl_screeny1
-	int	gl_screenx2
-	int	gl_screeny2
-	int	gl_xmargin
-	int	gl_ymargin
- 
-	t_tick	gl_xtick
-	int	gl_nxlabels
-	t_symbol	**gl_xlabel
-	t_float	gl_xlabely
-
- t_tick	gl_ytick
-	int	gl_nylabels
-	t_symbol	**gl_ylabel
-	t_float	gl_ylabelx
- 
-	t_editor	*gl_editor
-	t_editor	*gl_editor2
-	t_symbol	*gl_name
-	int	gl_font
-	struct	_glist	*gl_next
-	t_canvasenvironment	*gl_env
-*/	
 }

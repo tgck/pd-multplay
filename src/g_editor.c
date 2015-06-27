@@ -33,6 +33,8 @@ static char *canvas_textcopybuf;
 static int canvas_textcopybufsize;
 static t_glist *glist_finddirty(t_glist *x);
 
+void canvas_editor_dump(t_canvas *x); // test
+
 /* ---------------- generic widget behavior ------------------------- */
 
 void gobj_getrect(t_gobj *x, t_glist *glist, int *x1, int *y1,
@@ -2910,6 +2912,11 @@ void g_editor_setup(void)
         gensym("disconnect"), A_FLOAT, A_FLOAT, A_FLOAT, A_FLOAT, A_NULL);
 /* -------------- copy buffer ------------------ */
     copy_binbuf = binbuf_new();
+
+/* -------------- test --------------- */
+    class_addmethod(canvas_class, (t_method)canvas_editor_dump, 
+										gensym("eddump"), A_GIMME, A_NULL); // tani
+
 }
 
 //
@@ -2933,4 +2940,48 @@ void canvas_editor_for_class(t_class *c)
         gensym("menuclose"), A_DEFFLOAT, 0);
     class_addmethod(c, (t_method)canvas_find_parent,
         gensym("findparent"), A_NULL);
+}
+
+
+/* -------------- utility for editor ---------------- */
+/* NOTE: デバッグの手間をへらすため、キャンバスを引数に指定する */
+void canvas_editor_dump(t_canvas *x){
+	
+	if (!x->gl_editor) {
+		fprintf(stderr, "[debug]canvas_editor_dump CAN'T dump\n");
+	}
+	t_editor *e = x->gl_editor;
+	
+	fprintf(stderr, "[debug]canvas_editor_dump START ----------------------------\n");
+	fprintf(stderr, "  e_upd:[.x|%lx]\n", e->e_upd);
+	fprintf(stderr, "  e_updlist:[.x|%lx]\n", e->e_updlist);
+	fprintf(stderr, "  e_selection:[.x|%lx]\n", e->e_selection);
+	fprintf(stderr, "  e_textedfor:[.x|%lx]\n", e->e_textedfor);
+	fprintf(stderr, "  e_grab:[.x|%lx]\n", e->e_grab);
+
+	fprintf(stderr, "  e_motionfn:[.x|%lx]\n", e->e_motionfn);
+	fprintf(stderr, "  e_keyfn:[.x|%lx]\n", e->e_keyfn);
+
+	fprintf(stderr, "  e_connectbuf:[.x|%lx]\n", e->e_connectbuf);
+	fprintf(stderr, "  e_deleted:[.x|%lx]\n", e->e_deleted);
+	fprintf(stderr, "  e_guiconnect:[.x|%lx]\n", e->e_guiconnect);
+	
+	fprintf(stderr, "  e_glist:[.x|%lx]\n", e->e_glist); /* editorの親glist */
+	fprintf(stderr, "  e_xwas:[%d]\n", e->e_xwas);
+	fprintf(stderr, "  e_ywas:[%d]\n", e->e_ywas);
+	fprintf(stderr, "  e_selectline_index1:[%d]\n", e->e_selectline_index1);
+	fprintf(stderr, "  e_selectline_outno:[%d]\n", e->e_selectline_outno);
+	fprintf(stderr, "  e_selectline_index2:[%d]\n", e->e_selectline_index2);
+	fprintf(stderr, "  e_selectline_inno:[%d]\n", e->e_selectline_inno);
+
+	fprintf(stderr, "  e_onmotion:[%d]\n", e->e_onmotion);
+	fprintf(stderr, "  e_lastmoved:[%d]\n", e->e_lastmoved);
+	fprintf(stderr, "  e_textdirty:[%d]\n", e->e_textdirty);
+	fprintf(stderr, "  e_selectedline:[%d]\n", e->e_selectedline);
+
+	fprintf(stderr, "  e_clock:[%lx]\n", e->e_clock);
+	fprintf(stderr, "  e_xnew:[%d]\n", e->e_xnew);
+	fprintf(stderr, "  e_ynew:[%d]\n", e->e_ynew);
+	fprintf(stderr, "  session_id:[%d]\n", e->session_id);
+	fprintf(stderr, "[debug]canvas_editor_dump END ------------------------------\n");
 }
