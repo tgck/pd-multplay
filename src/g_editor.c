@@ -1950,14 +1950,8 @@ void canvas_motion(t_canvas *x, t_floatarg xpos, t_floatarg ypos,
     	
     x->gl_editor->e_lastmoved = 1;
 	
-	  //
-	  // test
-	  // 
-	  //	fprintf(stderr, "window name:[%s] width:[%lx]  height:[%lx]\n", x->gl_name->s_name, x->gl_pixwidth, x->gl_pixheight); // USELESS!
-	  //		fprintf(stderr, "window name:[%s] [%f] [%f] [%f] [%f]\n", x->gl_name->s_name, // USELESS!
-	  //						x->gl_x1, x->gl_y1, x->gl_x2, x->gl_y2 ); 
-	  fprintf(stderr, "window name:[%s] [%d] [%d] [%d] [%d]\n", x->gl_name->s_name, 
-					x->gl_screenx1, x->gl_screeny1, x->gl_screenx2, x->gl_screeny2);
+	  // fprintf(stderr, "window name:[%s] [%d] [%d] [%d] [%d]\n", x->gl_name->s_name, 
+		//			x->gl_screenx1, x->gl_screeny1, x->gl_screenx2, x->gl_screeny2);
   	int width  = x->gl_screenx2 - x->gl_screenx1;
   	int height = x->gl_screeny2 - x->gl_screeny1;
 	
@@ -2744,7 +2738,7 @@ static void canvas_texteditor(t_canvas *x)
 void glob_key(void *dummy, t_symbol *s, int ac, t_atom *av)
 {
         /* canvas_key checks for zero */
-    fprintf(stderr, "-- glob_key symbol[%s]\n", s->s_name);
+    // fprintf(stderr, "-- glob_key symbol[%s]\n", s->s_name);
     canvas_key(0, s, ac, av);
 }
 
