@@ -105,6 +105,10 @@ proc ::pd_menucommands::menu_message_dialog {} {
     ::dialog_message::open_message_dialog $::focused_window
 }
 
+proc ::pd_menucommands::menu_message_dialog2 {} {
+    ::dialog_message2::open_message_dialog2 $::focused_window
+}
+
 proc ::pd_menucommands::menu_find_dialog {} {
     ::dialog_find::open_find_dialog $::focused_window
 }
