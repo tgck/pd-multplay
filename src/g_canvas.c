@@ -1672,12 +1672,85 @@ void canvas_add_for_class(t_class *c)
 }
 
 /* -------------- utility for canvas, editor ---------------- */
+/* NOTE: t_canvas は struct _glist と等価 */
 void canvas_dump(t_canvas *x)
 {
 	if (!x) {
 		fprintf(stderr, "[debug]canvas_dump CAN'T dump\n");
 	}
+	
 	fprintf(stderr, "[debug]canvas_dump START ----------------------------\n");
+	fprintf(stderr, "  this:[.x|%lx]\n", x);
+	fprintf(stderr, "  gl_obj:[%lx]\n",  x->gl_obj);
+	fprintf(stderr, "  gl_list:[%s]\n",  x->gl_list);
+	fprintf(stderr, "  gl_stub:[.x|%lx]\n",  x->gl_stub);
+	fprintf(stderr, "  gl_owner:[%d]\n",  x->gl_owner);
+	fprintf(stderr, "  gl_pixwidth:[%d]\n",  x->gl_pixwidth);
+	fprintf(stderr, "  gl_pixheight:[%d]\n",  x->gl_pixheight);
+
+	fprintf(stderr, "  gl_x1:[%f]\n",  x->gl_x1);
+	fprintf(stderr, "  gl_y1:[%f]\n",  x->gl_y1);
+	fprintf(stderr, "  gl_x2:[%f]\n",  x->gl_x2);
+	fprintf(stderr, "  gl_y2:[%f]\n",  x->gl_y2);
+	fprintf(stderr, "  gl_screenx1:[%d]\n",  x->gl_screenx1);
+	fprintf(stderr, "  gl_screeny1:[%d]\n",  x->gl_screeny1);
+	fprintf(stderr, "  gl_screenx2:[%d]\n",  x->gl_screenx2);
+	fprintf(stderr, "  gl_screeny2:[%d]\n",  x->gl_screeny2);
+	fprintf(stderr, "  gl_xmargin:[%d]\n",  x->gl_xmargin);
+	fprintf(stderr, "  gl_ymargin:[%d]\n",  x->gl_ymargin);
+	
+	fprintf(stderr, "  gl_xtick:[%lx]\n",  x->gl_xtick);
+	fprintf(stderr, "  gl_nxlabels:[%d]\n",  x->gl_nxlabels);
+	fprintf(stderr, "  gl_xlabel:[%d]\n",  x->gl_xlabel);
+	fprintf(stderr, "  gl_xlabely:[%f]\n",  x->gl_xlabely);
+	
+	fprintf(stderr, "  gl_ytick:[%lx]\n",  x->gl_ytick);
+	fprintf(stderr, "  gl_nylabels:[%d]\n",  x->gl_nylabels);
+	fprintf(stderr, "  gl_ylabel:[%d]\n",  x->gl_ylabel);
+	fprintf(stderr, "  gl_ylabelx:[%f]\n",  x->gl_ylabelx);
+	
+	fprintf(stderr, "  gl_editor:[.x|%lx]\n",  x->gl_editor);
+	fprintf(stderr, "  gl_editor2:[.x|%lx]\n",  x->gl_editor2);
 	fprintf(stderr, "  gl_name:[%s]\n", x->gl_name->s_name);
+	fprintf(stderr, "  gl_font:[%d]\n",  x->gl_font);
+	fprintf(stderr, "  gl_next:[.x|%lx]\n",  x->gl_next);
+	fprintf(stderr, "  gl_env:[.x|%lx]\n",  x->gl_env);
+	
 	fprintf(stderr, "[debug]canvas_dump END ------------------------------\n");
+/*
+	t_object	gl_obj
+	t_gobj	*gl_list
+	struct	_gstub	*gl_stub
+	int	gl_valid
+	struct	_glist	*gl_owner
+	int	gl_pixwidth
+	int	gl_pixheight
+	t_float	gl_x1
+	t_float	gl_y1
+	t_float	gl_x2
+	t_float	gl_y2
+	int	gl_screenx1
+	int	gl_screeny1
+	int	gl_screenx2
+	int	gl_screeny2
+	int	gl_xmargin
+	int	gl_ymargin
+ 
+	t_tick	gl_xtick
+	int	gl_nxlabels
+	t_symbol	**gl_xlabel
+	t_float	gl_xlabely
+
+ t_tick	gl_ytick
+	int	gl_nylabels
+	t_symbol	**gl_ylabel
+	t_float	gl_ylabelx
+ 
+	t_editor	*gl_editor
+	t_editor	*gl_editor2
+	t_symbol	*gl_name
+	int	gl_font
+	struct	_glist	*gl_next
+	t_canvasenvironment	*gl_env
+*/	
 }
