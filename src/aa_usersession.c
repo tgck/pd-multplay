@@ -17,21 +17,6 @@ void glob_list_canvases(t_pd *dummy){
 	fprintf(stdout, "[testOut]glob_list_canvases. canvas num[%d].\n", canvas_get_canvas_count());
 }
 
-//
-// キャンバスが保持するオブジェクトを走査する
-//
-void canvas_list_objects(t_glist *x){
-	t_gobj *z;
-	int num = 0;
-	for (z = x->gl_list; z; z = z->g_next){
-		fprintf(stdout, "-- -- canvas_list_objects[%d]:[%s]\n", 
-						num,
-						class_getname(pd_class((t_pd*)z)));
-		num++;
-	}
-	fprintf(stdout, "[testOut]number of objects in canvas[%d]\n", num);
-}
-
 // binbufのログ出力整形用
 // 文字列"mae" を文字列"ato"で置換する
 int strrep(char *buf, char *mae, char *ato)

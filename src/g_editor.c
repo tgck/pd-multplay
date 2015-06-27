@@ -2990,7 +2990,7 @@ void canvas_editor_dump(t_canvas *x){
 	fprintf(stderr, "[debug]canvas_editor_dump END ------------------------------\n");
 }
 
-/* t_selection に特化したenumrator */
+/* t_selection に特化したオブジェクトのデバッグ出力 */
 void canvas_selection_dump (t_canvas *x){
 	
 	if (!x->gl_editor->e_selection) {

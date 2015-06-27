@@ -57,8 +57,8 @@ static void canvas_pop(t_canvas *x, t_floatarg fvis);
 static void canvas_bind(t_canvas *x);
 static void canvas_unbind(t_canvas *x);
 
+void canvas_dump(t_canvas *x); // test(t_canvasのメンバーダンプ)
 void canvas_list_objects(t_canvas *x); // test
-void canvas_dump(t_canvas *x); // test
 
 /* --------- functions to handle the canvas environment ----------- */
 
@@ -1719,3 +1719,25 @@ void canvas_dump(t_canvas *x)
 	
 	fprintf(stderr, "[debug]canvas_dump END ------------------------------\n");
 }
+
+/* キャンバスのオブジェクトのデバッグ出力 */
+void canvas_list_objects(t_canvas *x){
+	
+	fprintf(stderr, "[debug]canvas_list_objects START ----------------------------\n");
+	
+	t_gobj *z;
+	int i;
+	for (z = x->gl_list, i=0; z; z = z->g_next, i++){
+		fprintf(stdout, " object[%d][%lx][%s]\n", i, z, z->g_pd->c_name->s_name);
+		
+		// fprintf(stdout, "  object[%d][%lx][%s]\n", i, z, 
+		//						class_getname(pd_class((t_pd*)z)));
+		
+		// NOTE: 上記のどちらのやり方でもうまく行く.
+		// z:        t_gobj
+		// g_pd:     t_pd
+		// c_name:   t_symbol
+	}
+	fprintf(stderr, "[debug]canvas_list_objects END ----------------------------\n");
+}
+
