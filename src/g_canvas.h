@@ -185,7 +185,8 @@ struct _glist
     t_float gl_ylabelx;
     t_editor *gl_editor;        /* editor structure when visible */ /*glistが表示状態のときのみgl_editorを持つ*/
     t_editor *gl_editor2;				// alternative editor (for test)
-    struct t_editors *gl_editors; 	    // editors assigned to this canvas.(for test)
+    // struct t_editors *gl_editors; 	    // editors assigned to this canvas.(for test)
+		t_editor *gl_editors; 	    // editors assigned to this canvas.(for test)
     t_symbol *gl_name;          /* symbol bound here */
     int gl_font;                /* nominal font size in points, e.g., 10 */
     struct _glist *gl_next;         /* link in list of toplevels */ /*当該リストがトップレベルであるとき、次のリストへのポインタ(?)*/
