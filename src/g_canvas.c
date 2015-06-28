@@ -59,6 +59,7 @@ static void canvas_unbind(t_canvas *x);
 
 void canvas_dump(t_canvas *x); // test(t_canvasのメンバーダンプ)
 void canvas_list_objects(t_canvas *x); // test
+void canvas_editors(t_canvas *x); // test
 
 /* --------- functions to handle the canvas environment ----------- */
 
@@ -1613,7 +1614,10 @@ void g_canvas_setup(void)
     class_addmethod(canvas_class, (t_method)canvas_list_objects,
         gensym("ls"), A_NULL, 0); /** alias **/
 	  class_addmethod(canvas_class, (t_method)canvas_dump,
-									gensym("dump"), A_NULL, 0);
+				gensym("dump"), A_NULL, 0);
+	  class_addmethod(canvas_class, (t_method)canvas_editors,
+				gensym("editors"), A_NULL, 0);
+	
 	
 /* ----- subcanvases, which you get by typing "pd" in a box ---- */
     class_addcreator((t_newmethod)subcanvas_new, gensym("pd"), A_DEFSYMBOL, 0);
@@ -1664,6 +1668,7 @@ void canvas_add_for_class(t_class *c)
     canvas_readwrite_for_class(c);
     /* g_graph_setup_class(c); */
 }
+
 
 /* -------------- utility for canvas ---------------- */
 /* NOTE: t_canvas は struct _glist と等価 */
