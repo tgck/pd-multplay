@@ -352,6 +352,7 @@ void glist_init(t_glist *x)
 t_canvas *canvas_new(void *dummy, t_symbol *sel, int argc, t_atom *argv)
 {
     fprintf(stderr, "canvas_new with argc[%d]\n", argc); // test
+    fprintf(stderr, "canvas size[%d]\n", sizeof(t_canvas)); // test
 	
     t_canvas *x = (t_canvas *)pd_new(canvas_class); // canvas_class を元にcanvasインスタンスを作成
     t_canvas *owner = canvas_getcurrent();
@@ -1711,7 +1712,7 @@ void canvas_dump(t_canvas *x)
 	
 	fprintf(stderr, "  gl_editor:[.x|%lx]\n",  x->gl_editor);
 	fprintf(stderr, "  gl_editor2:[.x|%lx]\n",  x->gl_editor2);
-//	fprintf(stderr, "  gl_editors:[.x|%lx]\n",  x->gl_editors);
+	fprintf(stderr, "  gl_editors:[.x|%lx]\n",  x->gl_editors);
 	
 	fprintf(stderr, "  gl_name:[%s]\n", x->gl_name->s_name);
 	fprintf(stderr, "  gl_font:[%d]\n",  x->gl_font);

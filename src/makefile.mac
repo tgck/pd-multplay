@@ -43,7 +43,8 @@ LDFLAGS = -Wl -framework CoreAudio -framework AudioUnit \
 LIB =   -ldl -lm -lpthread
 
 
-CFLAGS = $(ARCH_CFLAGS) $(WARN_CFLAGS) $(CPPFLAGS) $(MORECFLAGS)
+#CFLAGS = $(ARCH_CFLAGS) $(WARN_CFLAGS) $(CPPFLAGS) $(MORECFLAGS)
+CFLAGS = -g $(ARCH_CFLAGS) $(WARN_CFLAGS) $(CPPFLAGS) $(MORECFLAGS)
 
 # the sources
 
