@@ -437,6 +437,9 @@ t_canvas *canvas_new(void *dummy, t_symbol *sel, int argc, t_atom *argv)
     x->gl_willvis = vis;
     x->gl_edit = !strncmp(x->gl_name->s_name, "Untitled", 8);
     x->gl_font = sys_nearestfontsize(font);
+		
+	x->gl_editors = NULL; // とりあえずの初期化しとく
+	
     pd_pushsym(&x->gl_pd);
     return(x);
 }

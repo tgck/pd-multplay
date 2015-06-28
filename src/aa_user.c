@@ -34,18 +34,18 @@ int strrep(char *buf, char *mae, char *ato)
 
 // editorsに特化したデバッグプリント
 void canvas_editors (t_canvas *x){
-//	if (!x->gl_editors) {
-//		fprintf(stderr, "[debug]canvas_editors CAN'T dump\n");
-//		return;
-//	}
-//	
-//	fprintf(stderr, "[debug]canvas_editors START ----------------------------\n");
-//	
-//	t_editors *y;
-//	int i;
-//	for (y = x->gl_editors, i=0; y; y = y->e_next, i++){
-//		fprintf(stderr, "  editors[%d][%lx]\n", i, y->e_this);
-//	}
-//	
-//	fprintf(stderr, "[debug]canvas_editors END ------------------------------\n");
+	if (!x->gl_editors) {
+		fprintf(stderr, "[debug]canvas_editors CAN'T dump\n");
+		return;
+	}
+	
+	fprintf(stderr, "[debug]canvas_editors START ----------------------------\n");
+	
+	t_editors *y;
+	int i;
+	for (y = x->gl_editors, i=0; y; y = y->e_next, i++){
+		fprintf(stderr, "  editors[%d][%lx]\n", i, y->e_this);
+	}
+	
+	fprintf(stderr, "[debug]canvas_editors END ------------------------------\n");
 }
