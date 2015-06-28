@@ -608,6 +608,8 @@ void binbuf_eval(t_binbuf *x, t_pd *target, int argc, t_atom *argv)
     else
     {
 #if 1
+			
+        fprintf(stderr, "hoge0.1.0\n");
             /* count number of args in biggest message.  The wierd
             treatment of "pd_objectmaker" is because when the message
             goes out to objectmaker, commas and semis are passed
@@ -622,6 +624,8 @@ void binbuf_eval(t_binbuf *x, t_pd *target, int argc, t_atom *argv)
             int i, j = (target ? 0 : -1);
             for (i = 0; i < ac; i++)
             {
+                // at をチェックしたい
+                fprintf(stderr, "-- [%d]\n", at->a_type);
                 if (at[i].a_type == A_SEMI)
                     j = -1;
                 else if (at[i].a_type == A_COMMA)
@@ -644,12 +648,16 @@ void binbuf_eval(t_binbuf *x, t_pd *target, int argc, t_atom *argv)
 
     }
     msp = mstack;
+		fprintf(stderr, "hoge0.1.1\n");
     while (1)
     {
         t_pd *nexttarget;
             /* get a target. */
+				
         while (!target)
         {
+						// fprintf(stderr, "-- [%s]\n", target->c_name->s_name); // test
+					
             t_symbol *s;
             while (ac && (at->a_type == A_SEMI || at->a_type == A_COMMA))
                 ac--,  at++;
@@ -696,13 +704,19 @@ void binbuf_eval(t_binbuf *x, t_pd *target, int argc, t_atom *argv)
                 break;
             }
         }
+        fprintf(stderr, "-- hoge 0.1.1.0\n");//test
         if (!ac) break;
+        fprintf(stderr, "-- hoge 0.1.1.1\n");//test
+			
         nargs = 0;
         nexttarget = target;
         while (1)
         {
+						fprintf(stderr, "hoge0.1.2\n");
             t_symbol *s9;
             if (!ac) goto gotmess;
+						// fprintf(stderr, "-- a_type[%d]\n", at->a_type);//test
+					
             switch (at->a_type)
             {
             case A_SEMI:

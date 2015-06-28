@@ -99,6 +99,8 @@ void max_default(t_pd *x, t_symbol *s, int argc, t_atom *argv)
 // 
 void glob_init(void)
 {
+    fprintf(stderr, "-- glob_init() ***START***\n");
+	
     maxclass = class_new(gensym("max"), 0, 0, sizeof(t_pd),
         CLASS_DEFAULT, A_NULL);
     class_addanything(maxclass, max_default);
@@ -168,6 +170,8 @@ void glob_init(void)
 #endif
     class_addanything(glob_pdobject, max_default);
     pd_bind(&glob_pdobject, gensym("pd"));
+	
+    fprintf(stderr, "-- glob_init() ***END***\n");
 }
 
     /* function to return version number at run time.  Any of the

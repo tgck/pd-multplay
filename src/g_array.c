@@ -131,6 +131,8 @@ and float-arrays. */
 
 void garray_init( void)
 {
+		fprintf(stderr, "-- garray_init() ***START***\n");
+	
     t_binbuf *b;
     if (garray_arraytemplatecanvas)
         return;
@@ -140,15 +142,27 @@ void garray_init( void)
     binbuf_text(b, garray_floattemplatefile, strlen(garray_floattemplatefile));
     binbuf_eval(b, &pd_canvasmaker, 0, 0);
     vmess(s__X.s_thing, gensym("pop"), "i", 0);
-    
+  
+    fprintf(stderr, "hoge0\n");
+	
     glob_setfilename(0, gensym("_float_array_template"), gensym("."));
+	fprintf(stderr, "hoge0.1\n");	
     binbuf_text(b, garray_arraytemplatefile, strlen(garray_arraytemplatefile));
-    binbuf_eval(b, &pd_canvasmaker, 0, 0);
+  fprintf(stderr, "hoge0.2\n");
+	
+    binbuf_eval(b, &pd_canvasmaker, 0, 0);//この中でバスエラー
+
+	  fprintf(stderr, "hoge1\n");
+	
     garray_arraytemplatecanvas = s__X.s_thing;
     vmess(s__X.s_thing, gensym("pop"), "i", 0);
 
+		fprintf(stderr, "hoge2\n");
+	
     glob_setfilename(0, &s_, &s_);
-    binbuf_free(b);  
+    binbuf_free(b);
+	
+		fprintf(stderr, "-- garray_init() ***END***\n");
 }
 
 /* create a new scalar attached to a symbol.  Used to make floating-point
