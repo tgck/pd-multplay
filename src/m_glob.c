@@ -4,7 +4,6 @@
 
 #include "m_pd.h"
 #include "m_imp.h"
-//#include "aa_usersession.h"
 
 t_class *glob_pdobject;
 static t_class *maxclass;

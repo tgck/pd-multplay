@@ -1712,6 +1712,8 @@ void canvas_dump(t_canvas *x)
 	
 	fprintf(stderr, "  gl_editor:[.x|%lx]\n",  x->gl_editor);
 	fprintf(stderr, "  gl_editor2:[.x|%lx]\n",  x->gl_editor2);
+//	fprintf(stderr, "  gl_editors:[.x|%lx]\n",  x->gl_editors);
+	
 	fprintf(stderr, "  gl_name:[%s]\n", x->gl_name->s_name);
 	fprintf(stderr, "  gl_font:[%d]\n",  x->gl_font);
 	fprintf(stderr, "  gl_next:[.x|%lx]\n",  x->gl_next);
