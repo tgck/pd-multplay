@@ -354,13 +354,7 @@ t_canvas *canvas_new(void *dummy, t_symbol *sel, int argc, t_atom *argv)
 	
     t_canvas *x = (t_canvas *)pd_new(canvas_class); // canvas_class を元にcanvasインスタンスを作成
     t_canvas *owner = canvas_getcurrent();
-		
-    if (owner) {
-        fprintf(stderr, "canvas_new -- owner exists \n");// test
-    } else {
-        fprintf(stderr, "canvas_new -- owner NOT exists \n");// test
-    }
-	
+			
     t_symbol *s = &s_;
     int vis = 0, width = GLIST_DEFCANVASWIDTH, height = GLIST_DEFCANVASHEIGHT;
     int xloc = 0, yloc = GLIST_DEFCANVASYLOC;
