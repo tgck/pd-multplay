@@ -1686,43 +1686,55 @@ void canvas_dump(t_canvas *x)
 	}
 	
 	fprintf(stderr, "[debug]canvas_dump START ----------------------------\n");
-	fprintf(stderr, "  this:[.x|%lx]\n", x);
-	fprintf(stderr, "  gl_obj:[%lx]\n",  x->gl_obj);
-	fprintf(stderr, "  gl_list:[%s]\n",  x->gl_list);
-	fprintf(stderr, "  gl_stub:[.x|%lx]\n",  x->gl_stub);
-	fprintf(stderr, "  gl_owner:[%d]\n",  x->gl_owner);
-	fprintf(stderr, "  gl_pixwidth:[%d]\n",  x->gl_pixwidth);
-	fprintf(stderr, "  gl_pixheight:[%d]\n",  x->gl_pixheight);
+	fprintf(stderr, "  this:         [.x|%lx]\n", x);
+	fprintf(stderr, "  gl_obj:       [%lx]\n",  x->gl_obj);
+	fprintf(stderr, "  gl_list:      [%s]\n",  x->gl_list);
+	fprintf(stderr, "  gl_stub:      [.x|%lx]\n",  x->gl_stub);
+	fprintf(stderr, "  gl_owner:     [%d]\n",  x->gl_owner);
+	fprintf(stderr, "  gl_pixwidth:  [%d]\n",  x->gl_pixwidth);
+	fprintf(stderr, "  gl_pixheight: [%d]\n",  x->gl_pixheight);
 
-	fprintf(stderr, "  gl_x1:[%f]\n",  x->gl_x1);
-	fprintf(stderr, "  gl_y1:[%f]\n",  x->gl_y1);
-	fprintf(stderr, "  gl_x2:[%f]\n",  x->gl_x2);
-	fprintf(stderr, "  gl_y2:[%f]\n",  x->gl_y2);
-	fprintf(stderr, "  gl_screenx1:[%d]\n",  x->gl_screenx1);
-	fprintf(stderr, "  gl_screeny1:[%d]\n",  x->gl_screeny1);
-	fprintf(stderr, "  gl_screenx2:[%d]\n",  x->gl_screenx2);
-	fprintf(stderr, "  gl_screeny2:[%d]\n",  x->gl_screeny2);
-	fprintf(stderr, "  gl_xmargin:[%d]\n",  x->gl_xmargin);
-	fprintf(stderr, "  gl_ymargin:[%d]\n",  x->gl_ymargin);
+	fprintf(stderr, "  gl_x1:        [%f]\n",  x->gl_x1);
+	fprintf(stderr, "  gl_y1:        [%f]\n",  x->gl_y1);
+	fprintf(stderr, "  gl_x2:        [%f]\n",  x->gl_x2);
+	fprintf(stderr, "  gl_y2:        [%f]\n",  x->gl_y2);
+	fprintf(stderr, "  gl_screenx1:  [%d]\n",  x->gl_screenx1);
+	fprintf(stderr, "  gl_screeny1:  [%d]\n",  x->gl_screeny1);
+	fprintf(stderr, "  gl_screenx2:  [%d]\n",  x->gl_screenx2);
+	fprintf(stderr, "  gl_screeny2:  [%d]\n",  x->gl_screeny2);
+	fprintf(stderr, "  gl_xmargin:   [%d]\n",  x->gl_xmargin);
+	fprintf(stderr, "  gl_ymargin:   [%d]\n",  x->gl_ymargin);
 	
-	fprintf(stderr, "  gl_xtick:[%lx]\n",  x->gl_xtick);
-	fprintf(stderr, "  gl_nxlabels:[%d]\n",  x->gl_nxlabels);
-	fprintf(stderr, "  gl_xlabel:[%d]\n",  x->gl_xlabel);
-	fprintf(stderr, "  gl_xlabely:[%f]\n",  x->gl_xlabely);
+	fprintf(stderr, "  gl_xtick:     [%lx]\n",  x->gl_xtick);
+	fprintf(stderr, "  gl_nxlabels:  [%d]\n",   x->gl_nxlabels);
+	fprintf(stderr, "  gl_xlabel:    [%d]\n",   x->gl_xlabel);
+	fprintf(stderr, "  gl_xlabely:   [%f]\n",   x->gl_xlabely);
 	
-	fprintf(stderr, "  gl_ytick:[%lx]\n",  x->gl_ytick);
-	fprintf(stderr, "  gl_nylabels:[%d]\n",  x->gl_nylabels);
-	fprintf(stderr, "  gl_ylabel:[%d]\n",  x->gl_ylabel);
-	fprintf(stderr, "  gl_ylabelx:[%f]\n",  x->gl_ylabelx);
+	fprintf(stderr, "  gl_ytick:     [%lx]\n",  x->gl_ytick);
+	fprintf(stderr, "  gl_nylabels:  [%d]\n",   x->gl_nylabels);
+	fprintf(stderr, "  gl_ylabel:    [%d]\n",   x->gl_ylabel);
+	fprintf(stderr, "  gl_ylabelx:   [%f]\n",   x->gl_ylabelx);
 	
-	fprintf(stderr, "  gl_editor:[.x|%lx]\n",  x->gl_editor);
-	fprintf(stderr, "  gl_editor2:[.x|%lx]\n",  x->gl_editor2);
-	fprintf(stderr, "  gl_editors:[.x|%lx]\n",  x->gl_editors);
+	fprintf(stderr, "  gl_editor:    [.x|%lx]\n",  x->gl_editor);
+	fprintf(stderr, "  gl_editor2:   [.x|%lx]\n",  x->gl_editor2);
+	fprintf(stderr, "  gl_editors:   [.x|%lx]\n",  x->gl_editors);
 	
-	fprintf(stderr, "  gl_name:[%s]\n", x->gl_name->s_name);
-	fprintf(stderr, "  gl_font:[%d]\n",  x->gl_font);
-	fprintf(stderr, "  gl_next:[.x|%lx]\n",  x->gl_next);
-	fprintf(stderr, "  gl_env:[.x|%lx]\n",  x->gl_env);
+	fprintf(stderr, "  gl_name:      [%s]\n",      x->gl_name->s_name);
+	fprintf(stderr, "  gl_font:      [%d]\n",      x->gl_font);
+	fprintf(stderr, "  gl_next:      [.x|%lx]\n",  x->gl_next);
+	fprintf(stderr, "  gl_env:       [.x|%lx]\n",  x->gl_env);
+
+	fprintf(stderr, "  gl_havewindow:[%d]\n", x->gl_havewindow);
+	fprintf(stderr, "  gl_mapped:    [%d]\n", x->gl_mapped);
+	fprintf(stderr, "  gl_dirty:     [%d]\n", x->gl_dirty);
+	fprintf(stderr, "  gl_loading:   [%d]\n", x->gl_loading);
+	fprintf(stderr, "  gl_willvis:   [%d]\n", x->gl_willvis);
+	fprintf(stderr, "  gl_edit:      [%d]\n", x->gl_edit);
+	fprintf(stderr, "  gl_isdeleting:[%d]\n", x->gl_isdeleting);
+	fprintf(stderr, "  gl_goprect:   [%d]\n", x->gl_goprect);
+	fprintf(stderr, "  gl_isgraph:   [%d]\n", x->gl_isgraph);
+	fprintf(stderr, "  gl_hidetext:  [%d]\n", x->gl_hidetext);
+	fprintf(stderr, "  gl_private:   [%d]\n", x->gl_private);
 	
 	fprintf(stderr, "[debug]canvas_dump END ------------------------------\n");
 }

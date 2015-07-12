@@ -28,22 +28,26 @@ void canvas_drawredrect(t_canvas *x, int doit);
 
 void glist_add(t_glist *x, t_gobj *y)
 {
+  	// fprintf(stderr, "[debug]glist_add[%s]\n", y->g_pd->c_name->s_name ); // test
+		// 元々このソースは、struct _class を知らないので、このデバッグプリントを通すには m_imp.h のインクルードが必要。
+    fprintf(stderr, "[debug]glist_add[%lx][%s]\n", x, class_getname(y->g_pd)); // test インクルードを壊さずでバッグプリントする
+	
     t_object *ob;
     y->g_next = 0;
     if (!x->gl_list) x->gl_list = y;
     else
     {
         t_gobj *y2;
-        for (y2 = x->gl_list; y2->g_next; y2 = y2->g_next);
+        for (y2 = x->gl_list; y2->g_next; y2 = y2->g_next); // リストの末端までポインタを進める
         y2->g_next = y;
     }
-    if (x->gl_editor && (ob = pd_checkobject(&y->g_pd)))
+    if (x->gl_editor && (ob = pd_checkobject(&y->g_pd))) // is Patchable then 
         rtext_new(x, ob);
-    if (x->gl_editor && x->gl_isgraph && !x->gl_goprect
+    if (x->gl_editor && x->gl_isgraph && !x->gl_goprect  // フラグが立ってなければ立てて、描画する処理を
         && pd_checkobject(&y->g_pd))
     {
         x->gl_goprect = 1;
-        canvas_drawredrect(x, 1);
+        canvas_drawredrect(x, 1);	// 赤い矩形を書く
     }
     if (glist_isvisible(x))
         gobj_vis(y, x, 1);
