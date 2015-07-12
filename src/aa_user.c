@@ -17,8 +17,9 @@ void glob_list_canvases(t_pd *dummy){
 	fprintf(stdout, "[testOut]glob_list_canvases. canvas num[%d].\n", canvas_get_canvas_count());
 }
 
+// 
 // binbufのログ出力整形用
-// 文字列"mae" を文字列"ato"で置換する
+//    文字列"mae" を文字列"ato"で置換する
 int strrep(char *buf, char *mae, char *ato)
 {
 	char *mituke;
@@ -32,7 +33,9 @@ int strrep(char *buf, char *mae, char *ato)
 	return 1;
 }
 
+//
 // editorsに特化したデバッグプリント
+//
 void canvas_editors (t_canvas *x){
 	if (!x->gl_editors) {
 		fprintf(stderr, "[debug]canvas_editors CAN'T dump\n");
@@ -49,3 +52,5 @@ void canvas_editors (t_canvas *x){
 	
 	fprintf(stderr, "[debug]canvas_editors END ------------------------------\n");
 }
+
+

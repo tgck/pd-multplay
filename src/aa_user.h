@@ -3,7 +3,6 @@
 
 static void hello(void);
 static long new_session_id(void);
-//void canvas_editors(t_canvas);
 
 // ユーティリティ
 // ひとまずここに置いておく. 

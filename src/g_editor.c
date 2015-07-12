@@ -33,7 +33,7 @@ static char *canvas_textcopybuf;
 static int canvas_textcopybufsize;
 static t_glist *glist_finddirty(t_glist *x);
 
-void canvas_editor_dump(t_canvas *x); // test
+void canvas_editor_dump(t_canvas *x);    // test
 void canvas_selection_dump(t_canvas *x); // test
 
 /* ---------------- generic widget behavior ------------------------- */
@@ -917,6 +917,19 @@ void canvas_create_editor2(t_glist *x)
 			if (ob = pd_checkobject(&y->g_pd))
 				rtext_new(x, ob);
 	}
+}
+
+//
+// editorをキャンバスに追加する
+//
+void canvas_add_editor (t_canvas *x) {
+  fprintf(stderr, "[debug]canvas_add_editor\n");
+	// 単純に editor の生成関数を呼んでみる
+	t_editor *tmp = editor_new(x);
+	
+	// キャンバスに割当
+	x->gl_editor2 = tmp;
+	// x->gl_editors = tmp;
 }
 
 void canvas_destroy_editor(t_glist *x)
