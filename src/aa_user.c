@@ -37,13 +37,23 @@ int strrep(char *buf, char *mae, char *ato)
 // editorsに特化したデバッグプリント
 //
 void canvas_editors (t_canvas *x){
+	
 	if (!x->gl_editors) {
 		fprintf(stderr, "[debug]canvas_editors CAN'T dump\n");
 		return;
 	}
 	
 	fprintf(stderr, "[debug]canvas_editors START ----------------------------\n");
+
+	// 要素数カウント
+	t_editors *z;
+	int c = 0;
+	for (z=x->gl_editors; z; z=z->e_next) {
+		c++;
+	}
+	fprintf(stderr, "  editors count[%d]\n", c);
 	
+	// editor のダンプ
 	t_editors *y;
 	int i;
 	for (y = x->gl_editors, i=0; y; y = y->e_next, i++){

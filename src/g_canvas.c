@@ -1624,6 +1624,8 @@ void g_canvas_setup(void)
 				gensym("editors"), A_NULL, 0);
 	  class_addmethod(canvas_class, (t_method)canvas_add_editor,
 				gensym("add-editor"), A_NULL, 0);
+	  class_addmethod(canvas_class, (t_method)canvas_add_editor,
+				gensym("ae"), A_NULL, 0); /** alias **/
 	
 /* ----- subcanvases, which you get by typing "pd" in a box ---- */
     class_addcreator((t_newmethod)subcanvas_new, gensym("pd"), A_DEFSYMBOL, 0);

@@ -14,6 +14,6 @@ int strrep(char *buf, char *mae, char *ato); // binbufのログ出力整形用
 typedef struct _editors
 {	
 	t_gobj *e_this;
-	struct t_editors *e_next;
+	struct _editors *e_next; // _symbol とか _namelist に倣ってる
 } t_editors;
 

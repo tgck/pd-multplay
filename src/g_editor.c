@@ -920,16 +920,30 @@ void canvas_create_editor2(t_glist *x)
 }
 
 //
-// editorをキャンバスに追加する
+// editorをキャンバスに追加する // tani
 //
 void canvas_add_editor (t_canvas *x) {
-  fprintf(stderr, "[debug]canvas_add_editor\n");
-	// 単純に editor の生成関数を呼んでみる
-	t_editor *tmp = editor_new(x);
+  fprintf(stderr, "[debug]canvas_add_editor START -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-\n");
+
+	t_editors *neds;
+	neds = (t_editors *)(getbytes(sizeof(*neds)));
+	neds->e_this = editor_new(x);
+	neds->e_next = 0;
 	
-	// キャンバスに割当
-	x->gl_editor2 = tmp;
-	// x->gl_editors = tmp;
+	fprintf(stderr, "  adding new editor[%lx] to editors[%lx]\n", neds->e_this, x->gl_editors);
+
+	if (!x->gl_editors) {
+		x->gl_editors = neds;
+	} else {
+		t_editors *y;
+		for (y=x->gl_editors; y->e_next; y=y->e_next) {
+			;
+		}
+		y->e_next = neds;
+	}
+	
+	canvas_editors(x); // debug
+	fprintf(stderr, "[debug]canvas_add_editor END -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-\n");
 }
 
 void canvas_destroy_editor(t_glist *x)
@@ -974,7 +988,7 @@ void canvas_vis(t_canvas *x, t_floatarg f)
             int cbuflen;
             t_canvas *c = x;
             canvas_create_editor(x); // editor の生成. 変数xのメンバであるx->editorが埋められて処理が戻ってくる
-						canvas_create_editor2(x); // この行を有効化すると、1キーストロークで2つのオブジェクトボックスが作られる。
+						// canvas_create_editor2(x); // この行を有効化すると、1キーストロークで2つのオブジェクトボックスが作られる。
 																				// イベントハンドラが2回動いているっぽい 
 					
 						// test for session.
