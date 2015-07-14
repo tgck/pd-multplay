@@ -28,9 +28,9 @@ void canvas_drawredrect(t_canvas *x, int doit);
 
 void glist_add(t_glist *x, t_gobj *y)
 {
-  	// fprintf(stderr, "[debug]glist_add[%s]\n", y->g_pd->c_name->s_name ); // test
+  	// fprintf(stderr, "[DEBUG]glist_add[%s]\n", y->g_pd->c_name->s_name ); // test
 		// 元々このソースは、struct _class を知らないので、このデバッグプリントを通すには m_imp.h のインクルードが必要。
-    fprintf(stderr, "[debug]glist_add[%lx][%s]\n", x, class_getname(y->g_pd)); // test インクルードを壊さずでバッグプリントする
+    fprintf(stderr, "[DEBUG]glist_add: [%lx][%s]\n", x, class_getname(y->g_pd)); // test インクルードを壊さずでバッグプリントする
 	
     t_object *ob;
     y->g_next = 0;
@@ -140,7 +140,7 @@ void glist_delete(t_glist *x, t_gobj *y)
 //
 void glist_clear(t_glist *x)
 {
-    fprintf(stdout, "[debug]glist_clear.\n");
+    fprintf(stdout, "[DEBUG]glist_clear.\n");
 	
     t_gobj *y, *y2;
     int dspstate = 0, suspended = 0;

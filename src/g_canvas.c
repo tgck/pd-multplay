@@ -346,8 +346,8 @@ void glist_init(t_glist *x)
 		// 注: canvas_getcurrent() は親ウィンドウのidを返すらしい
 t_canvas *canvas_new(void *dummy, t_symbol *sel, int argc, t_atom *argv)
 {
-    fprintf(stderr, "canvas_new with argc[%d]\n", argc); // test
-    fprintf(stderr, "canvas size[%d]\n", sizeof(t_canvas)); // test
+    // fprintf(stderr, "canvas_new with argc[%d]\n", argc); // test
+    // fprintf(stderr, "canvas size[%d]\n", sizeof(t_canvas)); // test
 	
     t_canvas *x = (t_canvas *)pd_new(canvas_class); // canvas_class を元にcanvasインスタンスを作成
     t_canvas *owner = canvas_getcurrent();
@@ -604,10 +604,10 @@ t_symbol *canvas_makebindsym(t_symbol *s)
 static void canvas_bind(t_canvas *x)
 {
 		if (x->gl_name->s_name){
-			fprintf(stderr, "canvas_bind A) canvas[.x%lx] with symbol[%s]\n", x, x->gl_name->s_name);
+			fprintf(stderr, "-- canvas_bind A) canvas[.x%lx] with symbol[%s]\n", x, x->gl_name->s_name);
 			// --> canvas_bind canvas[.x221960] symbol[Untitled-3]
 		} else {
-			fprintf(stderr, "canvas_bind B) canvas[.x%lx] with symbol[%s]\n", x, x->gl_name);
+			fprintf(stderr, "-- canvas_bind B) canvas[.x%lx] with symbol[%s]\n", x, x->gl_name);
 		}
     
     if (strcmp(x->gl_name->s_name, "Pd"))

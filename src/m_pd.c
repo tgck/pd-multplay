@@ -124,9 +124,8 @@ void m_pd_setup(void)
 // pdオブジェクトとシンボルのバインド
 void pd_bind(t_pd *x, t_symbol *s)
 {
-    fprintf(stderr, "pd_bind bind_target[.x%lx] as [%s] with symbol[%s]\n", 
+    fprintf(stderr, "-- pd_bind bind_target[.x%lx][%s] with symbol[%s]\n", 
 						x, class_getname(pd_class(x)), s->s_name);
-//	fprintf(stderr, "pd_bind bind_target[.x%lx] symbol[%s]\n", x, s->s_name);
 	
     if (s->s_thing)
     {
@@ -157,7 +156,7 @@ void pd_bind(t_pd *x, t_symbol *s)
 // pd から、オブジェクトをunbindするときのメソッド
 void pd_unbind(t_pd *x, t_symbol *s)
 {
-    fprintf(stderr, "pd_unbind unbind_target[.x%lx] symbol[%s]\n", x, s->s_name);
+    fprintf(stderr, "-- pd_unbind unbind_target[.x%lx] from symbol[%s]\n", x, s->s_name);
 	
     if (s->s_thing == x) s->s_thing = 0;
     else if (s->s_thing && *s->s_thing == bindlist_class)
