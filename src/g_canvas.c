@@ -83,8 +83,6 @@ static void canvas_addtolist(t_canvas *x)
 	
     x->gl_next = canvas_list;
     canvas_list = x;
-
-    fprintf(stderr, "-- canvas_addtolist done num_canvas=[%d]\n", canvas_get_canvas_count()); // test
 }
 
 static void canvas_takeofflist(t_canvas *x)
@@ -100,26 +98,22 @@ static void canvas_takeofflist(t_canvas *x)
             ;
         z->gl_next = x->gl_next;
     }
-    fprintf(stderr, "-- canvas_takeofflist done num_canvas=[%d]\n", canvas_get_canvas_count()); // test
 }
 
 // 
-// pd が保持する canvas の数を取得する
-// BUGあり
+// pd が保持する canvas の dump
 //
-//-- -- canvas name[.x217480][_float_array_template].
-//-- -- canvas name[.x217270][_float_template].
-//-- -- canvas name[.x212080][_text_template].
+//-- -- canvas_get_count[0]: canvas name[.x5103a0] symbol[Untitled-2].
+//-- -- canvas_get_count[1]: canvas name[.x225010] symbol[Untitled-1].
+//-- -- canvas_get_count[2]: canvas name[.x217940] symbol[_float_array_template].
+//-- -- canvas_get_count[3]: canvas name[.x217670] symbol[_float_template].
+
 int canvas_get_canvas_count(){
 	t_canvas *z;
 	int num = 0;
-	for (z = canvas_list; z->gl_next; z = z->gl_next){
-		fprintf(stdout, "-- -- canvas_get_count[%d]: canvas name[.x%lx]symbol[%s].\n",
-							num,
-							glist_getcanvas(z->gl_next)->gl_name,   // print as object id
-							glist_getcanvas(z->gl_next)->gl_name->s_name);
-
-		num++;
+	for (z = canvas_list; z->gl_next; z = z->gl_next, num++){
+		fprintf(stderr, "-- -- canvas_get_count[%d]: canvas name[.x%lx] symbol[%s].\n",
+							num, z, z->gl_name->s_name);
 	}
 	return num;
 }
