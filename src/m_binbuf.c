@@ -772,12 +772,15 @@ void binbuf_eval(t_binbuf *x, t_pd *target, int argc, t_atom *argv)
     gotmess:
         if (nargs)
         {
+	  				// fprintf(stderr, "[debug] gotmess @binbuf_eval\n");
             switch (mstack->a_type)
             {
             case A_SYMBOL:
-                typedmess(target, mstack->a_w.w_symbol, nargs-1, mstack+1);
+								fprintf(stderr, "-- A_SYMBOL @binbuf_eval\n");
+                typedmess(target, mstack->a_w.w_symbol, nargs-1, mstack+1); // ここのなかが多重化されてしまう
                 break;
             case A_FLOAT:
+								// fprintf(stderr, "-- A_FLOAT @binbuf_eval\n");
                 if (nargs == 1) pd_float(target, mstack->a_w.w_float);
                 else pd_list(target, 0, nargs, mstack);
                 break;

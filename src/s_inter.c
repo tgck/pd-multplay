@@ -463,6 +463,8 @@ void sys_exit(void);
 // 受信ソケットの読み出し
 void socketreceiver_read(t_socketreceiver *x, int fd)
 {
+  	// fprintf(stderr, "[debug]socketreceiver_read:fd[%d]\n", fd);	
+	
     if (x->sr_udp)   /* UDP ("datagram") socket protocol */
         socketreceiver_getudp(x, fd);
     else  /* TCP ("streaming") socket protocol */
@@ -520,13 +522,14 @@ void socketreceiver_read(t_socketreceiver *x, int fd)
                     outlet_setstacklim();
                     if (x->sr_socketreceivefn)
                         (*x->sr_socketreceivefn)(x->sr_owner, inbinbuf);
-                    else binbuf_eval(inbinbuf, 0, 0, 0);
+                    else binbuf_eval(inbinbuf, 0, 0, 0); // 割り込みのかたちで binbuf_evalが呼ばれる
                     if (x->sr_inhead == x->sr_intail)
                         break;
                 }
             }
         }
     }
+	  // fprintf(stderr, "[debug]socketreceiver_read:[%d] END\n", fd);
 }
 
 void sys_closesocket(int fd)

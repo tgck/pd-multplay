@@ -465,6 +465,8 @@ t_glist *glist_addglist(t_glist *g, t_symbol *sym,
     t_float x1, t_float y1, t_float x2, t_float y2,
     t_float px1, t_float py1, t_float px2, t_float py2)
 {
+	fprintf(stderr, "[debug]glist_addglist:");
+	
     static int gcount = 0;
     int zz;
     int menu = 0;

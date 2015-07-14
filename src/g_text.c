@@ -38,6 +38,8 @@ void canvas_startmotion(t_canvas *x);
 
 void glist_text(t_glist *gl, t_symbol *s, int argc, t_atom *argv)
 {
+	  fprintf(stderr, "[debug]glist_text [%lx][%s]\n", gl, gl->gl_name->s_name);
+	
     t_text *x = (t_text *)pd_new(text_class);
     t_atom at;
     x->te_width = 0;                            /* don't know it yet. */
@@ -86,13 +88,15 @@ void canvas_getargs(int *argcp, t_atom **argvp);
 static void canvas_objtext(t_glist *gl, int xpix, int ypix, int width,
     int selected, t_binbuf *b)
 {
+	  fprintf(stderr, "[debug]canvas_objtext [%lx] START -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_\n", gl);
+	
     t_text *x;
     int argc;
     t_atom *argv;
     newest = 0;
     canvas_setcurrent((t_canvas *)gl);
     canvas_getargs(&argc, &argv);
-    binbuf_eval(b, &pd_objectmaker, argc, argv);
+    binbuf_eval(b, &pd_objectmaker, argc, argv); // binbuf_eval
     if (binbuf_getnatom(b))
     {
         if (!newest)
@@ -118,7 +122,7 @@ static void canvas_objtext(t_glist *gl, int xpix, int ypix, int width,
     x->te_ypix = ypix;
     x->te_width = width;
     x->te_type = T_OBJECT;
-    glist_add(gl, &x->te_g);
+    glist_add(gl, &x->te_g); // glist_add
     if (selected)
     {
             /* this is called if we've been created from the menu. */
@@ -130,6 +134,8 @@ static void canvas_objtext(t_glist *gl, int xpix, int ypix, int width,
     if (pd_class(&x->ob_pd) == voutlet_class)
         canvas_resortoutlets(glist_getcanvas(gl));
     canvas_unsetcurrent((t_canvas *)gl);
+	
+	  fprintf(stderr, "[debug]canvas_objtext [%lx] END   -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_\n", gl);
 }
 
 extern int sys_noautopatch;
