@@ -57,7 +57,7 @@ void canvas_editors (t_canvas *x){
 	t_editors *y;
 	int i;
 	for (y = x->gl_editors, i=0; y; y = y->e_next, i++){
-		fprintf(stderr, "  editors[%d][%lx]\n", i, y->e_this);
+		fprintf(stderr, "  editors[%d][.x%lx]\n", i, y->e_this);
 	}
 	
 	fprintf(stderr, "[debug]canvas_editors END ------------------------------\n");

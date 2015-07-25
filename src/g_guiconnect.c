@@ -26,7 +26,7 @@ static t_class *guiconnect_class;
 // guiとの接続
 t_guiconnect *guiconnect_new(t_pd *who, t_symbol *sym)
 {
-    fprintf(stderr, "-- --guiconnect_new at class[-] sym[%s]\n", sym->s_name);
+    fprintf(stderr, "-- -- guiconnect_new: class[%s] sym[%s]\n", class_getname(pd_class(who)), sym->s_name);
 	
     t_guiconnect *x = (t_guiconnect *)pd_new(guiconnect_class);
     x->x_who = who;

@@ -863,7 +863,9 @@ static void canvas_rightclick(t_canvas *x, int xpos, int ypos, t_gobj *y)
 
 static t_editor *editor_new(t_glist *owner)
 {
-		char buf[40];
+    fprintf(stderr, "[debug]editor_new: owner[.x%lx]as[%s]\n", owner, owner->gl_name->s_name);
+	
+    char buf[40];
     t_editor *x = (t_editor *)getbytes(sizeof(*x));
     x->e_connectbuf = binbuf_new();
     x->e_deleted = binbuf_new();
@@ -930,8 +932,6 @@ void canvas_add_editor (t_canvas *x) {
 	neds->e_this = editor_new(x);
 	neds->e_next = 0;
 	
-	fprintf(stderr, "  adding new editor[%lx] to editors[%lx]\n", neds->e_this, x->gl_editors);
-
 	if (!x->gl_editors) {
 		x->gl_editors = neds;
 	} else {
@@ -942,6 +942,7 @@ void canvas_add_editor (t_canvas *x) {
 		y->e_next = neds;
 	}
 	
+	fprintf(stderr, "-- added editor[.x%lx] to editors[.x%lx]\n", neds->e_this, x->gl_editors);
 	canvas_editors(x); // debug
 	fprintf(stderr, "[debug]canvas_add_editor END -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-\n");
 }
