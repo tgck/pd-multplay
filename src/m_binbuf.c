@@ -591,6 +591,8 @@ done:
 #endif
 
 // GUIから受信したメッセージのパース
+// パッチを開くときにも使われる
+// 引数の t_binbuf は 単一のメッセージでも、ファイル全体のテキスト表現でもよい
 void binbuf_eval(t_binbuf *x, t_pd *target, int argc, t_atom *argv)
 {
     int bufsize;
@@ -728,6 +730,7 @@ void binbuf_eval(t_binbuf *x, t_pd *target, int argc, t_atom *argv)
                     SETSYMBOL(msp, gensym(","));
                     break;
                 }
+                // メッセージの終端。
                 else goto gotmess;
             case A_FLOAT:
             case A_SYMBOL:
@@ -892,6 +895,7 @@ static t_binbuf *binbuf_convert(t_binbuf *oldb, int maxtopd);
 
     /* write a binbuf to a text file.  If "crflag" is set we suppress
     semicolons. */
+    // binbuffer から ファイルを書き出す関数
 int binbuf_write(t_binbuf *x, char *filename, char *dir, int crflag)
 {
     FILE *f = 0;

@@ -692,6 +692,25 @@ static void canvas_savetemplatesto(t_canvas *x, t_binbuf *b, int wholething)
 
 void canvas_reload(t_symbol *name, t_symbol *dir, t_gobj *except);
 
+// パッチをオンデマンドで文字列表現にして返す関数
+// このファイルではなく m_binbuf.c に移動するかどうかは検討
+// TODO: 任意のソケットに書く
+// TODO: pd global から呼び出せるようにする
+static void canvas_get_string(t_canvas *x){
+
+  t_binbuf *b = binbuf_new();
+  canvas_savetemplatesto(x, b, 1);
+  canvas_saveto(x, b);  // canvas を binbuf に変換
+
+  int bufsize;
+  char *str;
+  binbuf_gettext(b, &str, &bufsize); // binbuf を 文字列に変換
+  strrep(str, "\n", "");
+  fprintf(stderr, "------- canvas_get_string START --------\n");
+  fprintf(stderr, "%s", str);
+  fprintf(stderr, "------- canvas_get_string END --------\n");
+}
+
     /* save a "root" canvas to a file; cf. canvas_saveto() which saves the
     body (and which is called recursively.) */
 static void canvas_savetofile(t_canvas *x, t_symbol *filename, t_symbol *dir,
@@ -751,6 +770,8 @@ void g_readwrite_setup(void)
         gensym("savetofile"), A_SYMBOL, A_SYMBOL, A_DEFFLOAT, 0);
     class_addmethod(canvas_class, (t_method)canvas_saveto,
         gensym("saveto"), A_CANT, 0);
+    class_addmethod(canvas_class, (t_method)canvas_get_string,
+        gensym("string"), A_CANT, 0); // Add
 /* ------------------ from the menu ------------------------- */
     class_addmethod(canvas_class, (t_method)canvas_menusave,
         gensym("menusave"), A_DEFFLOAT, 0);
