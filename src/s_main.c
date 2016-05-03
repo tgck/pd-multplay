@@ -305,6 +305,7 @@ int sys_main(int argc, char **argv)
         return (0);
     if (sys_startgui(sys_libdir->s_name))       /* start the gui */
         return(1);
+    sys_start_ext_socket(); // tani
     if (sys_externalschedlib)
         return (sys_run_scheduler(sys_externalschedlibname,
             sys_extraflagsstring));

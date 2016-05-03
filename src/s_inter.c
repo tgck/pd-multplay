@@ -1313,6 +1313,40 @@ void glob_quit(void *dummy)
         sys_closesocket(sys_guisock);
         sys_rmpollfn(sys_guisock);
     }
-    exit(0); 
+    exit(0);
 }
 
+// tani ....
+// Unix Domain Socket
+// サーバとしてソケットを作成し、
+// そこに出力する
+int ext_send_setup(void)
+{
+  // int fd = socket(...);
+  // send(fd, );
+  int res;
+  //struct sockaddr_un addr = SOCKADDR_UN_INIT(AF_LOCAL, "/tmp/pd-local.sock");
+//  struct sockaddr_un addr;
+//  memset( &addr, 0, sizeof(addr) );
+//  addr.sun_family = AF_UNIX;
+//  strcpy( addr.sun_path, "/tmp/pd-local.sock" );
+  struct sockaddr_un addr = {
+    .sun_path = "/tmp/pd-local.sock",
+    .sun_family = AF_UNIX,
+  };
+  int s = socket(AF_UNIX, SOCK_DGRAM, 0);
+  char msg[64] ="This is client!";
+
+  res = sendto(s, msg, sizeof(msg), 0, (struct sockaddr*)&addr, sizeof(addr));
+  fprintf(stderr, "sendto result:[%d]", res);
+  return 0;
+}
+
+
+
+int sys_start_ext_socket(){
+  fprintf(stderr, "hoge1");
+  ext_send_setup();
+  fprintf(stderr, "hoge2");
+  return 0;
+}
