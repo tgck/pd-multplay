@@ -9,7 +9,8 @@ BIN_DIR = ../bin
 PDEXEC = $(BIN_DIR)/pd
 EXT= pd_darwin
 GUINAME= libPdTcl.dylib
-ARCH= -arch i386 -arch ppc
+#ARCH= -arch i386 -arch ppc
+ARCH= -arch i386
 
 prefix = /usr/local
 exec_prefix = ${prefix}
@@ -31,7 +32,7 @@ CPPFLAGS = -DPD -DINSTALL_PREFIX=\"$(prefix)\" \
     -I../portaudio/src/os/mac_osx/ -I../portmidi/pm_common \
     -I../portmidi/pm_mac -I../portmidi/porttime \
     -DUSEAPI_PORTAUDIO -DPA_USE_COREAUDIO -DNEWBUFFER
-ARCH_CFLAGS = $(ARCH) 
+ARCH_CFLAGS = $(ARCH)
 WARN_CFLAGS = -Wall -W -Wstrict-prototypes -Wno-unused -Wno-unused-parameter \
      -Wno-parentheses -Wno-switch
 MORECFLAGS = -Wno-error -ffast-math -fno-strict-aliasing -O3
@@ -42,7 +43,8 @@ LDFLAGS = -Wl -framework CoreAudio -framework AudioUnit \
 LIB =   -ldl -lm -lpthread
 
 
-CFLAGS = $(ARCH_CFLAGS) $(WARN_CFLAGS) $(CPPFLAGS) $(MORECFLAGS)
+#CFLAGS = $(ARCH_CFLAGS) $(WARN_CFLAGS) $(CPPFLAGS) $(MORECFLAGS)
+CFLAGS = -g $(ARCH_CFLAGS) $(WARN_CFLAGS) $(CPPFLAGS) $(MORECFLAGS)
 
 # the sources
 
@@ -87,7 +89,7 @@ SRC = g_canvas.c g_graph.c g_text.c g_rtext.c g_array.c g_template.c g_io.c \
     x_scalar.c \
     $(SYSSRC)
 
-OBJ = $(SRC:.c=.o) 
+OBJ = $(SRC:.c=.o)
 
 # get version from m_pd.h to use in doc/1.manual/1.introduction.txt
 PD_MAJOR_VERSION := $(shell grep PD_MAJOR_VERSION m_pd.h | \
@@ -116,7 +118,7 @@ bin: pd $(BIN_DIR)/pd-watchdog gui $(BIN_DIR)/pdsend \
     $(BIN_DIR)/pdreceive
 
 $(OBJ) : %.o : %.c
-	$(CC) $(CFLAGS) $(INCLUDE) -c -o $(OBJ_DIR)/$*.o $*.c 
+	$(CC) $(CFLAGS) $(INCLUDE) -c -o $(OBJ_DIR)/$*.o $*.c
 
 pd: $(PDEXEC)
 
@@ -137,17 +139,17 @@ $(BIN_DIR)/pdreceive: u_pdreceive.c $(BIN_DIR)
 $(PDEXEC): $(OBJ) $(BIN_DIR)
 	cd ../obj;  $(CC) $(LDFLAGS) $(DBG_CFLAGS) -o $(PDEXEC) $(OBJ) $(LIB)
 
-externs: 
-	make -C ../extra/bonk~    d_fat
-	make -C ../extra/choice   d_fat
-	make -C ../extra/expr~    d_fat
-	make -C ../extra/fiddle~  d_fat
-	make -C ../extra/loop~    d_fat
-	make -C ../extra/lrshift~ d_fat
-	make -C ../extra/pique    d_fat
-	make -C ../extra/sigmund~ d_fat
-	make -C ../extra/pd~      d_fat
-	make -C ../extra/stdout   d_fat
+externs:
+#	make -C ../extra/bonk~    d_fat
+#	make -C ../extra/choice   d_fat
+#	make -C ../extra/expr~    d_fat
+#	make -C ../extra/fiddle~  d_fat
+#	make -C ../extra/loop~    d_fat
+#	make -C ../extra/lrshift~ d_fat
+#	make -C ../extra/pique    d_fat
+#	make -C ../extra/sigmund~ d_fat
+#	make -C ../extra/pd~      d_fat
+#	make -C ../extra/stdout   d_fat
 
 BINARYMODE=-m755
 
@@ -159,7 +161,7 @@ install:  all
 	install -d $(DESTDIR)$(bindir)
 	install $(BINARYMODE) $(PDEXEC) $(DESTDIR)$(bindir)/pd
 	install -m755 $(BIN_DIR)/pdsend $(DESTDIR)$(bindir)/pdsend
-	install -m755 $(BIN_DIR)/pdreceive $(DESTDIR)$(bindir)/pdreceive 
+	install -m755 $(BIN_DIR)/pdreceive $(DESTDIR)$(bindir)/pdreceive
 	install -d $(DESTDIR)$(libpdtcldir)
 	install ../tcl/* $(DESTDIR)$(libpdtcldir)
 	for dir in $(shell ls -1 ../doc | grep -v CVS); do \
@@ -181,20 +183,20 @@ install:  all
 	rm -f $(DESTDIR)$(libpddir)/extra/*/*.o
 	install -d $(DESTDIR)$(includedir)
 	install -m644 m_pd.h $(DESTDIR)$(includedir)/m_pd.h
-	install -d $(DESTDIR)$(mandir)/man1
-	gzip < ../man/pd.1 >  $(DESTDIR)$(mandir)/man1/pd.1.gz
-	chmod 644 $(DESTDIR)$(mandir)/man1/pd.1.gz
-	gzip < ../man/pdsend.1 >  $(DESTDIR)$(mandir)/man1/pdsend.1.gz
-	chmod 644 $(DESTDIR)$(mandir)/man1/pdsend.1.gz
-	gzip < ../man/pdreceive.1 >  $(DESTDIR)$(mandir)/man1/pdreceive.1.gz
-	chmod 644 $(DESTDIR)$(mandir)/man1/pdreceive.1.gz
+	# install -d $(DESTDIR)$(mandir)/man1
+	# gzip < ../man/pd.1 >  $(DESTDIR)$(mandir)/man1/pd.1.gz
+	# chmod 644 $(DESTDIR)$(mandir)/man1/pd.1.gz
+	# gzip < ../man/pdsend.1 >  $(DESTDIR)$(mandir)/man1/pdsend.1.gz
+	# chmod 644 $(DESTDIR)$(mandir)/man1/pdsend.1.gz
+	# gzip < ../man/pdreceive.1 >  $(DESTDIR)$(mandir)/man1/pdreceive.1.gz
+	# chmod 644 $(DESTDIR)$(mandir)/man1/pdreceive.1.gz
 	@echo "Pd install succeeded."
 
 local-clean:
 	-rm -f ../obj/* $(BIN_DIR)/pd $(BIN_DIR)/pdsend \
 	    $(BIN_DIR)/pdreceive $(BIN_DIR)/pd-watchdog m_stamp.c \
             $(BIN_DIR)/*.tcl
-	-rm -f `find ../portaudio -name "*.o"` 
+	-rm -f `find ../portaudio -name "*.o"`
 	-rm -f *~
 	-(cd ../doc/6.externs; rm -f *.pd_linux)
 	-rm -f makefile.dependencies
@@ -231,10 +233,3 @@ uninstall:
 	rm -f $(DESTDIR)$(mandir)/man1/pdreceive.1.gz
 
 include makefile.dependencies
-
-
-
-
-
-
-

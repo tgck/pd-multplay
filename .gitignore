@@ -12,3 +12,4 @@ portmidi
 po
 configure.ac
 autogen.sh
+obj
