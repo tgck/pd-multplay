@@ -12,6 +12,7 @@ that didn't really belong anywhere. */
 #ifndef _WIN32
 #include <unistd.h>
 #include <sys/socket.h>
+#include <sys/un.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <netdb.h>
@@ -94,10 +95,13 @@ struct _socketreceiver
 
 extern int sys_guisetportnumber;
 
-static int sys_nfdpoll;
-static t_fdpoll *sys_fdpoll;
+static int sys_nfdpoll; // 監視対象のソケットの数
+static t_fdpoll *sys_fdpoll; // 監視対象ソケットの配列(の先頭要素のアドレス)
 static int sys_maxfd;
 static int sys_guisock;
+
+#define UDS_PATH "/tmp/pd-local.sock"
+static int sys_extsock; // tani. Unix Domain Socket.
 
 static t_binbuf *inbinbuf;	// NOTE: 受信ソケットへの書込内容
 static t_socketreceiver *sys_socketreceiver;
@@ -1318,35 +1322,43 @@ void glob_quit(void *dummy)
 
 // tani ....
 // Unix Domain Socket
-// サーバとしてソケットを作成し、
-// そこに出力する
-int ext_send_setup(void)
+int ext_get_socket(void)
 {
-  // int fd = socket(...);
-  // send(fd, );
-  int res;
-  //struct sockaddr_un addr = SOCKADDR_UN_INIT(AF_LOCAL, "/tmp/pd-local.sock");
-//  struct sockaddr_un addr;
-//  memset( &addr, 0, sizeof(addr) );
-//  addr.sun_family = AF_UNIX;
-//  strcpy( addr.sun_path, "/tmp/pd-local.sock" );
+  int res, fd = socket(AF_UNIX, SOCK_DGRAM, 0);
+  char msg[64] ="UDS Socket create!";
+
   struct sockaddr_un addr = {
-    .sun_path = "/tmp/pd-local.sock",
+    .sun_path = UDS_PATH,
     .sun_family = AF_UNIX,
   };
-  int s = socket(AF_UNIX, SOCK_DGRAM, 0);
-  char msg[64] ="This is client!";
 
-  res = sendto(s, msg, sizeof(msg), 0, (struct sockaddr*)&addr, sizeof(addr));
-  fprintf(stderr, "sendto result:[%d]", res);
-  return 0;
+  res = sendto(fd, msg, sizeof(msg), 0, (struct sockaddr*)&addr, sizeof(addr));
+  fprintf(stderr, "UDS-DGRAM:sendto result:[%d]\n", res);
+  if (res < 0) {
+    sys_closesocket(fd);
+    fprintf(stderr, "UDS-DGRAM: sendto failed, so socket is discarded. Make sure there is a listener !\n");
+    return -1;
+  } else {
+    fprintf(stderr, "UDS-DGRAM: make socket success.fd[%d]", fd);
+    return fd;
+  }
 }
 
-
+// メッセージ送信
+int ext_send_sendto(char *str)
+{
+  int res;
+  // FIXME: この構造体は、最初に作成したものを使い回すこと。
+  struct sockaddr_un addr = {
+    .sun_path = UDS_PATH,
+    .sun_family = AF_UNIX,
+  };
+  fprintf(stderr, "sysext_sock[%d][%s]\n", sys_extsock, str);
+  res = sendto(sys_extsock, str, strlen(str), 0, (struct sockaddr*)&addr, sizeof(addr));
+  return res;
+}
 
 int sys_start_ext_socket(){
-  fprintf(stderr, "hoge1");
-  ext_send_setup();
-  fprintf(stderr, "hoge2");
+  sys_extsock = ext_get_socket();
   return 0;
 }

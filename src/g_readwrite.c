@@ -709,6 +709,9 @@ static void canvas_get_string(t_canvas *x){
   fprintf(stderr, "------- canvas_get_string START --------\n");
   fprintf(stderr, "%s", str);
   fprintf(stderr, "------- canvas_get_string END --------\n");
+
+  // 拡張ソケットに書く
+  ext_send_sendto(str);
 }
 
     /* save a "root" canvas to a file; cf. canvas_saveto() which saves the
