@@ -335,6 +335,10 @@ void sys_sockerror(char *s)
     post("%s: %s (%d)\n", s, strerror(err), err);
 }
 
+// 受信ソケット追加時によびだす。
+// アプリケーションが監視したいソケットを集中管理することを目的としたもの。
+// スタティック変数 sys_nfdpoll: ポーリング対象ソケットの数を関数内でインクリメント
+// 後述の sys_rmpollfn(int fd) とセット。
 void sys_addpollfn(int fd, t_fdpollfn fn, void *ptr)
 {
     int nfd = sys_nfdpoll;
@@ -462,13 +466,59 @@ static void socketreceiver_getudp(t_socketreceiver *x, int fd)
     }
 }
 
+// Unix Domain Socket datagram
+// 当初 socketreceiver_getudp() で済ませようとしたが、
+// "consistency check failed: socketreceiver_getudp" エラーとなったため。
+// コールバックが登録されてないのでエラーになる。
+// ダミーのコールバックを登録することでこのエラーを回避できることがわかったので、
+// まだこの関数は出番がない
+// TODO:  用意したものの、使ってない(通れない).
+// FIXME: モンキーパッチング. UDS DGRAMの受信がそもそもPdデフォルトにないので.
+//        ありもの(STREAM) を使ったほうがよい
+static void socketreceiver_getuds_dgram(t_socketreceiver *x, int fd)
+{
+    char buf[INBUFSIZE+1];
+    int ret = recv(fd, buf, INBUFSIZE, 0);
+    if (ret < 0)
+    {
+        sys_sockerror("recv");
+        sys_rmpollfn(fd);
+        sys_closesocket(fd);
+    }
+    else if (ret > 0)
+    {
+        buf[ret] = 0;
+#if 0
+        post("%s", buf);
+#endif
+        if (buf[ret-1] != '\n')
+        {
+#if 0
+            buf[ret] = 0;
+            error("dropped bad buffer %s\n", buf);
+#endif
+        }
+        else
+        {
+            char *semi = strchr(buf, ';');
+            if (semi)
+                *semi = 0;
+            binbuf_text(inbinbuf, buf, strlen(buf));
+            //outlet_setstacklim();
+            //if (x->sr_socketreceivefn)
+            //    (*x->sr_socketreceivefn)(x->sr_owner, inbinbuf);
+            //else bug("socketreceiver_getudp");
+        }
+    }
+}
+
 void sys_exit(void);
 
 // 受信ソケットの読み出し
 void socketreceiver_read(t_socketreceiver *x, int fd)
 {
-  	// fprintf(stderr, "[debug]socketreceiver_read:fd[%d]\n", fd);	
-	
+  	// fprintf(stderr, "[debug]socketreceiver_read:fd[%d]\n", fd);
+
     if (x->sr_udp)   /* UDP ("datagram") socket protocol */
         socketreceiver_getudp(x, fd);
     else  /* TCP ("streaming") socket protocol */
@@ -1322,7 +1372,7 @@ void glob_quit(void *dummy)
 
 // tani ....
 // Unix Domain Socket
-int ext_get_socket(void)
+int get_ext_write_socket(void)
 {
   int res, fd = socket(AF_UNIX, SOCK_DGRAM, 0);
   char msg[64] ="UDS Socket create!";
@@ -1333,13 +1383,13 @@ int ext_get_socket(void)
   };
 
   res = sendto(fd, msg, sizeof(msg), 0, (struct sockaddr*)&addr, sizeof(addr));
-  fprintf(stderr, "UDS-DGRAM:sendto result:[%d]\n", res);
+  fprintf(stderr, "UDS-DGRAM: sendto result:[%d]\n", res);
   if (res < 0) {
     sys_closesocket(fd);
     fprintf(stderr, "UDS-DGRAM: sendto failed, so socket is discarded. Make sure there is a listener !\n");
     return -1;
   } else {
-    fprintf(stderr, "UDS-DGRAM: make socket success.fd[%d]", fd);
+    fprintf(stderr, "UDS-DGRAM: make socket success.fd[%d]\n", fd);
     return fd;
   }
 }
@@ -1358,7 +1408,49 @@ int ext_send_sendto(char *str)
   return res;
 }
 
-int sys_start_ext_socket(){
-  sys_extsock = ext_get_socket();
+void dummy_func(void *a)
+{
+  fprintf(stderr, "dummy callback func called!\n");
+}
+// tani..
+// Unix Domain Socket
+// メッセージ受信
+int get_ext_read_socket()
+{
+  int res, fd = socket(AF_UNIX, SOCK_DGRAM, 0);
+  struct sockaddr_un addr = {
+    .sun_path = UDS_READ_PATH,
+    .sun_family = AF_UNIX,
+  };
+  if (fd < 0) {
+    fprintf(stderr, "get_ext_read_socket: make socket failed.[%d]\n", fd);
+  }
+  unlink(UDS_READ_PATH);
+  res = bind(fd, (struct sockaddr *)&addr, sizeof(addr));
+  if (res < 0) {
+    fprintf(stderr, "get_ext_read_socket: bind failed.[%d]\n", res);
+  }
+
+  // UDP に準ずる形 で監視登録
+  t_socketreceiver *y = socketreceiver_new(0, 0, dummy_func, 1); // UDP の recv メソッド使いたいだけ
+  sys_addpollfn(fd, (t_fdpollfn)socketreceiver_read, y);
+
+  // TCP STREAM ソケットに準ずる形式で監視登録 -> NG(pdはソケット読めてない)
+  // sys_socketreceiver = socketreceiver_new(0, 0, 0, 0);
+  // sys_addpollfn(fd, (t_fdpollfn)socketreceiver_read, sys_socketreceiver);
+
+  fprintf(stderr, "get_ext_read_socket: success. fd[%d] path[%s]\n", fd, UDS_READ_PATH);
+
+  return fd;
+}
+
+int sys_start_ext_sockets(){
+  // プロキシ向けの出力ソケット
+  sys_extsock = get_ext_write_socket();
+
+  // プロキシから読み込むソケット
+  // TODO: GUI用の標準ソケットを置き換えたい
+  get_ext_read_socket();
+
   return 0;
 }
