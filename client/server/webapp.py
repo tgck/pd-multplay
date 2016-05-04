@@ -5,24 +5,29 @@ import threading
 import time
 from datetime import datetime
 
-button_pressed = Queue()
+q = Queue()
 
-@route('/')
+@route('/hello')
 def hello():
     return "Hello World!"
 
+@route('/')
+def get():
+	try:
+		mess = q.get_nowait()
+	except Empty:
+		mess = "no data"
+		pass
+	return ("got from queue: [%s] rest:[%d]" % (mess, q.qsize()))
+
 def method():
+	# 5秒に1回キューにメッセージが追加される
 	while True:
-		print "hoge " + datetime.now().strftime("%Y/%m/%d %H:%M:%S")
-		time.sleep(3)
-		# try:
-		# 	button_pressed.get_nowait()
-		# except Empty:
-		# 	pass
-		# else:
-  #           print "push recieved"
-
-
+		time.sleep(5)
+		newmess = "recorded at" + datetime.now().strftime("%Y/%m/%d %H:%M:%S")
+		q.put(newmess)
+		print newmess
+	
 #run(host='localhost', port=8080)
 
 if __name__ == '__main__':
@@ -38,4 +43,4 @@ if __name__ == '__main__':
 # http://stackoverflow.com/questions/19604648/threading-a-bottle-app
 
 
-# TODO : マルチスレッド時のプロセス終了
+# TODO : マルチスレッド時のkillを受けたときにきれいに終了する実装
