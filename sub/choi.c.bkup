@@ -1,0 +1,19 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/un.h>
+
+int main(){
+  struct sockaddr_un addr = {
+    .sun_path = "/tmp/pd-local.sock",
+    .sun_family = AF_UNIX,
+  };
+  int s = socket(AF_UNIX, SOCK_DGRAM, 0);
+  char msg[64] ="This is client!\n";
+  fprintf(stderr, msg);
+  sendto(s, msg, sizeof(msg), 0, (struct sockaddr*)&addr, sizeof(addr));
+
+  return 0;
+}

@@ -1,16 +1,18 @@
 # -*- coding: utf-8 -*- 
 from bottle import route, run
 from Queue import Queue, Empty
-import threading
-import time
+import threading, time, socket, os
 from datetime import datetime
 
+# バックエンドスレッドは、ソケットを作成し、リスンし、取得したメッセージを キューに蓄える
+# Web リソーススレッドは、ブラウザからの要求に対し、キューから取り出したメッセージを応答する
+
+BUF_SIZE = 4096
 q = Queue()
 
-@route('/hello')
-def hello():
-    return "Hello World!"
-
+''' リクエストの都度、キューから直近のメッセージを取り出します.
+	(Pd から pd-gui に送信されるメッセージの読み出しを意図しています)
+'''
 @route('/')
 def get():
 	try:
@@ -18,29 +20,33 @@ def get():
 	except Empty:
 		mess = "no data"
 		pass
-	return ("got from queue: [%s] rest:[%d]" % (mess, q.qsize()))
+	return "message [%s] <br>rest in queue [%d]<br>" % (mess, q.qsize())
 
-def method():
-	# 5秒に1回キューにメッセージが追加される
+
+''' ネットワーク側の処理
+	ひたすらソケットを読んでキューに追加します.
+'''
+def keep_receive():
+
+	path = '/tmp/pd-local.sock'
+
+	if os.path.exists(path):
+		os.remove(path)
+
+	fd = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
+	fd.bind(path)
+
 	while True:
-		time.sleep(5)
-		newmess = "recorded at" + datetime.now().strftime("%Y/%m/%d %H:%M:%S")
-		q.put(newmess)
-		print newmess
+		data, claddr = fd.recvfrom(BUF_SIZE)
+		print 'recved [%d] bytes from [%s]' % (len(data), claddr)
+		print data
+		recvtime = "[" + datetime.now().strftime("%Y/%m/%d %H:%M:%S") + "]"
+		q.put(recvtime + ":" + data)
 	
+
 #run(host='localhost', port=8080)
 
 if __name__ == '__main__':
     threading.Thread(target=run, kwargs=dict(host='localhost', port=8080)).start()
-    method()
+    keep_receive()
 
-# リスナプロセスを用意して、
-# そこから読めるものをブラウザに返す。
-
-# 非同期処理なのでスレッドを分けたい。
-# Web API 側と、ソケットリスニング側
-# 両者のやり取りは、キューを使う
-# http://stackoverflow.com/questions/19604648/threading-a-bottle-app
-
-
-# TODO : マルチスレッド時のkillを受けたときにきれいに終了する実装
