@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*- 
-from bottle import route, run
+# -*- coding: utf-8 -*-
+from bottle import route, run, hook, response
 from Queue import Queue, Empty
 import threading, time, socket, os
 from datetime import datetime
@@ -10,7 +10,11 @@ from datetime import datetime
 BUF_SIZE = 4096
 q = Queue()
 
-''' リクエストの都度、キューから直近のメッセージを取り出します.
+@hook('after_request')
+def enable_cors():
+    response.headers['Access-Control-Allow-Origin'] = '*'
+
+''' TODO: リクエストの都度、キューから直近のメッセージを取り出します.
 	(Pd から pd-gui に送信されるメッセージの読み出しを意図しています)
 '''
 @route('/')
@@ -21,6 +25,17 @@ def get():
 		mess = "no data"
 		pass
 	return "message [%s] <br>rest in queue [%d]<br>" % (mess, q.qsize())
+
+
+''' TODO: コマンドの中継
+	ブラウザからPOSTされた文字列を Pd のソケットに書く
+	原則同期はしないので、処理の結果は別のURIを叩いて取得する
+	中継したい文字列は　"pd dsp 1" など
+'''
+@route('/command')
+def command():
+    response.content_type = 'application/json'
+    return {'message': 'OK'}
 
 
 ''' ネットワーク側の処理
@@ -42,11 +57,10 @@ def keep_receive():
 		print data
 		recvtime = "[" + datetime.now().strftime("%Y/%m/%d %H:%M:%S") + "]"
 		q.put(recvtime + ":" + data)
-	
+
 
 #run(host='localhost', port=8080)
 
 if __name__ == '__main__':
     threading.Thread(target=run, kwargs=dict(host='localhost', port=8080)).start()
     keep_receive()
-
