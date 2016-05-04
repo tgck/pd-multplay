@@ -102,6 +102,7 @@ static int sys_guisock;
 
 #define UDS_PATH "/tmp/pd-local.sock"
 static int sys_extsock; // tani. Unix Domain Socket.
+#define UDS_READ_PATH "/tmp/pd-local-read.sock"
 
 static t_binbuf *inbinbuf;	// NOTE: 受信ソケットへの書込内容
 static t_socketreceiver *sys_socketreceiver;
@@ -1409,19 +1410,17 @@ int ext_send_sendto(char *str)
 }
 
 // socketreceiver_getudp() から呼び出される.
-// 引数 b は実質 inbinbuf がわたってくる
-// FIXME: きたないハック故に名前くらいは見直ししたい
+// 引数 b には inbinbuf が渡される
 void socketreceivefn_udsd(void *a, void *b)
 {
   fprintf(stderr, "dummy callback func called!\n");
   binbuf_eval(b, 0, 0, 0);
-  //binbuf_eval(inbinbuf, 0, 0, 0); // 前の行はこの行と等価
+  //binbuf_eval(inbinbuf, 0, 0, 0); // 前行と当行は等価
   fprintf(stderr, "dummy callback func called! END!\n");
 }
 
 // tani..
 // Unix Domain Socket
-// メッセージ受信
 int get_ext_read_socket()
 {
   int res, fd = socket(AF_UNIX, SOCK_DGRAM, 0);
@@ -1445,17 +1444,13 @@ int get_ext_read_socket()
   t_socketreceiver *y = socketreceiver_new(0, 0, socketreceivefn_udsd, 1);
   sys_addpollfn(fd, (t_fdpollfn)socketreceiver_read, y);
 
-  // TCP STREAM ソケットに準ずる形式で監視登録 -> NG(pdはソケット読めてない)
-  // sys_socketreceiver = socketreceiver_new(0, 0, 0, 0);
-  // sys_addpollfn(fd, (t_fdpollfn)socketreceiver_read, sys_socketreceiver);
-
   fprintf(stderr, "get_ext_read_socket: success. fd[%d] path[%s]\n", fd, UDS_READ_PATH);
 
   return fd;
 }
 
 int sys_start_ext_sockets(){
-  // プロキシ向けの出力ソケット
+
   sys_extsock = get_ext_write_socket();
 
   // プロキシから読み込むソケット
