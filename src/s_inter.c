@@ -1408,10 +1408,17 @@ int ext_send_sendto(char *str)
   return res;
 }
 
-void dummy_func(void *a)
+// socketreceiver_getudp() から呼び出される.
+// 引数 b は実質 inbinbuf がわたってくる
+// FIXME: きたないハック故に名前くらいは見直ししたい
+void socketreceivefn_udsd(void *a, void *b)
 {
   fprintf(stderr, "dummy callback func called!\n");
+  binbuf_eval(b, 0, 0, 0);
+  //binbuf_eval(inbinbuf, 0, 0, 0); // 前の行はこの行と等価
+  fprintf(stderr, "dummy callback func called! END!\n");
 }
+
 // tani..
 // Unix Domain Socket
 // メッセージ受信
@@ -1431,8 +1438,11 @@ int get_ext_read_socket()
     fprintf(stderr, "get_ext_read_socket: bind failed.[%d]\n", res);
   }
 
-  // UDP に準ずる形 で監視登録
-  t_socketreceiver *y = socketreceiver_new(0, 0, dummy_func, 1); // UDP の recv メソッド使いたいだけ
+  // 監視登録
+  // UDP DATAGRAM を捌く関数を流用する(不本意)
+  //   - 独自の関数をコールバックに指定するのはハック
+  //   - 第四引数のフラグを立てるのは Pd (netreceive obj)のお作法
+  t_socketreceiver *y = socketreceiver_new(0, 0, socketreceivefn_udsd, 1);
   sys_addpollfn(fd, (t_fdpollfn)socketreceiver_read, y);
 
   // TCP STREAM ソケットに準ずる形式で監視登録 -> NG(pdはソケット読めてない)
@@ -1449,7 +1459,7 @@ int sys_start_ext_sockets(){
   sys_extsock = get_ext_write_socket();
 
   // プロキシから読み込むソケット
-  // TODO: GUI用の標準ソケットを置き換えたい
+  // TODO: GUI用の標準ソケットを置き換えたい(プロキシ故に)
   get_ext_read_socket();
 
   return 0;
