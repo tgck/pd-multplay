@@ -449,6 +449,7 @@ static void socketreceiver_getudp(t_socketreceiver *x, int fd)
         if (buf[ret-1] != '\n')
         {
 #if 0
+            // UDPメッセージの場合、メッセージの末尾に改行コードがないものはすべてドロップする
             buf[ret] = 0;
             error("dropped bad buffer %s\n", buf);
 #endif
@@ -584,7 +585,6 @@ void socketreceiver_read(t_socketreceiver *x, int fd)
             }
         }
     }
-	  // fprintf(stderr, "[debug]socketreceiver_read:[%d] END\n", fd);
 }
 
 void sys_closesocket(int fd)
@@ -1411,12 +1411,12 @@ int ext_send_sendto(char *str)
 
 // socketreceiver_getudp() から呼び出される.
 // 引数 b には inbinbuf が渡される
-void socketreceivefn_udsd(void *a, void *b)
+static void socketreceivefn_udsd(void *a, void *b)
 {
-  fprintf(stderr, "dummy callback func called!\n");
+  fprintf(stderr, "[Pd:socketreceivefn_udsd]Dummy callback func called!\n");
   binbuf_eval(b, 0, 0, 0);
   //binbuf_eval(inbinbuf, 0, 0, 0); // 前行と当行は等価
-  fprintf(stderr, "dummy callback func called! END!\n");
+  fprintf(stderr, "[Pd:socketreceivefn_udsd]Dummy callback func called! END!\n");
 }
 
 // tani..
@@ -1429,29 +1429,39 @@ int get_ext_read_socket()
     .sun_family = AF_UNIX,
   };
   if (fd < 0) {
-    fprintf(stderr, "get_ext_read_socket: make socket failed.[%d]\n", fd);
+    fprintf(stderr, "[Pd:get_ext_read_socket] Make socket failed.[%d]\n", fd);
   }
   unlink(UDS_READ_PATH);
   res = bind(fd, (struct sockaddr *)&addr, sizeof(addr));
   if (res < 0) {
-    fprintf(stderr, "get_ext_read_socket: bind failed.[%d]\n", res);
+    fprintf(stderr, "[Pd:get_ext_read_socket] Bind address to the socket failed.[%d]\n", res);
   }
+
+  // debug
+  // ここへの埋め込みは、適切な通信を実現する
+  // char buf[2048];
+  // int n;
+  // memset(buf, 0, sizeof(buf));
+  // while (1) {
+  //   n = recv(fd, buf, sizeof(buf) - 1, 0);
+  //   printf("recvd: [%s]\n", buf);
+  // }
+  //
 
   // 監視登録
   // UDP DATAGRAM を捌く関数を流用する(不本意)
   //   - 独自の関数をコールバックに指定するのはハック
-  //   - 第四引数のフラグを立てるのは Pd (netreceive obj)のお作法
-  t_socketreceiver *y = socketreceiver_new(0, 0, socketreceivefn_udsd, 1);
+  //   - 第四引数のフラグを立てるのは Pd (netreceive obj)のお作法, なのだが。
+  //      -> 改行コードの有無でハマるので、そもそものPd汎用ルート(STREAMING想定)をとおす
+  t_socketreceiver *y = socketreceiver_new(0, 0, socketreceivefn_udsd, 0);
   sys_addpollfn(fd, (t_fdpollfn)socketreceiver_read, y);
-
-  fprintf(stderr, "get_ext_read_socket: success. fd[%d] path[%s]\n", fd, UDS_READ_PATH);
 
   return fd;
 }
 
 int sys_start_ext_sockets(){
 
-  sys_extsock = get_ext_write_socket();
+  // sys_extsock = get_ext_write_socket();
 
   // プロキシから読み込むソケット
   // TODO: GUI用の標準ソケットを置き換えたい(プロキシ故に)
