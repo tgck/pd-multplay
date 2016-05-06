@@ -46,8 +46,7 @@ def command():
 
 @route('/dsp/on')
 def dspon():
-	#send_q.put("pd dsp 1;")
-	send_q.put("dummmmmmy 1 2 3;")
+	send_q.put("pd dsp 1;")
 	response.content_type = 'application/json'
 	return {'message': 'OK'}
 

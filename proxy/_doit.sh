@@ -32,7 +32,7 @@ function testReceiveMessage(){
 }
 function healthCheckPdRecv(){
 	# pd の受信ソケットが生きているかどうかを確認
-	echo "dummy 1 2 3;" | socat stdin unix-sendto:$UDS_READ_PATH
+	echo ";" | socat stdin unix-sendto:$UDS_READ_PATH
 	echo "sending (socat)->(pd) result:[" $? "]"
 }
 
