@@ -15,7 +15,8 @@ main()
   sock = socket(AF_UNIX, SOCK_DGRAM, 0);
 
   addr.sun_family = AF_UNIX;
-  strcpy(addr.sun_path, "/tmp/pd-local.sock");
+  //strcpy(addr.sun_path, "/tmp/pd-local.sock");
+  strcpy(addr.sun_path, "/tmp/pd-local-read.sock");
 
   n = sendto(sock, "HOGE\n", 5, 0, (struct sockaddr *)&addr, sizeof(addr));
 

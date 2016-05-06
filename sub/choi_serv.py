@@ -16,6 +16,7 @@ if os.path.exists(path):
 
 fd = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
 fd.bind(path)
+print "[Server] Making socket done. path[%s]" % path
 
 while True:
 	data, claddr = fd.recvfrom(BUF_SIZE)
