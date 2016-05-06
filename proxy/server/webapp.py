@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from bottle import route, run, hook, response
+from bottle import route, run, hook, request, response
 from Queue import Queue, Empty
 import threading, time, socket, os
 from datetime import datetime
@@ -12,7 +12,9 @@ q = Queue()
 
 @hook('after_request')
 def enable_cors():
-    response.headers['Access-Control-Allow-Origin'] = '*'
+	response.headers['Access-Control-Allow-Origin'] = '*'
+	response.headers['Access-Control-Allow-Methods'] = 'PUT, GET, POST, DELETE, OPTIONS'
+	response.headers['Access-Control-Allow-Headers'] = 'Origin, Accept, Content-Type, X-Requested-With, X-CSRF-Token'
 
 ''' TODO: リクエストの都度、キューから直近のメッセージを取り出します.
 	(Pd から pd-gui に送信されるメッセージの読み出しを意図しています)
@@ -32,11 +34,12 @@ def get():
 	原則同期はしないので、処理の結果は別のURIを叩いて取得する
 	中継したい文字列は　"pd dsp 1" など
 '''
-@route('/command')
+@route('/cmd')
 def command():
-    response.content_type = 'application/json'
-    return {'message': 'OK'}
-
+	response.content_type = 'application/json'
+	print request.params
+	print request.params.keys()
+	return {'message': 'OK'}
 
 ''' ネットワーク側の処理
 	ひたすらソケットを読んでキューに追加します.

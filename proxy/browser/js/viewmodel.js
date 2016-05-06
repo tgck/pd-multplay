@@ -21,12 +21,12 @@ var vm = new Vue({
 ////////////////////////////////////////////////////
 var kickAjax = function(){
 
-  url = "http://localhost:8080/command"
+  url = "http://localhost:8080/cmd"
 
   $.ajax ({
       'url' : url,
       'method' : "GET",
-      'data' : vm.$data.command
+      'data' : JSON.stringify(vm.$data.command)
   }).done(function(data){
       console.log("kickAjax() ... success");
       console.log(data);
