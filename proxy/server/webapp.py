@@ -6,6 +6,8 @@ from datetime import datetime
 
 # バックエンドスレッドは、ソケットを作成し、リスンし、取得したメッセージを キューに蓄える
 # Web リソーススレッドは、ブラウザからの要求に対し、キューから取り出したメッセージを応答する
+PATH_TO_SEND='/tmp/pd-local-read.sock'
+PATH_TO_RECV='/tmp/pd-local.sock'
 
 BUF_SIZE = 4096
 q = Queue()
@@ -41,13 +43,12 @@ def command():
 	print request.params.keys()
 	return {'message': 'OK'}
 
-''' ネットワーク側の処理
+''' ネットワーク(受信)処理
 	ひたすらソケットを読んでキューに追加します.
+	Unix ドメインソケットのデータグラムパケットを受信する処理です。
 '''
 def keep_receive():
-
-	path = '/tmp/pd-local.sock'
-
+	path = PATH_TO_RECV
 	if os.path.exists(path):
 		os.remove(path)
 
@@ -61,9 +62,28 @@ def keep_receive():
 		recvtime = "[" + datetime.now().strftime("%Y/%m/%d %H:%M:%S") + "]"
 		q.put(recvtime + ":" + data)
 
+''' ネットワーク(送信)処理
+	Web側の処理からキューイングされたメッセージをネットワークに送信します。
+	Unix ドメインソケットのデータグラムパケットを送信します。
+'''
+def keep_send():
+		path = PATH_TO_SEND
+		# ソケットつくって、宛先代入して、sendto する
+		fd = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
+
+		try:
+			fd.sendto("test", path)
+		except socket.error:
+			print "Socket error@[sendto]. be sure that the receiver process is up."
+			return
+
+		while True:
+			fd.sendto("test", path)
+			time.sleep(3)
 
 #run(host='localhost', port=8080)
 
 if __name__ == '__main__':
-    threading.Thread(target=run, kwargs=dict(host='localhost', port=8080)).start()
-    keep_receive()
+    #threading.Thread(target=run, kwargs=dict(host='localhost', port=8080)).start()
+    # keep_receive()
+	keep_send()

@@ -8,7 +8,8 @@
 import socket, os
 BUF_SIZE = 4096
 
-path = '/tmp/pd-local.sock'
+#path = '/tmp/pd-local.sock'
+path = '/tmp/pd-local-read.sock'
 
 if os.path.exists(path):
 	os.remove(path)
