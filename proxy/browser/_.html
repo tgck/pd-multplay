@@ -1,36 +1,63 @@
 <!DOCTYPE html>
 <html lang="ja">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Pd-Proxy client</title>
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-  </head>
-  <body>
-    <h1>Hello, world!</h1>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pd-Proxy client</title>
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/user.css" rel="stylesheet">
+</head>
 
-    <div id="demo">
+<body>
+<section name="request">
+  <div id="demo" class="container wrapper">
+    <div class="row">
+      <h3>pd proxy client</h3>
+    </div><!-- row 1 -->
+    <div class="row">
+      <div>
+        <textarea class="form-control" rows="2" v-model="ta"></textarea>
+      </div>
+    </div><!-- row 2 -->
+    <div class="row">
+      <div class="col-md-8">
+
+        <div class="btn-group btn-group-justified" role="group">
+        	<div class="btn-group" role="group">
+            <div class="form-group">
+              <select class="form-control" v-model="selected">
+                <option v-for="item in commands">{{ item.title }}</option>
+              </select>
+              <span>{{selected}}</span><br>
+            </div>
+        	</div>
+        </div>
+
+      </div>
+      <div class="col-md-4">
+        <button class="btn btn-block" v-on:click="send">send</button>
+      </div>
+    </div><!-- row 3 -->
+  </div><!-- container -->
+</section>
+
+<section class="response wrapper">
+  <div class="container">
+    <div class="row">
       <button type="button" name="button" v-on:click="kick">Command</button><br>
       <span v-text="command"></span><br>
       <span v-text="response | json"></span><br>
-
-      <!-- 以下 TODO -->
-      <span><code>pd open Untitled-2.pd /Users/tani/Desktop;fpref</code></span><br>
-
-      <button type="button" name="button">get canvases</button>
-
-      <button type="button" name="button">get Patcher</button>
-      <span>ルートキャンバスのテキスト表現を得る</span>
     </div>
+  </div>
+</section>
 
-    <script src="js/jquery-2.2.3.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/vue.js"></script>
-    <script src="js/lodash.core.min.js"></script>
 
-    <script src="js/viewmodel.js"></script>
-
-    <script>
-    </script>
-  </body>
+<script src="js/jquery-2.2.3.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/vue.js"></script>
+<script src="js/lodash.js"></script>
+<script src="js/viewmodel.js"></script>
+<script>
+</script>
+</body>
 </html>

@@ -7,11 +7,37 @@ var vm = new Vue({
     session: {
       // url: '/command',
       param: {}
+    },
+    selected: '',
+    commands: [
+      {
+        title: 'Turn DSP on',
+        message: 'pd dsp 1;'
+      },{
+        title: 'Turn DSP off',
+        message: 'pd dsp 0;'
+      },{
+        title: 'Open a patch file',
+        message: 'pd open Untitled-2.pd /Users/tani/Desktop;'
+      }
+    ]
+  },
+  computed: {
+    ta: function(){
+      target = this.selected;
+      where = _.findIndex(this.commands, function(val){return val.title == target });
+      return ( where == -1 ) ? '' : this.commands[where]['message'];
     }
   },
   methods: {
+    send: function(){
+      kickAjax();
+    },
     kick: function(){
       kickAjax();
+    },
+    hoge: function(){
+      alert($index);
     }
   }
 })
@@ -26,7 +52,8 @@ var kickAjax = function(){
   $.ajax ({
       'url' : url,
       'method' : "GET",
-      'data' : JSON.stringify(vm.$data.command)
+      //'data' : JSON.stringify(vm.$data.command)
+      'data' : JSON.stringify(vm.$data.ta)
   }).done(function(data){
       console.log("kickAjax() ... success");
       console.log(data);
