@@ -5,8 +5,10 @@ var vm = new Vue({
     command: 'pd dsp 1',
     response: '(result)',
     session: {
-      // url: '/command',
-      param: {}
+      url: '/cmd',
+      param: {
+        q:''
+      }
     },
     selected: '',
     commands: [
@@ -31,6 +33,7 @@ var vm = new Vue({
   },
   methods: {
     send: function(){
+      this.session.param.q = this.ta;
       kickAjax();
     },
     kick: function(){
@@ -52,8 +55,10 @@ var kickAjax = function(){
   $.ajax ({
       'url' : url,
       'method' : "GET",
+      'dataType': 'json',
       //'data' : JSON.stringify(vm.$data.command)
-      'data' : JSON.stringify(vm.$data.ta)
+      //'data' : JSON.stringify(vm.$data.ta)
+      'data' : vm.$data.session.param
   }).done(function(data){
       console.log("kickAjax() ... success");
       console.log(data);

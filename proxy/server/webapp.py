@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from bottle import route, run, hook, request, response
 from Queue import Queue, Empty
-import threading, time, socket, os
+import threading, time, socket, os, json
 from datetime import datetime
 
 # バックエンドスレッドは、ソケットを作成し、リスンし、取得したメッセージを キューに蓄える
@@ -10,6 +10,7 @@ PATH_TO_SEND='/tmp/pd-local-read.sock'
 PATH_TO_RECV='/tmp/pd-local.sock'
 
 BUF_SIZE = 4096
+INTERVAL= 0.5       # check interval of send queue
 recv_q = Queue()	# receiving messages from the app.
 send_q = Queue()	# sending messages to the app, registered via web.
 
@@ -40,8 +41,14 @@ def get():
 @route('/cmd')
 def command():
 	response.content_type = 'application/json'
+	#print json.dumps(request.keys())
+	#print json.dumps(request.params)
 	print request.params
-	print request.params.keys()
+	# TODO: q キーがあれば
+	cmd = request.params.q
+	print cmd
+	send_q.put(cmd)
+
 	return {'message': 'OK'}
 
 @route('/dsp/on')
@@ -97,7 +104,7 @@ def keep_send():
 			try:
 				m = send_q.get_nowait()
 			except Empty:
-				time.sleep(3)
+				time.sleep(INTERVAL)
 				print "[Proxy:keep_send] No message to send. rest:[%d]\n" % send_q.qsize()
 			else:
 				#  else 節は try 節で全く例外が送出されなかったときに実行されるコード
