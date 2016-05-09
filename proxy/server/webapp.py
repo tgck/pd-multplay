@@ -10,7 +10,7 @@ PATH_TO_SEND='/tmp/pd-local-read.sock'
 PATH_TO_RECV='/tmp/pd-local.sock'
 
 BUF_SIZE = 4096
-INTERVAL= 0.5       # check interval of send queue
+INTERVAL= 0.5       # check interval of send queue.
 recv_q = Queue()	# receiving messages from the app.
 send_q = Queue()	# sending messages to the app, registered via web.
 
@@ -40,26 +40,12 @@ def get():
 '''
 @route('/cmd')
 def command():
-	response.content_type = 'application/json'
-	#print json.dumps(request.keys())
-	#print json.dumps(request.params)
-	print request.params
 	# TODO: q キーがあれば
 	cmd = request.params.q
-	print cmd
 	send_q.put(cmd)
+	response_ok
 
-	return {'message': 'OK'}
-
-@route('/dsp/on')
-def dspon():
-	send_q.put("pd dsp 1;")
-	response.content_type = 'application/json'
-	return {'message': 'OK'}
-
-@route('/dsp/off')
-def dspoff():
-	send_q.put("pd dsp 0;")
+def response_ok():
 	response.content_type = 'application/json'
 	return {'message': 'OK'}
 
@@ -94,7 +80,7 @@ def keep_send():
 		# 送信先のチェック。
 		# 相手がいなければ プログラムは終了する(べき)
 		try:
-			fd.sendto("test", path)
+			fd.sendto("pd version 1;", path)
 		except socket.error:
 			print "Socket error@[sendto]. Be sure that the receiver process is up.\n"
 
@@ -105,11 +91,11 @@ def keep_send():
 				m = send_q.get_nowait()
 			except Empty:
 				time.sleep(INTERVAL)
-				print "[Proxy:keep_send] No message to send. rest:[%d]\n" % send_q.qsize()
+				#print "[Proxy:keep_send] No message to send. rest:[%d]\n" % send_q.qsize()
 			else:
 				#  else 節は try 節で全く例外が送出されなかったときに実行されるコード
 				rtn = fd.sendto(m, path)
-				print "[Proxy:keep_send] Sended a message.rtn:[%d] msg:[%s] rest:[%d]\n" % (rtn, m, send_q.qsize())
+				#print "[Proxy:keep_send] Sended a message.rtn:[%d] msg:[%s] rest:[%d]\n" % (rtn, m, send_q.qsize())
 
 if __name__ == '__main__':
 	# app からの受けの確保
