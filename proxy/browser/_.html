@@ -5,57 +5,78 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Pd-Proxy client</title>
   <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/toastr.css" rel="stylesheet"/>
   <link href="css/user.css" rel="stylesheet">
+
 </head>
 
 <body>
-<section name="request">
-  <div id="demo" class="container wrapper">
-    <div class="row">
-      <h3>pd proxy client</h3>
-    </div><!-- row 1 -->
-    <div class="row">
-      <div>
-        <textarea class="form-control" rows="2" v-model="ta"></textarea>
-      </div>
-    </div><!-- row 2 -->
-    <div class="row">
-      <div class="col-md-8">
+<div class="container">
 
-        <div class="btn-group btn-group-justified" role="group">
-        	<div class="btn-group" role="group">
-            <div class="form-group">
-              <select class="form-control" v-model="selected">
-                <option v-for="item in commands">{{ item.title }}</option>
-              </select>
-            </div>
-        	</div>
+<div class="row">
+  <div class="col-md-12 bg-warning"><h3>Pd Proxy client</h3></div>
+</div>
+
+<div class="row">
+
+<section name="コマンド送信">
+  <div id="demo" class="col-md-6 bg-info" style="height:200px">
+    <div class="padding">
+      <div class="row">
+        <h4>Command Send</h4>
+      </div><!-- row 1 -->
+      <div class="row">
+        <div>
+          <textarea class="form-control" rows="2" v-model="ta"></textarea>
         </div>
+      </div><!-- row 2 -->
+      <div class="row">
+        <div class="col-md-8">
 
-      </div>
-      <div class="col-md-4">
-        <button class="btn btn-block" v-on:click="send">send</button>
-      </div>
-    </div><!-- row 3 -->
+          <div class="btn-group btn-group-justified" role="group">
+          	<div class="btn-group" role="group">
+              <div class="form-group">
+                <select class="form-control" v-model="selected">
+                  <option v-for="item in commands">{{ item.title }}</option>
+                </select>
+              </div>
+          	</div>
+          </div>
+
+        </div>
+        <div class="col-md-4">
+          <button class="btn btn-block" v-on:click="send">send</button>
+        </div>
+      </div><!-- row 3 -->
+    </div><!-- padding -->
   </div><!-- container -->
 </section>
 
-<section class="response wrapper">
-  <div class="container">
+<section class="レポート">
+  <div id="receiver" class="col-md-6 bg-success" style="height:200px">
     <div class="row">
-      <button type="button" name="button" v-on:click="kick">Command</button><br>
-      <span v-text="command"></span><br>
-      <span v-text="response | json"></span><br>
+      <div class="padding">
+        <h4>
+          <input type="checkbox" v-model="bReceive" v-on:click="switch">
+          want to get response from pd ?
+        </h4>
+        <span v-text="url"></span><br>
+        <span v-text="interval"></span><br>
+      </div>
     </div>
   </div>
 </section>
 
+</div><!-- row -->
+</div><!-- container -->
 
 <script src="js/jquery-2.2.3.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script src="js/vue.js"></script>
 <script src="js/lodash.js"></script>
+<script src="js/toastr.min.js"></script>
 <script src="js/viewmodel.js"></script>
+
 <script>
 </script>
 </body>

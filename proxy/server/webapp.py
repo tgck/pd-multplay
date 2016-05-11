@@ -23,8 +23,8 @@ def enable_cors():
 ''' TODO: リクエストの都度、キューから直近のメッセージを取り出します.
 	(Pd から pd-gui に送信されるメッセージの読み出しを意図しています)
 '''
-@route('/')
-def get():
+@route('/recv')
+def recv():
 	try:
 		mess = recv_q.get_nowait()
 	except Empty:
@@ -43,8 +43,10 @@ def command():
 	# TODO: q キーがあれば
 	cmd = request.params.q
 	send_q.put(cmd)
-	response_ok
+	#return response_ok
+	return "pushed a command into queue."
 
+# JSON 返そうとするとブラウザでエラーになる CORS の問題ぽい
 def response_ok():
 	response.content_type = 'application/json'
 	return {'message': 'OK'}
