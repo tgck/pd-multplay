@@ -100,22 +100,39 @@ static void canvas_takeofflist(t_canvas *x)
     }
 }
 
-// 
-// pd が保持する canvas の dump
+//
+// tani
+// canvas の id と 名称を送出する
+// TODO: 関数接頭辞
+// TODO: 似たような処理を、デバッグ出力と ソケット書き込みで書きすぎる件
+void exdump_canvases(){
+    char str[MAXPDSTRING], tmpstr[MAXPDSTRING];
+    memset(str, '\0', strlen(str));
+    memset(tmpstr, '\0', strlen(tmpstr));
+
+    t_canvas *z;
+    int num=0;
+    for (z = canvas_list; z->gl_next; z = z->gl_next, num++){
+        sprintf(tmpstr, ".x%lx, %s\n", z, z->gl_name->s_name);
+        strcat(str, tmpstr);
+    }
+    ext_send_sendto(str);
+}
+// tani
+// canvas の数を数える
 //
 //-- -- canvas_get_count[0]: canvas name[.x5103a0] symbol[Untitled-2].
 //-- -- canvas_get_count[1]: canvas name[.x225010] symbol[Untitled-1].
 //-- -- canvas_get_count[2]: canvas name[.x217940] symbol[_float_array_template].
 //-- -- canvas_get_count[3]: canvas name[.x217670] symbol[_float_template].
-
-int canvas_get_canvas_count(){
-	t_canvas *z;
-	int num = 0;
-	for (z = canvas_list; z->gl_next; z = z->gl_next, num++){
-		fprintf(stderr, "-- -- canvas_get_count[%d]: canvas name[.x%lx] symbol[%s].\n",
+int canvas_get_count(){
+    t_canvas *z;
+    int num=0;
+    for (z = canvas_list; z->gl_next; z = z->gl_next, num++){
+        fprintf(stderr, "-- -- canvas_get_count[%d]: canvas name[.x%lx] symbol[%s].\n",
 							num, z, z->gl_name->s_name);
-	}
-	return num;
+    }
+    return num;
 }
 
 void canvas_setargs(int argc, t_atom *argv)

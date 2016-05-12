@@ -1376,13 +1376,21 @@ void glob_quit(void *dummy)
 int get_ext_write_socket(void)
 {
   int res, fd = socket(AF_UNIX, SOCK_DGRAM, 0);
-  char msg[64] ="UDS Socket create!";
 
+  char msg[64] ="UDS Socket create!";
+  fprintf(stderr, "\n\n[debug][get_ext_write_socket] %s[%d]\n\n\n", msg, fd);
+
+  //　疎通確認せずにファイルディスクイプタを返す.
+  //  疎通確認は後続で適宜。(UDS DGRAM なので使うタイミングで)
+  return fd;
+
+  /*
   struct sockaddr_un addr = {
     .sun_path = UDS_PATH,
     .sun_family = AF_UNIX,
   };
 
+  // TODO: コネクションを使わない前提のため、アドレスは使い回す
   res = sendto(fd, msg, sizeof(msg), 0, (struct sockaddr*)&addr, sizeof(addr));
   fprintf(stderr, "UDS-DGRAM: sendto result:[%d]\n", res);
   if (res < 0) {
@@ -1393,9 +1401,12 @@ int get_ext_write_socket(void)
     fprintf(stderr, "UDS-DGRAM: make socket success.fd[%d]\n", fd);
     return fd;
   }
+  */
 }
 
+//
 // メッセージ送信
+// tani
 int ext_send_sendto(char *str)
 {
   int res;
@@ -1404,6 +1415,9 @@ int ext_send_sendto(char *str)
     .sun_path = UDS_PATH,
     .sun_family = AF_UNIX,
   };
+  if (sys_extsock < 0) {
+    fprintf(stderr, "[debug] The extsock does not seem to be successfly allocated....\n");
+  }
   fprintf(stderr, "sysext_sock[%d][%s]\n", sys_extsock, str);
   res = sendto(sys_extsock, str, strlen(str), 0, (struct sockaddr*)&addr, sizeof(addr));
   return res;
@@ -1461,7 +1475,8 @@ int get_ext_read_socket()
 
 int sys_start_ext_sockets(){
 
-  // sys_extsock = get_ext_write_socket();
+  // 起動の順序によっては、WEB受信側が存在せずエラーとなるが問題ない。
+  sys_extsock = get_ext_write_socket();
 
   // プロキシから読み込むソケット
   // TODO: GUI用の標準ソケットを置き換えたい(プロキシ故に)

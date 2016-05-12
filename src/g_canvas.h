@@ -529,8 +529,10 @@ EXTERN int canvas_isconnected (t_canvas *x,
 EXTERN void canvas_selectinrect(t_canvas *x, int lox, int loy, int hix, int hiy);
 
 EXTERN t_glist *pd_checkglist(t_pd *x);
-	
-EXTERN int canvas_get_canvas_count(void); // test
+
+// TODO: 私設の関数の、宣言場所
+EXTERN int canvas_get_count(void); // test
+EXTERN void exdump_canvases(void); // test
 
 
 /* ---- functions on canvasses as objects  --------------------- */

@@ -21,6 +21,12 @@ var vm = new Vue({
       },{
         title: 'Open a patch file',
         message: 'pd open Untitled-2.pd /Users/tani/Desktop;'
+      }, {
+        title: '[ext] List canvases.',
+        message: 'pd ls;'
+      }, {
+        title: '[ext] Get the frontmost patch as text',
+        message: '(not implemented)'
       }
     ]
   },
