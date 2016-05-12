@@ -25,12 +25,14 @@ def enable_cors():
 '''
 @route('/recv')
 def recv():
-	try:
-		mess = recv_q.get_nowait()
-	except Empty:
-		mess = "no data"
-		pass
-	return "message [%s] <br>rest in queue [%d]<br>" % (mess, recv_q.qsize())
+	mess = []
+	while True:
+		try:
+			mess.append(recv_q.get_nowait())
+		except Empty:
+			break
+
+	return '\n---\n'.join(mess)
 
 
 ''' TODO: コマンドの中継
@@ -44,12 +46,13 @@ def command():
 	cmd = request.params.q
 	send_q.put(cmd)
 	#return response_ok
-	return "pushed a command into queue."
+	return "Pushed a command into queue."
 
 # JSON 返そうとするとブラウザでエラーになる CORS の問題ぽい
 def response_ok():
 	response.content_type = 'application/json'
 	return {'message': 'OK'}
+
 
 ''' ネットワーク(受信)処理
 	ひたすらソケットを読んでキューに追加します.
@@ -63,11 +66,14 @@ def keep_receive():
 	fd.bind(path)
 
 	while True:
+		# ブロックあり
 		data, from_addr = fd.recvfrom(BUF_SIZE)
-		print 'recved [%d] bytes from [%s]' % (len(data), from_addr)
-		print data
-		recvtime = "[" + datetime.now().strftime("%Y/%m/%d %H:%M:%S") + "]"
-		recv_q.put(recvtime + ":" + data)	# FIXME 細工はなしにする。いらない
+		recv_q.put(data);
+		# print 'recved [%d] bytes from [%s]' % (len(data), from_addr)
+		# print data
+		# recvtime = "[" + datetime.now().strftime("%Y/%m/%d %H:%M:%S") + "]"
+		# recv_q.put(recvtime + ":" + data)
+
 
 ''' ネットワーク(送信)処理
 	Web側の処理からキューイングされたメッセージをネットワークに送信します。

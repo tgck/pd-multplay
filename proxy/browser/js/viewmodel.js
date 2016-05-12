@@ -96,9 +96,12 @@ var getMessages = function(){
     'url' : vm2.$data.url,
     'method' : "GET"
   }).done(function(data){
-    console.log("getMessages() ... success");
-    showMessage(data);
+    console.log("getMessages() ... success. length[" + data.length + "]");
 
+    // メッセージが空でない場合だけトーストする
+    if (data.length > 0) {
+      showMessage(data);
+    }
     setTimeout(getMessages, vm2.$data.interval);
     console.log("receiving...");
   }).fail(function(data){
