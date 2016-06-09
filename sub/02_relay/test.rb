@@ -25,7 +25,8 @@ l_sock = s0.accept
 # クライアントからのデータを最後まで受信する
 # 受信したデータはコンソールに表示される
 while buf = l_sock.gets
-  p buf
+  p ".... forwarding ....[" + buf + "]"
+  c_sock.write(buf) 
 end
 
 # クライアントとの接続ソケットを閉じる
