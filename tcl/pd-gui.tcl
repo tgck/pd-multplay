@@ -8,6 +8,7 @@
 # "." automatically gets a window, we don't want it.  Withdraw it before doing
 # anything else, so that we don't get the automatic window flashing for a
 # second while pd loads.
+puts stdout "<<STDOUT>>"
 if { [catch {wm withdraw .} fid] } { exit 2 }
 
 package require Tcl 8.3
@@ -56,8 +57,8 @@ package require pd_guiprefs
 namespace import ::pd_guiprefs::init
 namespace import ::pd_guiprefs::update_recentfiles
 namespace import ::pd_guiprefs::write_recentfiles
-# make global since they are used throughout    
-namespace import ::pd_menucommands::* 
+# make global since they are used throughout
+namespace import ::pd_menucommands::*
 
 # import into the global namespace for backwards compatibility
 namespace import ::pd_connect::pdsend
@@ -199,7 +200,7 @@ array set editingtext {};# if an obj, msg, or comment is being edited, per patch
 array set loaded {}     ;# store whether a patch has completed loading
 array set xscrollable {};# keep track of whether the scrollbars are present
 array set yscrollable {}
-# patch window tree, these might contain patch IDs without a mapped toplevel 
+# patch window tree, these might contain patch IDs without a mapped toplevel
 array set windowname {}    ;# window names based on mytoplevel IDs
 array set childwindows {}  ;# all child windows based on mytoplevel IDs
 array set parentwindows {} ;# topmost parent window ID based on mytoplevel IDs
@@ -209,7 +210,7 @@ set ::pdwindow_menubar ".menubar"
 set ::patch_menubar   ".menubar"
 set ::dialog_menubar   ""
 
-# variables for test 
+# variables for test
 set ::canvas_width  0
 set ::canvas_height 0
 
@@ -233,8 +234,8 @@ namespace eval ::pdgui:: {
 #
 # these are preliminary ideas, we'll change them as we work things out:
 # - when possible use "" doublequotes to delimit messages
-# - use '$::myvar' instead of 'global myvar' 
-# - for the sake of clarity, there should not be any inline code, everything 
+# - use '$::myvar' instead of 'global myvar'
+# - for the sake of clarity, there should not be any inline code, everything
 #   should be in a proc that is ultimately triggered from main()
 # - if a menu_* proc opens a dialog panel, that proc is called menu_*_dialog
 # - use "eq/ne" for string comparison, NOT "==/!=" (http://wiki.tcl.tk/15323)
@@ -285,7 +286,7 @@ proc init_for_platform {} {
             option add *PatchWindow*Canvas.background "white" startupFile
             # add control to show/hide hidden files in the open panel (load
             # the tk_getOpenFile dialog once, otherwise it will not work)
-            catch {tk_getOpenFile -with-invalid-argument} 
+            catch {tk_getOpenFile -with-invalid-argument}
             set ::tk::dialog::file::showHiddenBtn 1
             set ::tk::dialog::file::showHiddenVar 0
             # set file types that open/save recognize
@@ -369,7 +370,7 @@ proc init_for_platform {} {
             set ::menubarsize 0
             # Tk handles the window placement differently on each platform, on
             # Mac OS X, the x,y placement refers to the content window's upper
-            # left corner. http://wiki.tcl.tk/11502 
+            # left corner. http://wiki.tcl.tk/11502
             # TODO this probably needs a script layer: http://wiki.tcl.tk/11291
             set ::windowframex 0
             set ::windowframey 0
@@ -409,7 +410,7 @@ proc load_locale {} {
         }
     } elseif {$::tcl_platform(platform) eq "windows"} {
         # using LANG on Windows is useful for easy debugging
-        if {[info exists ::env(LANG)] && $::env(LANG) ne "C" && $::env(LANG) ne ""} {  
+        if {[info exists ::env(LANG)] && $::env(LANG) ne "C" && $::env(LANG) ne ""} {
             ::msgcat::mclocale $::env(LANG)
         } elseif {![catch {package require registry}]} {
             ::msgcat::mclocale [string tolower \
@@ -517,7 +518,9 @@ proc pdtk_pd_startup {major minor bugfix test
     set_base_font $sys_font $sys_fontweight
     fit_font_into_metrics
     ::pd_guiprefs::init
+    puts stdout <<-------------------------------------->>
     pdsend "pd init [enquote_path [pwd]] $oldtclversion $::font_measured_metrics"
+    puts stdout <<-------------------------------------->>
     ::pd_bindings::class_bindings
     ::pd_bindings::global_bindings
     ::pd_menus::create_menubar
@@ -527,6 +530,7 @@ proc pdtk_pd_startup {major minor bugfix test
     load_startup_plugins
     open_filestoopen
     set ::done_init 1
+    puts stdout ENDOF
 }
 
 ##### routine to ask user if OK and, if so, send a message on to Pd ######
@@ -547,7 +551,7 @@ proc pdtk_check {mytoplevel message reply_to_pd default} {
 
 # ------------------------------------------------------------------------------
 # parse command line args when Wish/pd-gui.tcl is started first
- 
+
 proc parse_args {argc argv} {
     opt_parser::init {
         {-stderr    set {::stderr}}
@@ -559,7 +563,7 @@ proc parse_args {argc argv} {
         if { [string is int $argv] && $argv > 0} {
             # 'pd-gui' got the port number from 'pd'
             set ::host "localhost"
-            set ::port $argv 
+            set ::port $argv
         } else {
             set hostport [split $argv ":"]
             set ::port [lindex $hostport 1]
@@ -712,7 +716,10 @@ proc load_startup_plugins {} {
 
 # ------------------------------------------------------------------------------
 # main
+# main 関数の定義
 proc main {argc argv} {
+    puts stdout _START_OF_MAIN_
+
     # TODO Tcl/Tk 8.3 doesn't have [tk windowingsystem]
     set ::windowingsystem [tk windowingsystem]
     tk appname pd-gui
@@ -723,21 +730,29 @@ proc main {argc argv} {
     init_for_platform
 
     # ::host and ::port are parsed from argv by parse_args
+    # Pd core から起動した場合はこのルートをとおる
     if { $::port > 0 && $::host ne "" } {
         # 'pd' started first and launched us, so get the port to connect to
         ::pd_connect::to_pd $::port $::host
     } else {
+        # GUIから起動するとこのルートを通るよ( port が 初期値)
+        # ソケットの作成関数が、GUIが待ち受けするポートを返却する。
         # the GUI is starting first, so create socket and exec 'pd'
         set ::port [::pd_connect::create_socket]
         set pd_exec [file join [file dirname [info script]] ../bin/pd]
-        exec -- $pd_exec -guiport $::port &
+        puts stdout $::port
+        # Pd core の起動を抑止
+        #exec -- $pd_exec -guiport $::port &
         if {$::windowingsystem eq "aqua"} {
             # on Aqua, if 'pd-gui' first, then initial dir is home
             set ::filenewdir $::env(HOME)
             set ::fileopendir $::env(HOME)
         }
     }
+    puts stdout _END_OF_MAIN_
     ::pdwindow::verbose 0 "------------------ done with main ----------------------\n"
 }
 
+# main 関数の実行
 main $::argc $::argv
+puts stdout <<<aaa>>>
