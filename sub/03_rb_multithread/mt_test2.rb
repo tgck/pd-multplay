@@ -36,10 +36,9 @@ l_sock = s0.accept
 pd_thread = Thread.new do
   loop do
     while buf = l_sock.gets
-      print "==== <---- watching the socket for Client(Pd)...Got Message!"
-      p "==== <---- .... forwarding ....[" + buf + "]"
-      c_sock.write(buf) 
-      print "==== <---- watching the socket for Client(Pd)..."
+      puts "<---- [" + buf.gsub(/\n/, '') + "]"
+      c_sock.write(buf)
+      # puts "<     watching the socket for Client(Pd)..."
     end
   end
 end
@@ -47,10 +46,9 @@ end
 gui_thread = Thread.new do
   loop do
     while buf = c_sock.gets
-      puts "==== ----> watching the socket for Server(GUI)...Got Message!"
-      p "==== ----> .... forwarding ....[" + buf + "]"
+      puts "----> [" + buf.gsub(/\n/, '') + "]"
       l_sock.write(buf)
-      print "==== watching the socket for server(Pd-GUI)."
+      # puts "  > watching the socket for server(Pd-GUI)."
     end
   end
 end
