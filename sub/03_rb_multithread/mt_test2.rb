@@ -6,8 +6,8 @@ require "socket"
 # 単純なTCPサーバ。接続してきたクライアントのメッセージを、ログ出力する。
 # http://www.geekpage.jp/programming/ruby-network/tcp-1.php
 # TODO: 単純に
-# 使い方:   test.rb --guiport 8080
-# => ポート 8080 でリスンしているサーバプログラムに接続しに行く。
+# 使い方:   test.rb 15001
+# => ポート 15001 でリスンしているサーバプログラムに接続しに行く。
 
 # [制約]先に、exec pd を抑止した Pd-GUI を起動しておくこと。
 # そのときに確保したポートを使って、当スクリプトの引数を指定すること。
@@ -21,7 +21,7 @@ require "socket"
 # 引数
 # サーバプログラムにクライアントとして接続。
 # 引数で指定されたポート番号を使う
-puts "====Connect to port [" + ARGV[0] + "] as client."
+print  "====Connect to port [" + ARGV[0] + "] as client."
 
 # Pd-GUIと通信するソケットを作成
 c_sock = TCPSocket.open("127.0.0.1", ARGV[0])
@@ -43,6 +43,7 @@ pd_thread = Thread.new do
   end
 end
 
+# サーバ(Pd-GUI)からのソケットの監視
 gui_thread = Thread.new do
   loop do
     while buf = c_sock.gets
