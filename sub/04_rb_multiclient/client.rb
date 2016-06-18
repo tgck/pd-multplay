@@ -3,9 +3,9 @@
 require "socket"
 require "io/console"
 
-# ñ���TCP���饤�����
-# �Ȥ���:   test.rb 8080
-# => �ݡ��� 8080 �ǥꥹ�󤷤Ƥ��륵���Хץ���������³���˹Ԥ���
+# 単純なTCPクライアント
+# 使い方:   test.rb 8080
+# => ポート 8080 でリスンしているサーバプログラムに接続しに行く。
 
 port = ARGV[0]
 puts  "====Connect to port [" + port  + "] as client."

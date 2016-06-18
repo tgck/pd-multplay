@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-# Ruby $B$K$h$k4JC1$J%^%k%A%9%l%C%I(B
+# Ruby による簡単なマルチスレッド
 
 require "io/console"
  
