@@ -14,6 +14,9 @@ p "Connect to port [" + pguiport + "] as client."
 
 pguisock = TCPSocket.open("127.0.0.1", pguiport)
 
+# GUI の管理
+guipool = [pguisock]
+
 # Pd からの接続を待つ
 l_pdsock = TCPServer.open(8080)
 #p "listening(pd) at 8080 . fd[xx]".gsub(/xx/, pdlsock)
@@ -33,7 +36,10 @@ pd_thread = Thread.new do
 			p "<-- [" + buf.gsub(/\n/, '') + "]"
 
 			# GUI に渡す
-			pguisock.write(buf)
+			# pguisock.write(buf)
+			for sock in guipool do
+				sock.write(buf)
+			end
 		end
 	end
 end
@@ -50,8 +56,7 @@ gui_thread = Thread.new do
 	end
 end
 
-# v3 マルチスレッド化して複数のクライアントからのレスポンスを返せるようにする
-# http://qiita.com/nekogeruge_987/items/23312e53b15ebfeb0607
+# 二番目以降の GUI を扱うスレッド。
 lport = 18080
 server = TCPServer.open(lport)
 p "listening new GUI applicants at port 18080"
@@ -60,12 +65,31 @@ while true
 
   Thread.start(server.accept) do |socket|
   	p "new client accepted."
-    p socket.peeraddr
+  	p socket.peeraddr
+
+  	# こんなメッセージじゃなくて、
+  	socket.write('hoge!!!! now mimicing init gui message')
+  	# pd-gui が初期化するようなやつ。メッセージは送れるけど、pd-gui は反応しない。
+  	socket.write <<-EOF
+::pdwindow::post {canvas 511110, owner 0
+}
+::pdwindow::post {canvas 40e640, owner 0
+}
+::pdwindow::post {canvas 40e980, owner 0}
+pdtk_test
+pdtk_test
+pdtk_test
+EOF
 
     while buffer = socket.gets
-      p socket.peeraddr
-      p buffer
-      socket.puts "200"
+    	p socket.peeraddr
+    	p "+++ " + buffer
+    	# socket.puts "200"
+    	
+		# pd に向けて書く
+    	pdsock.write(buffer)
+    	# TODO: 受信側も考慮する必要ある
+    	# -> 一応、同報できるようにしたけど。このソケットに向かって、何か pd から初期化メッセージ送ってやらないとならんみたい。
     end
 
     socket.close
