@@ -4,6 +4,11 @@ require "socket"
 # Pd に対応することによる実装は sub/02_relay での実験が元
 # Pd-GUI の あとで起動して
 # Pd-GUI に接続する
+
+### ##### ##### ##### ##### ##### ##### ###
+### 最初に "wish pd-gui.tcl" などとして起動 ###
+### ##### ##### ##### ##### ##### ##### ###
+
 pguiport = ARGV[0] # prime gui : 最初に起動した GUI が待ち受けしているポート
 p "Connect to port [" + pguiport + "] as client." 
 
@@ -13,7 +18,10 @@ pguisock = TCPSocket.open("127.0.0.1", pguiport)
 l_pdsock = TCPServer.open(8080)
 #p "listening(pd) at 8080 . fd[xx]".gsub(/xx/, pdlsock)
 p "listening(pd) at 8080"
-## 裏から "pd -guiport 8080" を叩くこと
+
+### ##### ##### ##### ##### ##### ##### ###
+### 裏から "pd -guiport 8080" を叩くこと   ###
+### ##### ##### ##### ##### ##### ##### ###
 
 pdsock = l_pdsock.accept
 p "accepted(pd)"
@@ -42,27 +50,31 @@ gui_thread = Thread.new do
 	end
 end
 
-gui_thread.join 
-pd_thread.join
-
 # v3 マルチスレッド化して複数のクライアントからのレスポンスを返せるようにする
 # http://qiita.com/nekogeruge_987/items/23312e53b15ebfeb0607
 lport = 18080
 server = TCPServer.open(lport)
+p "listening new GUI applicants at port 18080"
 
-# while true
-#   Thread.start(server.accept) do |socket|
-#     p socket.peeraddr
+while true
 
-#     while buffer = socket.gets
-#       p socket.peeraddr
-#       p buffer
-#       socket.puts "200"
-#     end
+  Thread.start(server.accept) do |socket|
+  	p "new client accepted."
+    p socket.peeraddr
 
-#     socket.close
-#   end
-# end
+    while buffer = socket.gets
+      p socket.peeraddr
+      p buffer
+      socket.puts "200"
+    end
+
+    socket.close
+    p "client exited." 
+  end
+end
+
+gui_thread.join 
+pd_thread.join
 
 server.close
 
