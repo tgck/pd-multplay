@@ -35,10 +35,12 @@ pd_thread = Thread.new do
 		while buf = pdsock.gets
 			p "<-- [" + buf.gsub(/\n/, '') + "]"
 
-			# GUI に渡す
-			# pguisock.write(buf)
-			for sock in guipool do
-				sock.write(buf)
+      # 単一のGUI に渡す
+      # pguisock.write(buf)
+
+			# 多重化された GUI に渡す
+			for s in guipool do
+				s.write(buf)
 			end
 		end
 	end
@@ -67,10 +69,8 @@ while true
   	p "new client accepted."
   	p socket.peeraddr
   	sleep(3)
-  	# こんなメッセージじゃなくて、
-  	#socket.write('hoge!!!! now mimicing init gui message')
-  	#pdsock.write('pd init;')
-  	# pd-gui が初期化するようなやつ。メッセージは送れるけど、pd-gui は反応しない。
+  	p "pd-multplay! now mimicing init gui message"
+  	
   	socket.write <<-EOF
 ::pdwindow::post {canvas 24ae50, owner 0
 }
@@ -98,7 +98,9 @@ set pd_whichapi 4
 set pd_whichmidiapi 0
 EOF
 
-# ここまで投げたら, 次　pd から応答あるはずなんだけど。pdtk_pd_startup を呼び出すような。
+# ここまで投げると GUI は canvas が開く
+    
+    guipool.push(socket) #? これでいいの？　pd から書いてもらうソケット。
 
     while buffer = socket.gets
     	p socket.peeraddr
@@ -110,7 +112,8 @@ EOF
     	# TODO: 受信側も考慮する必要ある
     	# -> 一応、同報できるようにしたけど。このソケットに向かって、何か pd から初期化メッセージ送ってやらないとならんみたい。
     end
-
+    
+    guipool.pop(socket)
     socket.close
     p "client exited." 
   end
