@@ -56,7 +56,7 @@ gui_thread = Thread.new do
 	end
 end
 
-# 二番目以降の GUI を扱うスレッド。
+# 二番目以降の GUI に向かうスレッド。
 lport = 18080
 server = TCPServer.open(lport)
 p "listening new GUI applicants at port 18080"
@@ -66,20 +66,39 @@ while true
   Thread.start(server.accept) do |socket|
   	p "new client accepted."
   	p socket.peeraddr
-
+  	sleep(3)
   	# こんなメッセージじゃなくて、
-  	socket.write('hoge!!!! now mimicing init gui message')
+  	#socket.write('hoge!!!! now mimicing init gui message')
+  	#pdsock.write('pd init;')
   	# pd-gui が初期化するようなやつ。メッセージは送れるけど、pd-gui は反応しない。
   	socket.write <<-EOF
-::pdwindow::post {canvas 511110, owner 0
+::pdwindow::post {canvas 24ae50, owner 0
 }
-::pdwindow::post {canvas 40e640, owner 0
+::pdwindow::post {canvas 24ba60, owner 0
 }
-::pdwindow::post {canvas 40e980, owner 0}
+::pdwindow::post {canvas 24bda0, owner 0
+}
 pdtk_test
 pdtk_test
 pdtk_test
+pdtk_test2 321 567
+set pd_whichmidiapi 0
+set pd_whichmidiapi 0
+set ::tmp_path {}
+set ::sys_searchpath $::tmp_path
+set ::tmp_path {}
+lappend ::tmp_path {/Users/tani/Library/Pd}
+lappend ::tmp_path {/Library/Pd}
+lappend ::tmp_path {./../extra}
+set ::sys_staticpath $::tmp_path
+set ::startup_flags {}
+set ::startup_libraries {}
+pdtk_pd_startup 0 45 4 {} {} {} {Monaco} normal
+set pd_whichapi 4
+set pd_whichmidiapi 0
 EOF
+
+# ここまで投げたら, 次　pd から応答あるはずなんだけど。pdtk_pd_startup を呼び出すような。
 
     while buffer = socket.gets
     	p socket.peeraddr

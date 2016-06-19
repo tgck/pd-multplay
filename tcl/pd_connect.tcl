@@ -13,6 +13,7 @@ namespace eval ::pd_connect:: {
 # TODO figure out how to escape { } properly
 
 proc ::pd_connect::configure_socket {sock} {
+    puts <<<_configure_socket_>>>
     fconfigure $sock -blocking 0 -buffering none -encoding utf-8;
     fileevent $sock readable {::pd_connect::pd_readsocket}
 }
@@ -21,6 +22,7 @@ proc ::pd_connect::configure_socket {sock} {
 # Pd-GUI は Pd から通知されたポート番号に接続をおこなう
 # if pd opens first, it starts pd-gui, then pd-gui connects to the port pd sent
 proc ::pd_connect::to_pd {port {host localhost}} {
+    puts stdout <<<to_pd>>>
     variable pd_socket
     ::pdwindow::debug "'pd-gui' connecting to 'pd' on localhost $port ...\n"
     if {[catch {set pd_socket [socket $host $port]}]} {
@@ -32,7 +34,7 @@ proc ::pd_connect::to_pd {port {host localhost}} {
 }
 
 # Pd-GUI が先に起動した場合は、GUI がソケットを作り、接続をリスニングするポート番号を
-# 呼び出し元に返却する。そのあと Pd がこのポートに対して接続しにくる。
+# 呼び出し元に返却する。そのあとPd Coreがこのポートに対して接続しにくる。
 # if pd-gui opens first, it creates socket and requests a port.  The function
 # then returns the portnumber it receives. pd then connects to that port.
 proc ::pd_connect::create_socket {} {
@@ -85,7 +87,7 @@ proc ::pd_connect::pd_readsocket {} {
      variable pd_socket
      variable cmds_from_pd
 
-     puts stdout <<<<__pd_readsocket__>>>>
+     puts stdout <<<__pd_readsocket__>>>
 
      if {[eof $pd_socket]} {
          # if we lose the socket connection, that means pd quit, so we quit
@@ -102,6 +104,7 @@ proc ::pd_connect::pd_readsocket {} {
          # the block is incomplete, wait for the next block of data
          return
      } else {
+         puts stdout <<<__pd_doing_parse__>>>
          set docmds $cmds_from_pd
          set cmds_from_pd ""
          if {![catch {uplevel #0 $docmds} errorname]} {

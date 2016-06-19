@@ -507,6 +507,7 @@ proc fit_font_into_metrics {} {
 
 proc pdtk_pd_startup {major minor bugfix test
                       audio_apis midi_apis sys_font sys_fontweight} {
+    puts stdout <<<pdtk_pd_startup__called>>>
     set ::PD_MAJOR_VERSION $major
     set ::PD_MINOR_VERSION $minor
     set ::PD_BUGFIX_VERSION $bugfix
@@ -743,7 +744,7 @@ proc main {argc argv} {
         set pd_exec [file join [file dirname [info script]] ../bin/pd]
         puts stdout $::port
         # Pd core の起動を抑止
-        exec -- $pd_exec -guiport $::port &
+        #exec -- $pd_exec -guiport $::port &
         if {$::windowingsystem eq "aqua"} {
             # on Aqua, if 'pd-gui' first, then initial dir is home
             set ::filenewdir $::env(HOME)
@@ -756,4 +757,4 @@ proc main {argc argv} {
 
 # main 関数の実行
 main $::argc $::argv
-puts stdout <<<aaa>>>
+puts stdout <<<end_of_main>>>
