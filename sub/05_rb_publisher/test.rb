@@ -12,7 +12,7 @@ end
 
 # Gui => Proxy => Pd  ...  黄
 def log_toPd(msg)
-  str = "g=>  [" + msg.gsub(/n/, '') + "]"
+  str = "g=>  [" + msg.gsub(/;[\r\n]+/, ';' )+ "]"
   puts str.brown
 end
 # Gui <= Proxy <= Pd  ...  緑
@@ -78,11 +78,12 @@ gui_thread = Thread.new do
       # メッセージのチェック
       if drop(buf) then
         #p "g=>  [" + "xxxx" + "][DROP] " + buf
-        log_toPd('DROP ' + buf)
+        #log_toPd('DROP ' + buf)
+        log_toPd(buf)
         # NGワード持っているメッセージは送信しない
       else
         #p "g=>  [" + "xxxx" + "][PBL*] " + buf
-        log_toPd('SEND ' + buf)
+        log_toPd(buf)
         # pd に向けて書く
         pdsock.write(buf)
       end
