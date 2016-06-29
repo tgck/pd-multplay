@@ -57,8 +57,6 @@ puts "accepted(pd)"
 pd_thread = Thread.new do
 	loop do
 		while buf = pdsock.gets
-			# p " <-p [" + buf.gsub(/\n/, '') + "]"
-
 			# 多重化された GUI に渡す
 			for s in guipool do
 				s.write(buf)
@@ -73,13 +71,9 @@ end
 gui_thread = Thread.new do
 	loop do
 		while buf = pguisock.gets
-
-
       # メッセージのチェック
       if drop(buf) then
-        #p "g=>  [" + "xxxx" + "][DROP] " + buf
-        #log_toPd('DROP ' + buf)
-        log_toPd(buf)
+        log_toPd('DROP ' + buf)
         # NGワード持っているメッセージは送信しない
       else
         #p "g=>  [" + "xxxx" + "][PBL*] " + buf
@@ -97,7 +91,6 @@ server = TCPServer.open(lport)
 puts "listening new GUI applicants at port 18080"
 
 while true
-
   Thread.start(server.accept) do |socket|
   	puts "new client accepted."
   	puts socket.peeraddr
@@ -133,14 +126,13 @@ set pd_whichmidiapi 0
 EOF
 
 # ここまで投げると GUI は canvas が開く
-    
-    guipool.push(socket)        # 新たに確率されたGUI側のソケットをプールに入れる
+    # 新たに確率されたGUI側のソケットをプールに入れる
+    guipool.push(socket)        
 
-    while buffer = socket.gets  # 生成したソケットからの読み出し(このスレッドの担当するGUIで何かイベントがあったとき)
-      # p socket.peeraddr
+    # 生成したソケットからの読み出し(このスレッドの担当するGUIで何かイベントがあったとき)
+    while buffer = socket.gets  
       if drop(buffer) then
         # puts "g+>p [" + peerport + "][DROP] " + buffer
-
         # NGワード持っているメッセージは送信しない
       else
         puts "g+> [" + peerport + "][PBL*] " + buffer
